@@ -1,0 +1,314 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Diagnostics;
+using System;
+
+namespace Splendor
+{
+
+    public class Splendor
+    {
+
+    //    static DisplayGems gemPiles;
+        public static Deck[] decks;
+        public static Deck nobles;
+   //     public Texture2D[] nobleSprites;
+   //     public Texture2D[] deckImages;
+   //     public Texture2D[] gemIcons;
+   //     public static Texture2D[] GemIcons;
+        private static int t;
+        public static int turn
+        {
+            get { return t; }
+            private set { t = value; }
+        }
+        public static Player[] players;
+        public static Card selected;
+        public static bool gameOver = true;
+        public static bool takingTurn;
+        static int gamesPlayed = 0;
+        public static Random random;
+        public static Splendor self;
+        public string playing;
+        public static Stopwatch timer;
+
+
+        public static Player currentPlayer
+        {
+            get
+            {
+                return players[turn % 2];
+            }
+        }
+
+        public static List<Card> viewableCards
+        {
+            get
+            {
+                List<Card> l = new List<Card>();
+                foreach (Deck d in decks)
+                {
+                    l.AddRange(d.viewableCards);
+                }
+                l.AddRange(nobles.viewableCards);
+                return l;
+            }
+        }
+
+   
+        //Signal the current AI to stop, the turn to increment, and the scores to be checked.
+        public static void nextTurn()
+        {
+            turn += 1;
+     //       Console.WriteLine(Splendor.currentPlayer.ToString() + " is taking their turn");
+            Gem.Reset();
+            //gemPiles.updateTexts();
+            if (currentPlayer == players[0])
+            {
+                if (getMaxPlayer().points >= 15)
+                {
+                    endGame();
+                    return;
+                }
+            }
+            takingTurn = false;
+        }
+        //Stop the AIs and close the recording tool.
+        static void endGame()
+        {
+
+            gameOver = true;
+            Player winner = getMaxPlayer();
+            Player loser = winner;
+            foreach (Player p in players)
+            {
+                if (p != winner)
+                    loser = p;
+            }
+            winner.wins += 1;
+
+            if (gamesPlayed > 0) { 
+                Console.Title = ("   Game " + gamesPlayed + " / 100     Average Time: " + (timer.ElapsedMilliseconds / gamesPlayed));
+            }
+        }
+
+        public static void replayGame()
+        {
+            foreach (Deck d in decks)
+            {
+                d.getAllCards().Clear();
+            }
+            foreach (Player p in players)
+            {
+                p.field.Clear();
+                p.reserve.Clear();
+                p.gems = new Gem();
+                p.turnOrder = (p.turnOrder + 1) % 2;
+            }
+            players = new Player[2] { players[1], players[0] };
+            Splendor.turn = 0;
+            self.getCards();
+            Gem.board = new Gem(4, 4, 4, 4, 4, 8);
+            //	RecordHistory.initialize ();
+            gameOver = false;
+            takingTurn = false;
+            while (!gameOver)
+            {
+                Update();
+            }
+        }
+
+        //Returns the player with the highest score, with ties broken by least gem mines.
+        static Player getMaxPlayer()
+        {
+            if (players[0].points > players[1].points)
+            {
+                return players[0];
+            }
+            else if (players[1].points > players[0].points)
+            {
+                return players[1];
+            }
+            else if (players[0].field.Count > players[1].field.Count)
+            {
+                return players[1];
+            }
+            else if (players[1].field.Count > players[0].field.Count)
+            {
+                return players[0];
+            }
+            else
+                return players[0];
+        }
+
+        //public static Texture2D gem(int i)
+        //{
+        //    return GemIcons[i];
+        //}
+
+
+        //Load the cards from the .csv file
+        void getCards()
+        {
+            StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\..\splendor_cards.csv"));
+            file.ReadLine();
+            int id = 0;
+            while (!file.EndOfStream)
+            {
+                string[] vals = file.ReadLine().Split(',');
+                int w, u, b, r, g;
+                w = string.IsNullOrEmpty(vals[3]) ? 0 : int.Parse((vals[3]));
+                u = string.IsNullOrEmpty(vals[4]) ? 0 : int.Parse((vals[4]));
+                g = string.IsNullOrEmpty(vals[5]) ? 0 : int.Parse((vals[5]));
+                r = string.IsNullOrEmpty(vals[6]) ? 0 : int.Parse((vals[6]));
+                b = string.IsNullOrEmpty(vals[7]) ? 0 : int.Parse((vals[7]));
+                Gem cost = new Gem(w, u, b, r, g, 0);
+                int tier = int.Parse(vals[0]);
+                int points = string.IsNullOrEmpty(vals[2]) ? 0 : int.Parse((vals[2]));
+                int color = 0;
+                switch (vals[1])
+                {
+                    case "white":
+                        color = 0;
+                        break;
+                    case "blue":
+                        color = 1;
+                        break;
+                    case "black":
+                        color = 2;
+                        break;
+                    case "red":
+                        color = 3;
+                        break;
+                    case "green":
+                        color = 4;
+                        break;
+                }
+                Card c = new Card();
+                c.color = color;
+                c.cost = cost;
+                c.points = points;
+                c.id = id;
+                id++;
+
+                switch (tier)
+                {
+                    case 1:
+                        //c.backImage = deckImages[0];
+                        c.deck = decks[0];
+                        decks[0].getAllCards().Add(c);
+                        break;
+                    case 2:
+                        //c.backImage = deckImages[1];
+                        c.deck = decks[1];
+                        decks[1].getAllCards().Add(c);
+                        break;
+                    case 3:
+                        //c.backImage = deckImages[2];
+                        c.deck = decks[2];
+                        decks[2].getAllCards().Add(c);
+                        break;
+                }
+            }
+            file.Close();
+            decks[0].shuffle();
+            decks[1].shuffle();
+            decks[2].shuffle();
+            populate(nobles);
+
+        }
+
+        void populate(Deck nobles)
+        {
+            StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\..\splendor_nobles.csv"));
+            file.ReadLine();
+            int i = 0;
+            while (!file.EndOfStream)
+            {
+                string[] vals = file.ReadLine().Split(',');
+                int w, u, b, r, g;
+                w = string.IsNullOrEmpty(vals[0]) ? 0 : int.Parse((vals[0]));
+                u = string.IsNullOrEmpty(vals[1]) ? 0 : int.Parse((vals[1]));
+                g = string.IsNullOrEmpty(vals[2]) ? 0 : int.Parse((vals[2]));
+                r = string.IsNullOrEmpty(vals[3]) ? 0 : int.Parse((vals[3]));
+                b = string.IsNullOrEmpty(vals[4]) ? 0 : int.Parse((vals[4]));
+                Card c = new Card();
+                c.cost = new Gem(w, u, b, r, g, 0);
+                //c.frontImage = nobleSprites[i];
+                c.points = 3;
+                c.deck = nobles;
+                nobles.getAllCards().Add(c);
+                i++;
+            }
+            nobles.shuffle();
+            nobles.getAllCards().RemoveRange(4, 6);
+        }
+
+        //Initialize the cards, players, and recording tool. Then start the game.
+        public Splendor(Player p1, Player p2, int randomSeed)
+        {
+            Console.WriteLine("Initializing game...");
+            decks = new Deck[3] { new Deck(), new Deck(), new Deck() };
+            nobles = new Deck();
+            //nobles.position = new Vector2(Screen.width / 3, Screen.height / 3);
+            //decks[2].position = new Vector2(15, Screen.height / 3 - 60);
+            //decks[1].position = new Vector3(15, Screen.height / 3 + 70);
+            //decks[0].position = new Vector3(15, Screen.height / 3 + 200);
+            //gemPiles = GameObject.FindObjectOfType<DisplayGems>();
+            players = new Player[2] { p1, p2 };
+            random = new Random(randomSeed);
+            self = this;
+            //GemIcons = gemIcons;
+            int i = random.Next(0, 2);
+            foreach (Player p in players)
+            {
+                p.turnOrder = i;
+                i = (i + 1) % 2;
+            }
+            Console.WriteLine("Getting cards...");
+            getCards();
+            //	RecordHistory.initialize ();
+            Console.WriteLine("Starting game");
+            gameOver = false;
+            timer = Stopwatch.StartNew();
+
+        }
+
+        public Splendor(Player p1, Player p2) : this(p1, p2, new Random().Next())
+        {
+
+        }
+
+        public static void Update()
+        {
+            if (!gameOver && !takingTurn)
+            {
+                currentPlayer.takeTurn();
+            }         
+        }
+
+        void OnGUI()
+        {
+            if (gameOver)
+                return;
+            //players[0].display();
+            //players[1].display();
+            decks[0].OnGUI();
+            decks[1].OnGUI();
+            decks[2].OnGUI();
+            nobles.OnGUI();
+        }
+
+        public void select(int i)
+        {
+            Gem.selected[i] += 1;
+            Gem.tryTake();
+        }
+        public void reset()
+        {
+            Gem.Reset();
+        }
+
+    }
+
+}
