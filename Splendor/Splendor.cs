@@ -259,12 +259,8 @@ namespace Splendor
             random = new Random(randomSeed);
             self = this;
             //GemIcons = gemIcons;
-            int i = random.Next(0, 2);
-            foreach (Player p in players)
-            {
-                p.turnOrder = i;
-                i = (i + 1) % 2;
-            }
+            p1.turnOrder = 0;
+            p2.turnOrder = 1;
             Console.WriteLine("Getting cards...");
             getCards();
             //	RecordHistory.initialize ();
