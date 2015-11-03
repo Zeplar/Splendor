@@ -53,13 +53,14 @@ namespace Splendor
             Move bestMove = null;
             List<Move> legalMoves = b.legalMoves;
             legalMoves.RemoveAll(x => x.moveType == 3);
-            int bestScore, val, t;
+            int bestScore, val;
+            //int t;
 
             if (depth == treeDepth || legalMoves.Count == 0)
             {
-                t = historyLocation[depth+1];
-                history[depth+1][t] = score(b);
-                historyLocation[depth+1] += 1;
+                //t = historyLocation[depth+1];
+                //history[depth+1][t] = score(b);
+                //historyLocation[depth+1] += 1;
                 return new simMove(null, score(b));
             }
             if (maxPlayer)
@@ -69,17 +70,17 @@ namespace Splendor
                 {
         
                     val = generateMove(b.generate(m), depth + 1, false).score;
-                    t = historyLocation[depth+1];
-                    history[depth+1][t] = val;
-                    historyLocation[depth+1] += 1;
+                    //t = historyLocation[depth+1];
+                    //history[depth+1][t] = val;
+                    //historyLocation[depth+1] += 1;
                     if (val > bestScore)
                     {
                         bestScore = val;
                         bestMove = m;
                     }
                 }
-                historyLocation[depth+1] += 1;
-                historyLocation[treeDepth+1] += 1;
+                //historyLocation[depth+1] += 1;
+                //historyLocation[treeDepth+1] += 1;
                 return new simMove(bestMove, bestScore);
             }
             else
@@ -88,17 +89,17 @@ namespace Splendor
                 foreach (Move m in legalMoves)
                 {
                     val = generateMove(b.generate(m), depth + 1, true).score;
-                    t = historyLocation[depth];
-                    history[depth+1][t] = val;
-                    historyLocation[depth+1] += 1;
+                    //t = historyLocation[depth];
+                    //history[depth+1][t] = val;
+                    //historyLocation[depth+1] += 1;
                     if (val < bestScore)
                     {
                         bestScore = val;
                         bestMove = m;
                     }
                 }
-                historyLocation[depth+1] += 1;
-                historyLocation[treeDepth+1] += 1;
+                //historyLocation[depth+1] += 1;
+                //historyLocation[treeDepth+1] += 1;
 
                 return new simMove(bestMove, bestScore);
             }
@@ -122,10 +123,10 @@ namespace Splendor
 
         public override void takeTurn()
         {
-            makeHistory();
+            //makeHistory();
             Board b = Board.current;
             simMove m = generateMove(b, 0, true);
-            history[0][0] = m.score;
+            //history[0][0] = m.score;
             if (m.move != null)
             {
                 m.move.takeAction();
@@ -142,7 +143,7 @@ namespace Splendor
                 //			Debug.Log ("Took action Random");
             }
 
-            RecordHistory.recordMinimaxTree(history);
+            //RecordHistory.recordMinimaxTree(history);
         }
 
     }
