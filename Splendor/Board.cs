@@ -34,11 +34,12 @@ public class Board
         {
             this.players = Splendor.players.ToList();
             int i = Splendor.currentPlayer.turnOrder;
-            players = players.Skip(i).Concat(players.Take(i)).ToList();
+            this.players = players.Skip(i).Concat(players.Take(i)).ToList();
             this.gems = Gem.board;
             this.turn = 0;
             this.numPlayers = players.Count;
             this.viewableCards = Splendor.viewableCards;
+            
         }
 
 

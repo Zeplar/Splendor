@@ -33,6 +33,10 @@ namespace Splendor_E
                         recordScore();
                     }
                     return null;
+                case "debug":
+                    debugGame();
+                    recordScore();
+                    return null;
                 case greedy:
                     return new Splendor.Greedy();
                 case minimax:
@@ -46,13 +50,12 @@ namespace Splendor_E
                     return null;
                 case "runseed":
                     Console.Clear();
-                    i = int.Parse(commands.Dequeue());
+                //    i = int.Parse(commands.Dequeue());
                     p1 = dequeue() as Splendor.Player;
                     p2 = dequeue() as Splendor.Player;
-                    currentGame = new Splendor.Splendor(p1, p2, i);
+                    currentGame = new Splendor.Splendor(p1, p2, 100);
                     return null;
                 default:
-                    Trace.TraceError("Bad queue command");
                     return null;
             }
         }
@@ -67,8 +70,40 @@ namespace Splendor_E
 
         }
 
+        static void debugGame()
+        {
+            Splendor.Splendor.replayGame();
+
+        }
+
+        static void findDiscrepancy(int tries)
+            //Greedy diverged from Minimax 1 at i=28 (game 29)
+        {
+            Splendor.Greedy g1 = new Splendor.Greedy();
+            Splendor.Greedy g2 = new Splendor.Greedy();
+            Splendor.Greedy g3 = new Splendor.Greedy();
+            Splendor.Minimax m = new Splendor.Minimax(1);
+            int[] winArray = new int[tries];
+
+            Splendor.Splendor greedy = new Splendor.Splendor(g1, g2, 100);
+            for (int i=0; i < tries; i++)
+            {
+                Splendor.Splendor.replayGame();
+                winArray[i] = g1.wins;
+            }
+            Splendor.Splendor mini = new Splendor.Splendor(g3, m, 100);
+            for (int i = 0; i < tries; i++)
+            {
+                Splendor.Splendor.replayGame();
+                Debug.Assert(winArray[i] == g3.wins, "Games diverged at i= " + i);
+            }
+
+
+        }
+
         static void Main(string[] args)
         {
+            
             while (true) { 
                 
                     foreach (string s in Console.ReadLine().Split())
