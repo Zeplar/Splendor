@@ -26,11 +26,16 @@ namespace Splendor
                     bestMove = b;
                 }
             }
+            if (Splendor.recording)
+            {
+                RecordHistory.record("Greedy " + turnOrder + " took greedy action BUY " + bestMove.card);
+            }
             bestMove.takeAction();
         }
 
         public override void takeTurn()
         {
+
             //Get a list of cards that are affordable
             List<Move.BUY> buys = Move.BUY.getLegalMoves();
 
@@ -45,6 +50,10 @@ namespace Splendor
                 List<Move> allMoves = Move.getAllLegalMoves();
                 if (allMoves.Count > 0)
                 {
+                    if (Splendor.recording)
+                    {
+                        RecordHistory.record("Greedy " + turnOrder + " took random action " + allMoves[0].ToString());
+                    }
                     allMoves[0].takeAction();
                     return;
                 }
