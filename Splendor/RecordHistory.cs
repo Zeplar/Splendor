@@ -51,6 +51,15 @@ namespace Splendor
         }
 
 
+        public static void record(string s)
+        {
+            if (!init)
+            {
+                Trace.TraceError("File not initialized");
+                return;
+            }
+            file.WriteLine(s);
+        }
 
         public static void record(actions a, Card c)
         {
