@@ -29,8 +29,8 @@ namespace Splendor
         static int gamesPlayed = 0;
         public static Random random;
         public static Splendor self;
-        public string playing;
         public static Stopwatch timer;
+        public static bool recording = false;
 
 
         public static Player currentPlayer
@@ -263,7 +263,7 @@ namespace Splendor
             p2.turnOrder = 1;
             Console.WriteLine("Getting cards...");
             getCards();
-            //	RecordHistory.initialize ();
+            RecordHistory.initialize ();
             Console.WriteLine("Starting game");
             gameOver = false;
             timer = Stopwatch.StartNew();
