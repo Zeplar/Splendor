@@ -13,6 +13,7 @@ namespace Splendor
         public List<Card> reserve;
         public List<Card> field;
         public int wins;
+        public string name;
 
         public abstract void takeTurn();
 
@@ -102,7 +103,7 @@ namespace Splendor
                     return true;
                 }
             }
-            noble = new Card();
+            noble = null;
             return false;
         }
 
@@ -113,12 +114,12 @@ namespace Splendor
             Gem.board += (gems - newGems);
             gems = newGems;
             field.Add(c);
-            c.getBought();
+            c.deck.removeCard(c);
             reserve.Remove(c);
             Card noble;
             if (canGetNoble(out noble))
             {
-                noble.getBought();
+                noble.deck.removeCard(noble);
                 field.Add(noble);
             }
 
@@ -134,7 +135,7 @@ namespace Splendor
                 Gem.board[5] -= 1;
             }
             reserve.Add(c);
-            c.getBought();
+            c.deck.removeCard(c);
         }
 
         protected virtual void showReserve()

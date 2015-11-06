@@ -7,11 +7,18 @@ namespace Splendor
     public class Greedy : Player
     {
 
-        public Greedy()
+        public override string ToString()
+        {
+            return "Greedy " + this.name + " " + this.turnOrder;
+        }
+
+        public Greedy(string name="")
         {
             gems = new Gem();
             reserve = new List<Card>();
             field = new List<Card>();
+            this.name = name;
+
         }
 
         private void getBiggestBuy(List<Move.BUY> buys)
@@ -28,7 +35,7 @@ namespace Splendor
             }
             if (Splendor.recording)
             {
-                RecordHistory.record("Greedy " + turnOrder + " took greedy action BUY " + bestMove.card);
+                RecordHistory.record(this.ToString() + " made greedy move " + bestMove);
             }
             bestMove.takeAction();
         }
@@ -52,7 +59,7 @@ namespace Splendor
                 {
                     if (Splendor.recording)
                     {
-                        RecordHistory.record("Greedy " + turnOrder + " took random action " + allMoves[0].ToString());
+                        RecordHistory.record(this.ToString() + " made random move " + allMoves[0].ToString());
                     }
                     allMoves[0].takeAction();
                     return;

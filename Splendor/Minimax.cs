@@ -126,8 +126,8 @@ namespace Splendor
         /// </summary>
         private int score(Board b)
         {
-            Player self = b.startingPlayer;
-            Player opp = b.notStartingPlayer;
+            Player self = b.maximizingPlayer;
+            Player opp = b.minimizingPlayer;
             Debug.Assert(self != opp);
             //int points = self.points;
             int points = self.points - opp.points;
@@ -154,6 +154,7 @@ namespace Splendor
             {
                 RecordHistory.record("Minimax took move " + m.move.ToString());
                 m.move.takeAction();
+
             }
             else if (Move.getAllLegalMoves().Count == 0)
             {

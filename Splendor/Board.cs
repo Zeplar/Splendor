@@ -12,7 +12,6 @@ public class Board
         public Gem gems;
         public List<Card> viewableCards;
         public int turn;
-        public int numPlayers;
 
         /// <summary>
         /// Creates a deep copy of the given board. Turn indicates the current player as well as the "starting" player.
@@ -27,17 +26,17 @@ public class Board
             viewableCards = cards.ToList();
             this.gems = gems;
             this.turn = turn;
-            this.numPlayers = players.Count;
         }
 
         private Board()
         {
             this.players = Splendor.players.ToList();
-            int i = Splendor.currentPlayer.turnOrder;
-            this.players = players.Skip(i).Concat(players.Take(i)).ToList();
+            if (this.players[0] != Splendor.currentPlayer)
+            {
+                this.players.Reverse();
+            }
             this.gems = Gem.board;
             this.turn = 0;
-            this.numPlayers = players.Count;
             this.viewableCards = Splendor.viewableCards;
             
         }
@@ -72,7 +71,7 @@ public class Board
         {
             get
             {
-                return players[turn % numPlayers];
+                return players[turn % players.Count];
             }
         }
 
@@ -80,14 +79,14 @@ public class Board
         {
             get
             {
-                return players[(turn + 1) % numPlayers];
+                return players[(turn + 1) % players.Count];
             }
         }
 
         /// <summary>
         /// Returns the player who was active when this board was generated.
         /// </summary>
-        public Player startingPlayer
+        public Player maximizingPlayer
         {
             get
             {
@@ -95,7 +94,7 @@ public class Board
             }
         }
 
-        public Player notStartingPlayer
+        public Player minimizingPlayer
         {
             get
             {
@@ -113,7 +112,7 @@ public class Board
                     return true;
                 }
             }
-            noble = new Card();
+            noble = null;
             return false;
         }
 
@@ -167,7 +166,7 @@ public class Board
 
         Player copyPlayer(Player p)
         {
-            Greedy x = new Greedy();
+            Player x = new FakePlayer();
             x.gems = p.gems;
             x.field = new List<Card>();
             x.field.AddRange(p.field);

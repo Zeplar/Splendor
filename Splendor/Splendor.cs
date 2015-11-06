@@ -59,13 +59,13 @@ namespace Splendor
         //Signal the current AI to stop, the turn to increment, and the scores to be checked.
         public static void nextTurn()
         {
+            bool temp;
             turn += 1;
-     //       Console.WriteLine(Splendor.currentPlayer.ToString() + " is taking their turn");
             Gem.Reset();
             //gemPiles.updateTexts();
             if (currentPlayer == players[0])
             {
-                if (getMaxPlayer().points >= 15)
+                if (getMaxPlayer(out temp).points >= 15)
                 {
                     endGame();
                     return;
@@ -78,18 +78,27 @@ namespace Splendor
         {
 
             gameOver = true;
-            Player winner = getMaxPlayer();
+            bool tied;
+            Player winner = getMaxPlayer(out tied);
             Player loser = winner;
             foreach (Player p in players)
             {
                 if (p != winner)
                     loser = p;
             }
+            if (tied)
+            {
+                RecordHistory.record("Tie game!");
+                RecordHistory.close();
+                return;
+            }
             winner.wins += 1;
-
             if (gamesPlayed > 0) { 
                 Console.Title = ("   Game " + gamesPlayed + " / 100     Average Time: " + (timer.ElapsedMilliseconds / gamesPlayed));
             }
+            RecordHistory.record(winner + " won with " + winner.points);
+            RecordHistory.record(loser + " lost with " + loser.points);
+            RecordHistory.close();
         }
 
         public static void replayGame()
@@ -109,7 +118,7 @@ namespace Splendor
             Splendor.turn = 0;
             self.getCards();
             Gem.board = new Gem(4, 4, 4, 4, 4, 8);
-            //	RecordHistory.initialize ();
+            RecordHistory.initialize ();
             gameOver = false;
             takingTurn = false;
             while (!gameOver)
@@ -119,8 +128,9 @@ namespace Splendor
         }
 
         //Returns the player with the highest score, with ties broken by least gem mines.
-        static Player getMaxPlayer()
+        static Player getMaxPlayer(out bool tied)
         {
+            tied = false;
             if (players[0].points > players[1].points)
             {
                 return players[0];
@@ -138,6 +148,7 @@ namespace Splendor
                 return players[0];
             }
             else
+                tied = true;
                 return players[0];
         }
 
@@ -222,7 +233,7 @@ namespace Splendor
         {
             StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\..\splendor_nobles.csv"));
             file.ReadLine();
-            int i = 0;
+            int i = -1;
             while (!file.EndOfStream)
             {
                 string[] vals = file.ReadLine().Split(',');
@@ -237,8 +248,9 @@ namespace Splendor
                 //c.frontImage = nobleSprites[i];
                 c.points = 3;
                 c.deck = nobles;
+                c.id = i;
                 nobles.getAllCards().Add(c);
-                i++;
+                i--;
             }
             nobles.shuffle();
             nobles.getAllCards().RemoveRange(4, 6);
@@ -261,10 +273,7 @@ namespace Splendor
             //GemIcons = gemIcons;
             p1.turnOrder = 0;
             p2.turnOrder = 1;
-            Console.WriteLine("Getting cards...");
             getCards();
-            RecordHistory.initialize ();
-            Console.WriteLine("Starting game");
             gameOver = false;
             timer = Stopwatch.StartNew();
 
@@ -279,6 +288,14 @@ namespace Splendor
         {
             if (!gameOver && !takingTurn)
             {
+                RecordHistory.record(currentPlayer + " has " + currentPlayer.points + " points");
+                StringWriter s = new StringWriter();
+                s.Write(currentPlayer + " has field: ");
+                foreach (Card c in currentPlayer.field)
+                {
+                    s.Write(c.id + ", ");
+                }
+                RecordHistory.record(s.ToString());
                 currentPlayer.takeTurn();
             }         
         }

@@ -70,12 +70,6 @@ namespace Splendor
             //GUI.EndGroup();
         }
 
-        public void getBought()
-        {
-            deck.removeCard(this);
-        }
-
-
         public bool showCard(Vector pos, string side = "front")
         {
             bool wasClicked = false;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System;
+using System.Diagnostics;
 namespace Splendor
 {
 
@@ -23,6 +24,7 @@ namespace Splendor
         public void removeCard(Card c)
         {
             cards.Remove(c);
+            Debug.Assert(!cards.Contains(c));
         }
 
         //Necessary for RecordHistory to get initial deck configuration

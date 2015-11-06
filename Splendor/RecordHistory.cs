@@ -2,7 +2,7 @@
 using System.Diagnostics;
 namespace Splendor
 {
-    class RecordHistory
+    public class RecordHistory
     {
         public enum actions { BUY, RESERVE, RESERVETOP, TAKEGEMS };
         const string directory = @"..\..\..\..\Splendor\History\";
@@ -14,13 +14,13 @@ namespace Splendor
 
         public static void initialize()
         {
-
-            //Create the game file
-            if (!Directory.Exists(directory))
+            if (!Splendor.recording)
             {
-                Trace.TraceError("Directory does not exist: " + directory);
                 return;
             }
+
+            //Create the game file
+            Debug.Assert(Directory.Exists(directory));
             int i = 0;
             while (File.Exists(directory + name + i + suffix))
             {
@@ -38,56 +38,47 @@ namespace Splendor
                 }
                 file.WriteLine();
             }
-            //Record the starting player
-            foreach (Player p in Splendor.players)
-            {
-                if (p.turnOrder == 0)
-                {
-                    file.WriteLine(p + " goes first");
-                }
-            }
-
             init = true;
         }
 
 
         public static void record(string s)
         {
-            if (!init)
-            {
-                Trace.TraceError("File not initialized");
+            if (!Splendor.recording) {
                 return;
             }
+
+            Debug.Assert(init, "File not initialized");
             file.WriteLine(s);
         }
 
         public static void record(actions a, Card c)
         {
-            if (!init)
+            if (!Splendor.recording)
             {
-               Trace.TraceError("File not initialized");
                 return;
             }
+            Debug.Assert(init, "File not initialized");
             file.WriteLine(a + "," + c);
         }
 
         public static void record(actions a, Gem g)
         {
-            if (!init)
+            if (!Splendor.recording)
             {
-                Trace.TraceError("File not initialized");
                 return;
             }
+            Debug.Assert(init, "File not initialized");
             file.WriteLine(a + "," + g);
         }
 
         public static void close()
         {
-            if (!init)
+            if (!Splendor.recording)
             {
-                Trace.TraceError("File not initialized");
                 return;
             }
+            Debug.Assert(init, "File not initialized");
             file.Close();
             init = false;
         }

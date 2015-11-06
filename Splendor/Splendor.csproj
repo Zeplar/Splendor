@@ -147,9 +147,9 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Card.cs" />
+    <Compile Include="FakePlayer.cs" />
     <Compile Include="Gene Grey.cs" />
     <Compile Include="Greedy.cs" />
-    <Compile Include="Greedymax.cs" />
     <Compile Include="Minimax.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="RecordHistory.cs" />

@@ -6,7 +6,7 @@ namespace Splendor_E
     class Program
     {
         static Queue<string> commands = new Queue<string>();
-        const string run = "run", repeat = "repeat", greedy = "greedy", minimax = "minimax", greedymax = "greedymax";
+        const string run = "run", repeat = "repeat", greedy = "greedy", minimax = "minimax";
         static Splendor.Splendor currentGame;
         static Splendor.Player p1;
         static Splendor.Player p2;
@@ -42,9 +42,6 @@ namespace Splendor_E
                 case minimax:
                     i = int.Parse(commands.Dequeue());
                     return new Splendor.Minimax(i);
-                case greedymax:
-                    i = int.Parse(commands.Dequeue());
-                    return new Splendor.Greedymax(i);
                 case "clear":
                     Console.Clear();
                     return null;
@@ -104,7 +101,18 @@ namespace Splendor_E
         static void Main(string[] args)
         {
             
-            while (true) { 
+
+            new Splendor.Splendor(new Splendor.Greedy("Bob"), new Splendor.Greedy("Mini"), 100);
+            for (int i=0; i < 28; i++)
+            {
+                Splendor.Splendor.replayGame();
+            }
+            Splendor.Splendor.recording = true;
+            Splendor.Splendor.replayGame();
+
+
+
+            while (!true) { 
                 
                     foreach (string s in Console.ReadLine().Split())
                     {

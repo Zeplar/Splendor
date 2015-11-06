@@ -286,7 +286,7 @@ namespace Splendor
             public override bool isLegal(Board b)
             {
                 bool exists = b.viewableCards.Contains(card) || b.currentPlayer.reserve.Contains(card);
-                exists &= card.deck != Splendor.nobles;
+                exists &= (card.deck != Splendor.nobles);
                 bool affordable = (b.currentPlayer.gems + b.currentPlayer.discount - card.cost).deficit <= b.currentPlayer.gems[5];
                 return exists && affordable;
             }
@@ -359,7 +359,7 @@ namespace Splendor
                 {
                     return false;
                 }
-                bool isAvail = b.viewableCards.Contains(card);
+                bool isAvail = b.viewableCards.Contains(card) && card.deck != Splendor.nobles;
                 return isAvail;
             }
 
