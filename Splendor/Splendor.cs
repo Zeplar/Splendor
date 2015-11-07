@@ -107,6 +107,7 @@ namespace Splendor
             {
                 d.getAllCards().Clear();
             }
+            nobles.getAllCards().Clear();
             foreach (Player p in players)
             {
                 p.field.Clear();

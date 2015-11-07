@@ -97,7 +97,7 @@ namespace Splendor
         {
             foreach (Card c in Splendor.nobles.getAllCards())
             {
-                if (discount > c.cost)
+                if (discount >= c.cost)
                 {
                     noble = c;
                     return true;

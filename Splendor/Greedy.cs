@@ -36,6 +36,10 @@ namespace Splendor
             if (Splendor.recording)
             {
                 RecordHistory.record(this.ToString() + " made greedy move " + bestMove);
+                if (bestMove.card.id == 70)
+                {
+                    RecordHistory.record();
+                }
             }
             bestMove.takeAction();
         }

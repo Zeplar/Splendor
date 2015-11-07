@@ -54,8 +54,7 @@ namespace Splendor
             Move bestMove = null;
             List<Move> legalMoves = b.legalMoves;
             legalMoves.RemoveAll(x => x.moveType == 3);
-            int bestScore, val;
-           int t;
+            int bestScore, val, t;
 
             if (depth == treeDepth || legalMoves.Count == 0)
             {
@@ -130,11 +129,11 @@ namespace Splendor
             Player opp = b.minimizingPlayer;
             Debug.Assert(self != opp);
             //int points = self.points;
-            int points = self.points - opp.points;
             if (self.points < 15 && opp.points >= 15)
             {
-                points -= 100;
+                return -1000;
             }
+            int points = self.points - opp.points;
             return points;
         }
 
@@ -165,6 +164,7 @@ namespace Splendor
             {
                 RecordHistory.record("Minimax took random move " + Move.getAllLegalMoves()[0].ToString());
                 Move.getAllLegalMoves()[0].takeAction();
+                
             }
             if (recordEverything) {
                 RecordHistory.recordMinimaxTree(history);

@@ -106,7 +106,7 @@ public class Board
         {
             foreach (Card c in viewableCards.FindAll(x => x.deck == Splendor.nobles))
             {
-                if (currentPlayer.discount > c.cost)
+                if (currentPlayer.discount >= c.cost)
                 {
                     noble = c;
                     return true;

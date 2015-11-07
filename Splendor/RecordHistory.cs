@@ -2,7 +2,7 @@
 using System.Diagnostics;
 namespace Splendor
 {
-    public class RecordHistory
+    public static class RecordHistory
     {
         public enum actions { BUY, RESERVE, RESERVETOP, TAKEGEMS };
         const string directory = @"..\..\..\..\Splendor\History\";
@@ -10,7 +10,6 @@ namespace Splendor
         const string name = @"game";
         static StreamWriter file;
         static bool init;
-
 
         public static void initialize()
         {
@@ -41,6 +40,20 @@ namespace Splendor
             init = true;
         }
 
+        public static void record()
+        {
+            if (!Splendor.recording)
+            {
+                return;
+            }
+            file.Write("Board State: ");
+            foreach (Card c in Splendor.viewableCards)
+            {
+                file.Write(c + ", ");
+            }
+            file.WriteLine();
+            file.Write(Splendor.currentPlayer + " has colors " + Splendor.currentPlayer.discount);
+        }
 
         public static void record(string s)
         {

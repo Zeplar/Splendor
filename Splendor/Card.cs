@@ -36,7 +36,8 @@ namespace Splendor
 
         public override string ToString()
         {
-            return cost.ToString();
+            string name = "Card " + id.ToString() + ": " + cost.ToString() + ":" + color.ToString();
+            return name;
         }
         void showCost()
         {
