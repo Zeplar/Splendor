@@ -24,22 +24,20 @@ namespace Splendor
         private void getBiggestBuy(List<Move.BUY> buys)
         {
             int bestScore = -1;
+            int temp = 0;
             Move.BUY bestMove = null;
             foreach (Move.BUY b in buys)
             {
-                if (b.card.points > bestScore)
+                temp = Board.current.generate(b).maximizingPlayer.points;
+                if (temp > bestScore)
                 {
-                    bestScore = b.card.points;
+                    bestScore = temp;
                     bestMove = b;
                 }
             }
             if (Splendor.recording)
             {
                 RecordHistory.record(this.ToString() + " made greedy move " + bestMove);
-                if (bestMove.card.id == 70)
-                {
-                    RecordHistory.record();
-                }
             }
             bestMove.takeAction();
         }
