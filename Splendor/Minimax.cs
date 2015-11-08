@@ -56,7 +56,7 @@ namespace Splendor
             legalMoves.RemoveAll(x => x.moveType == 3);
             int bestScore, val, t;
 
-            if (depth == treeDepth || legalMoves.Count == 0)
+            if (depth == treeDepth || legalMoves.Count == 0 || b.gameOver)
             {
                 if (recordEverything)
                 {
@@ -129,14 +129,25 @@ namespace Splendor
             Player self = b.maximizingPlayer;
             Player opp = b.minimizingPlayer;
             Debug.Assert(self != opp);
-            //int points = self.points;
-            if (self.points < 15 && opp.points >= 15)
-            {
-                return -1000;
-            }
             int points = self.points - opp.points;
+            if (b.gameOver)
+            {
+                if (points < 0)
+                {
+                    return -1000;
+                }
+                if (points > 0)
+                {
+                    return 1000;
+                }
+                if (points == 0)
+                {
+                    return 1000 * (opp.field.Count - self.field.Count);
+                }
+            }
             return points;
         }
+
 
         public override void takeTurn()
         {
@@ -158,7 +169,7 @@ namespace Splendor
             }
             else if (Move.getAllLegalMoves().Count == 0)
             {
-                Debug.Fail("No legal moves!");
+             //   Debug.Fail("No legal moves!");
                 Splendor.replayGame();
             }
             else

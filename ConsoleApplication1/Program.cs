@@ -74,7 +74,6 @@ namespace Splendor_E
         }
 
         static void findDiscrepancy(int tries)
-            //Greedy diverged from Minimax 1 at i=28 (game 29)
         {
             Splendor.Greedy g1 = new Splendor.Greedy();
             Splendor.Greedy g2 = new Splendor.Greedy();

@@ -76,7 +76,6 @@ namespace Splendor
         //Stop the AIs and close the recording tool.
         static void endGame()
         {
-
             gameOver = true;
             bool tied;
             Player winner = getMaxPlayer(out tied);

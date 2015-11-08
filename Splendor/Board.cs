@@ -54,6 +54,17 @@ public class Board
         }
 
         /// <summary>
+        /// Returns True if the game ends after this turn.
+        /// </summary>
+        public bool gameOver
+        {
+            get
+            {
+                return (currentPlayer.turnOrder == players.Count - 1) && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15);
+            }
+        }
+
+        /// <summary>
         /// Returns a list of legal moves for the board.	
         /// </summary>
         public List<Move> legalMoves
@@ -158,6 +169,7 @@ public class Board
             x.field.AddRange(p.field);
             x.reserve = new List<Card>();
             x.reserve.AddRange(p.reserve);
+            x.turnOrder = p.turnOrder;
             return x;
         }
 
