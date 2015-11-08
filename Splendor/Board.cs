@@ -54,7 +54,7 @@ public class Board
         }
 
         /// <summary>
-        /// Returns True if the game is over. This means the game actually ended in the previous round.
+        /// Returns True if it's Player 1's turn and the game is over (ie the game ended in the previous round).
         /// </summary>
         public bool gameOver
         {

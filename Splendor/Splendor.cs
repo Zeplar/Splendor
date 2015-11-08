@@ -59,17 +59,14 @@ namespace Splendor
         //Signal the current AI to stop, the turn to increment, and the scores to be checked.
         public static void nextTurn()
         {
-            bool temp;
             turn += 1;
             Gem.Reset();
             //gemPiles.updateTexts();
-            if (currentPlayer == players[0])
+            if (Board.current.gameOver)
             {
-                if (getMaxPlayer(out temp).points >= 15)
-                {
-                    endGame();
-                    return;
-                }
+                endGame();
+                return;
+
             }
             takingTurn = false;
         }

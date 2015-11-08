@@ -99,7 +99,7 @@ namespace Splendor_E
 
         static void Main(string[] args)
         {
-            //findDiscrepancy(1000);
+            //findDiscrepancy(200);
             //new Splendor.Splendor(new Splendor.Greedy("Bob"), new Splendor.Minimax(1), 100);
             //for (int i=0; i < 52; i++)
             //{
@@ -107,6 +107,10 @@ namespace Splendor_E
             //}
             //Splendor.Splendor.recording = true;
             //Splendor.Splendor.replayGame();
+
+            // n=2: 280 / 215
+            // n=3: 315 / 185
+            // n=4: 113 / 58
 
             while (true)
             {
