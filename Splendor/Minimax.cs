@@ -73,6 +73,7 @@ namespace Splendor
                 {
 
                     val = generateMove(b.generate(m), depth + 1, false).score;
+
                     if (recordEverything)
                     {
                         t = historyLocation[depth + 1];

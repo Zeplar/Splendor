@@ -102,20 +102,6 @@ public class Board
             }
         }
 
-        public bool canGetNoble(out Card noble)
-        {
-            foreach (Card c in viewableCards.FindAll(x => x.deck == Splendor.nobles))
-            {
-                if (currentPlayer.discount >= c.cost)
-                {
-                    noble = c;
-                    return true;
-                }
-            }
-            noble = null;
-            return false;
-        }
-
         public Board generate(Move m)
         {
 
@@ -144,7 +130,7 @@ public class Board
                     b.viewableCards.Remove(z.card);
                     p.reserve.Remove(z.card);
                     Card noble;
-                    if (canGetNoble(out noble))
+                    if (p.canGetNoble(out noble))
                     {
                         p.field.Add(noble);
                         b.viewableCards.Remove(noble);
