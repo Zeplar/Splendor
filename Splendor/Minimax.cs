@@ -9,31 +9,12 @@ namespace Splendor
     {
 
         public int treeDepth;
-        private int[][] history;
-        private int[] historyLocation;
-        private bool recordEverything = false;
-
         public Minimax(int i)
         {
             gems = Gem.zero;
             reserve = new List<Card>();
             field = new List<Card>();
             treeDepth = i;
-
-        }
-
-        private void makeHistory()
-        {
-            history = new int[treeDepth + 2][];
-            for (int k = 0; k < treeDepth + 2; k++)
-            {
-                history[k] = new int[(int)Math.Pow(30, k)];
-                for (int z = 0; z < history[k].Length; z++)
-                {
-                    history[k][z] = -200;
-                }
-            }
-            historyLocation = new int[treeDepth + 2];
 
         }
 
@@ -54,16 +35,10 @@ namespace Splendor
             Move bestMove = null;
             List<Move> legalMoves = b.legalMoves;
             legalMoves.RemoveAll(x => x.moveType == 3);
-            int bestScore, val, t;
+            int bestScore, val;
 
             if (depth == treeDepth || legalMoves.Count == 0 || b.gameOver)
             {
-                if (recordEverything)
-                {
-                    t = historyLocation[depth + 1];
-                    history[depth + 1][t] = score(b);
-                    historyLocation[depth + 1] += 1;
-                }
                 return new simMove(null, score(b));
             }
             if (maxPlayer)
@@ -73,23 +48,11 @@ namespace Splendor
                 {
 
                     val = generateMove(b.generate(m), depth + 1, false).score;
-
-                    if (recordEverything)
-                    {
-                        t = historyLocation[depth + 1];
-                        history[depth + 1][t] = val;
-                        historyLocation[depth + 1] += 1;
-                    }
                     if (val > bestScore)
                     {
                         bestScore = val;
                         bestMove = m;
                     }
-                }
-                if (recordEverything)
-                {
-                    historyLocation[depth + 1] += 1;
-                    historyLocation[treeDepth + 1] += 1;
                 }
                 return new simMove(bestMove, bestScore);
             }
@@ -99,24 +62,12 @@ namespace Splendor
                 foreach (Move m in legalMoves)
                 {
                     val = generateMove(b.generate(m), depth + 1, true).score;
-                    if (recordEverything)
-                    {
-                        t = historyLocation[depth];
-                        history[depth + 1][t] = val;
-                        historyLocation[depth + 1] += 1;
-                    }
                     if (val < bestScore)
                     {
                         bestScore = val;
                         bestMove = m;
                     }
                 }
-                if (recordEverything)
-                {
-                    historyLocation[depth + 1] += 1;
-                    historyLocation[treeDepth + 1] += 1;
-                }
-
                 return new simMove(bestMove, bestScore);
             }
         }
@@ -151,19 +102,11 @@ namespace Splendor
 
         public override void takeTurn()
         {
-            if (recordEverything)
-            {
-                makeHistory();
-            }
             Board b = Board.current;
             simMove m = generateMove(b, 0, true);
-            if (recordEverything)
-            {
-                history[0][0] = m.score;
-            }
             if (m.move != null)
             {
-                RecordHistory.record("Minimax took move " + m.move.ToString());
+                RecordHistory.record("Minimax made move " + m.move.ToString());
                 m.move.takeAction();
 
             }
@@ -178,9 +121,6 @@ namespace Splendor
                 Move.getAllLegalMoves()[0].takeAction();
                 
             }
-            if (recordEverything) {
-                RecordHistory.recordMinimaxTree(history);
-             }
         }
 
     }
