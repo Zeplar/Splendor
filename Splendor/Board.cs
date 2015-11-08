@@ -54,13 +54,13 @@ public class Board
         }
 
         /// <summary>
-        /// Returns True if the game ends after this turn.
+        /// Returns True if the game is over. This means the game actually ended in the previous round.
         /// </summary>
         public bool gameOver
         {
             get
             {
-                return (currentPlayer.turnOrder == players.Count - 1) && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15);
+                return (currentPlayer.turnOrder == 0) && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15);
             }
         }
 

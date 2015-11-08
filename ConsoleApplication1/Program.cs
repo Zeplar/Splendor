@@ -99,16 +99,26 @@ namespace Splendor_E
 
         static void Main(string[] args)
         {
-               while (true) { 
-                
-                    foreach (string s in Console.ReadLine().Split())
-                    {
-                        commands.Enqueue(s);
-                    }
-                    if (commands.Count > 0)
-                    {
-                        dequeue();
-                    }                
+            //findDiscrepancy(1000);
+            //new Splendor.Splendor(new Splendor.Greedy("Bob"), new Splendor.Minimax(1), 100);
+            //for (int i=0; i < 52; i++)
+            //{
+            //    Splendor.Splendor.replayGame();
+            //}
+            //Splendor.Splendor.recording = true;
+            //Splendor.Splendor.replayGame();
+
+            while (true)
+            {
+
+                foreach (string s in Console.ReadLine().Split())
+                {
+                    commands.Enqueue(s);
+                }
+                if (commands.Count > 0)
+                {
+                    dequeue();
+                }
             }
         }
     }

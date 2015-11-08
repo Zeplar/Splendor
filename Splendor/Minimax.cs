@@ -46,7 +46,6 @@ namespace Splendor
                 bestScore = -100;
                 foreach (Move m in legalMoves)
                 {
-
                     val = generateMove(b.generate(m), depth + 1, false).score;
                     if (val > bestScore)
                     {
@@ -106,7 +105,7 @@ namespace Splendor
             simMove m = generateMove(b, 0, true);
             if (m.move != null)
             {
-                RecordHistory.record("Minimax made move " + m.move.ToString());
+                RecordHistory.record(this + " made move " + m.move.ToString());
                 m.move.takeAction();
 
             }
@@ -117,7 +116,7 @@ namespace Splendor
             }
             else
             {
-                RecordHistory.record("Minimax took random move " + Move.getAllLegalMoves()[0].ToString());
+                RecordHistory.record(this + " made random move " + Move.getAllLegalMoves()[0].ToString());
                 Move.getAllLegalMoves()[0].takeAction();
                 
             }
