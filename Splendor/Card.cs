@@ -18,20 +18,16 @@ namespace Splendor
         public int points;
         public Deck deck;
         public int id;
+        public static Card[] allCardsByID = new Card[90]; //currently not including Nobles
 
-        //static Dictionary<int, Color> dict = new Dictionary<int, Color>();
-
-        public Card()
+        public Card(int id)
         {
-            //frontImage = Texture2D.whiteTexture;
-            //if (dict.ContainsKey(0))
-            //    return;
-            //dict.Add(0, Color.white);
-            //dict.Add(1, Color.blue);
-            //dict.Add(2, Color.black);
-            //dict.Add(3, Color.red);
-            //dict.Add(4, Color.green);
-            //dimension = new Vector2(80, 120);
+            this.id = id;
+            if (id < 0)
+            {
+                return;
+            }
+            allCardsByID[id] = this;
         }
 
         public override string ToString()
@@ -39,37 +35,9 @@ namespace Splendor
             string name = "Card " + id.ToString() + ": " + cost.ToString() + ":" + color.ToString();
             return name;
         }
-        void showCost()
-        {
-            //Vector2 position = new Vector2(5, dimension.y - 25);
-            //Vector2 dim = new Vector2(25, 25);
-            //int i;
-            //for (i = 0; i < 5; i++)
-            //{
-            //    if (cost[i] != 0)
-            //    {
-            //        GUI.Label(new Rect(position, dim), global::Splendor.gem(i));
-            //        GUIStyle g = new GUIStyle();
-            //        g.fontStyle = FontStyle.BoldAndItalic;
-            //        g.fontSize = 22;
-            //        GUI.Label(new Rect(position.x + 3, position.y, dim.x, dim.y), cost[i].ToString(), g);
-            //        g.fontSize = 20;
-            //        g.normal.textColor = Color.white;
-            //        GUI.Label(new Rect(position.x + 4, position.y + 3, dim.x, dim.y), cost[i].ToString(), g);
-            //        position = position - 30 * Vector2.up;
-            //    }
-            //}
-        }
 
-        void showType()
-        {
-            //Vector2 position = new Vector2(dimension.x - 20, 0);
-            //Vector2 dim = new Vector2(25, 25);
-            //GUI.BeginGroup(new Rect(position, dim));
-            //GUI.Label(new Rect(Vector2.zero, dim), global::Splendor.gem(color));
-            //GUI.Label(new Rect(5 * Vector2.right, dim), points.ToString());
-            //GUI.EndGroup();
-        }
+
+
 
         public bool showCard(Vector pos, string side = "front")
         {
