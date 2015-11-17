@@ -89,6 +89,7 @@ namespace Splendor.Genetic
             Board b = Board.current;
             byte moveValue;
             MOVES = new List<Move>();
+            
 
             for (int i = 0; i < length; i++)
             {
@@ -96,20 +97,24 @@ namespace Splendor.Genetic
                 switch (moveTypes[i])
                 {
                     case 0:
-                        moves.Add(new Move.TAKE3(take3ref(moveValue)));
+                        MOVES = Move.TAKE3.getLegalMoves().ConvertAll(x => (Move)x);
                         break;
                     case 1:
-                        moves.Add(new Move.TAKE2(take2ref(moveValue)));
+                        MOVES = Move.TAKE2.getLegalMoves().ConvertAll(x => (Move)x);
                         break;
                     case 2:
-                        moves.Add(new Move.BUY(Card.allCardsByID[moveValue]));
+                        MOVES = Move.BUY.getLegalMoves().ConvertAll(x => (Move)x);
                         break;
                     case 3:
-                        moves.Add(new Move.RESERVE(Card.allCardsByID[moveValue]));
+                        MOVES = Move.RESERVE.getLegalMoves().ConvertAll(x => (Move)x);
                         break;
                     default:
                         Debug.Fail("Invalid move type.");
                         return;
+                }
+                if (MOVES.Count > 0)
+                {
+                    moves.Add(MOVES[moveValue % MOVES.Count]);
                 }
             }
         }
@@ -172,7 +177,6 @@ namespace Splendor.Genetic
             for (int i=0; i < length; i++)
             {
                 moveTypes[i] = (byte)(moveTypes[i] % 4);
-                moveValues[i] = (byte)(moveValues[i] % 90);
             }
 
         }
@@ -187,11 +191,11 @@ namespace Splendor.Genetic
             if (large)
             {
                 moveTypes[i] = (byte)Splendor.random.Next(4);
-                moveValues[i] = (byte)Splendor.random.Next(90);
+                moveValues[i] = (byte)Splendor.random.Next();
             }
             else
             {
-                moveValues[i] = (byte)Splendor.random.Next(90);
+                moveValues[i] = (byte)Splendor.random.Next();
             }
         }
         

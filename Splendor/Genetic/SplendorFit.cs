@@ -13,27 +13,28 @@ namespace Splendor.Genetic
         {
             Debug.Assert(cur.Count == next.Count, cur.Count + " " + next.Count);
 
-            foreach (SplendorGene g in cur)
-            {
-                g.updateMoves();
-            }
-            foreach (SplendorGene g in next)
-            {
-                g.updateMoves();
-            }
+            //foreach (SplendorGene g in cur)
+            //{
+            //    g.updateMoves();
+            //}
+            //foreach (SplendorGene g in next)
+            //{
+            //    g.updateMoves();
+            //}
 
             int count = cur.Count;
-            
-            for (int i=0; i < count; i++)
+
+            for (int i = 0; i < count; i++)
             {
-                for (int j=0; j < count; j++)
+                for (int j = 0; j < count; j++)
                 {
                     SplendorGene winner;
-                    bool curWon = score(cur[i], next[i]) > 0;//!!!
+                    bool curWon = score(cur[i], next[i]) > 0;
                     if (curWon)
                     {
                         winner = (SplendorGene)cur[i];
-                    } else
+                    }
+                    else
                     //!!! This gives ties to the opponent, but I doubt that throws it off too much (if scoring accounts for tiebreakers).
                     {
                         winner = (SplendorGene)next[i];
@@ -51,6 +52,39 @@ namespace Splendor.Genetic
             return g.score;
         }
 
+        public void ClearScore(List<IChromosome> population)
+        {
+            foreach (SplendorGene g in population)
+            {
+                g.score = 0;
+            }
+        }
+
+        private Move getMoveByIndex(int super, int sub, Board b)
+        {
+            List<Move> moves;
+            switch (super)
+            {
+                case 0:
+                    moves = Move.TAKE2.getLegalMoves(b).ConvertAll(x => (Move)x);
+                    break;
+                case 1:
+                    moves = Move.TAKE3.getLegalMoves(b).ConvertAll(x => (Move)x);
+                    break;
+                case 2:
+                    moves = Move.BUY.getLegalMoves(b).ConvertAll(x => (Move)x);
+                    break;
+                default:
+                    moves = Move.RESERVE.getLegalMoves(b).ConvertAll(x => (Move)x);
+                    break;
+            }
+            if (moves.Count > 0)
+            {
+                return moves[sub % moves.Count];
+            }
+            return null;
+        }
+
         private int score(IChromosome max, IChromosome min)
         {
             SplendorGene m = (SplendorGene)max;
@@ -63,40 +97,25 @@ namespace Splendor.Genetic
             Board b = Board.current;
             int i = 0;
             int j = 0;
+            Move nextMove;
             while (i < max.length && j < max.length)
             {
-                while (i < max.length)
+                nextMove = null;
+                while (i < max.length && nextMove == null)
                 {
-                    if (max.moves[i].isLegal(b))
-                    {
-                        b = b.generate(max.moves[i]);
-                        i++;
-                        break;
-                    }
-                    else
-                    {
-                        i++;
-                    }
+                    nextMove = getMoveByIndex(max.moveTypes[i], max.moveValues[i], b);
+                    i++;
                 }
-                while (j < max.length)
+                b = b.generate(nextMove);
+                nextMove = null;
+                while (j < max.length && nextMove == null)
                 {
-                    if (min.moves[j].isLegal(b))
-                    {
-                        b = b.generate(min.moves[j]);
-                        j++;
-                        break;
-                    }
-                    else
-                    {
-                        j++;
-                    }
+                    nextMove = getMoveByIndex(max.moveTypes[j], max.moveValues[j], b);
+                    j++;
                 }
-                if (b.gameOver)
-                {
-                    return 1000 * (b.maximizingPlayer.points - b.minimizingPlayer.points);
-                }
+                b.generate(nextMove);
             }
-            return (b.maximizingPlayer.points - b.minimizingPlayer.points);
+            return b.maximizingPlayer.points - b.minimizingPlayer.points;
         }
     }
 }

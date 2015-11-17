@@ -39,6 +39,8 @@ namespace Splendor_E
                     return null;
                 case greedy:
                     return new Splendor.Greedy();
+                case "gene":
+                    return new Splendor.Gene_Grey();
                 case minimax:
                     i = int.Parse(commands.Dequeue());
                     return new Splendor.Minimax(i);

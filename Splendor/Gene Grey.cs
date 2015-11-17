@@ -7,7 +7,7 @@ namespace Splendor
 {
     public class Gene_Grey : Player
     {
-        int size = 50;
+        int size = 5;
 
         public override void takeTurn()
         {
@@ -25,11 +25,14 @@ namespace Splendor
                 //!!! But runTournament is required to the values for Selection.
                 cur.Selection();
                 next.Selection();
+                fit.ClearScore(cur.population);
+                fit.ClearScore(next.population);
                 fit.runTournament(cur.population, next.population);
-                Console.WriteLine("" + i);
+                Console.CursorLeft = 0;
+                Console.Write("" + i);
             }
-            Debug.Assert(false);
-
+            Debug.Assert(false, "" + cur.FitnessMax);
+            ((SplendorGene)cur.BestChromosome).moves[0].takeAction();
 
         }
     }
