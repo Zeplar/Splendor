@@ -80,12 +80,6 @@ namespace Splendor
 
             public int color;
 
-            public TAKE2(Board b, int i)
-            {
-                color = i;
-                moveType = 0;
-            }
-
             public TAKE2(int i)
             {
                 color = i;
@@ -147,7 +141,7 @@ namespace Splendor
                 TAKE2 temp;
                 for (int i = 0; i < 5; i++)
                 {
-                    temp = new TAKE2(b, i);
+                    temp = new TAKE2(i);
                     if (temp.isLegal(b))
                     {
                         l.Add(temp);

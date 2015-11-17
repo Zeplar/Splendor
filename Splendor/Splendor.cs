@@ -192,11 +192,10 @@ namespace Splendor
                         color = 4;
                         break;
                 }
-                Card c = new Card();
+                Card c = new Card(id);
                 c.color = color;
                 c.cost = cost;
                 c.points = points;
-                c.id = id;
                 id++;
 
                 switch (tier)
@@ -240,12 +239,11 @@ namespace Splendor
                 g = string.IsNullOrEmpty(vals[2]) ? 0 : int.Parse((vals[2]));
                 r = string.IsNullOrEmpty(vals[3]) ? 0 : int.Parse((vals[3]));
                 b = string.IsNullOrEmpty(vals[4]) ? 0 : int.Parse((vals[4]));
-                Card c = new Card();
+                Card c = new Card(i);
                 c.cost = new Gem(w, u, b, r, g, 0);
                 //c.frontImage = nobleSprites[i];
                 c.points = 3;
                 c.deck = nobles;
-                c.id = i;
                 nobles.getAllCards().Add(c);
                 i--;
             }

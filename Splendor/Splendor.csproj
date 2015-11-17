@@ -149,6 +149,9 @@
     <Compile Include="Card.cs" />
     <Compile Include="FakePlayer.cs" />
     <Compile Include="Gene Grey.cs" />
+    <Compile Include="Genetic\Population.cs" />
+    <Compile Include="Genetic\SplendorFit.cs" />
+    <Compile Include="Genetic\SplendorGene.cs" />
     <Compile Include="Greedy.cs" />
     <Compile Include="Minimax.cs" />
     <Compile Include="Move.cs" />
