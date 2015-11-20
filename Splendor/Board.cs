@@ -163,7 +163,7 @@ public class Board
 
         Player copyPlayer(Player p)
         {
-            Player x = new FakePlayer();
+            Player x = new Player();
             x.gems = p.gems;
             x.field = new List<Card>();
             x.field.AddRange(p.field);

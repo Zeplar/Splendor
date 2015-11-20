@@ -58,7 +58,12 @@ namespace Splendor
             return getAllLegalMoves(Board.current);
         }
 
-
+        
+        /// <summary>
+        /// Gets all legal moves sorted BUY-TAKE3-TAKE2-RESERVE
+        /// </summary>
+        /// <param name="bd">The board</param>
+        /// <returns></returns>
         public static List<Move> getAllLegalMoves(Board bd)
         {
 
@@ -334,7 +339,10 @@ namespace Splendor
 
                 foreach (Card c in b.viewableCards)
                 {
-                    l.Add(new RESERVE(c));
+                    if (c.id >= 0)
+                    {
+                        l.Add(new RESERVE(c));
+                    }
                 }
 
                 return l;

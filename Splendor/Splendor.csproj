@@ -50,84 +50,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Controls, Version=2.2.5.0, Culture=neutral, PublicKeyToken=a8ac264d1dc6b9d9, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Controls.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.DebuggerVisualizers %282010%29, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0646c9a9e79f6b03, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.DebuggerVisualizers (2010).dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Fuzzy, Version=2.2.4.0, Culture=neutral, PublicKeyToken=cb12670d0eae17c9, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Fuzzy.dll</HintPath>
+      <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="AForge.Genetic, Version=2.2.4.0, Culture=neutral, PublicKeyToken=4336634eeb41b69b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Genetic.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Imaging, Version=2.2.5.0, Culture=neutral, PublicKeyToken=ba8ddea9676ca48b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Imaging.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Imaging.IPPrototyper, Version=1.0.1.1, Culture=neutral, PublicKeyToken=c6e9a6d4c86d47e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Imaging.IPPrototyper.dll</HintPath>
+      <HintPath>..\packages\AForge.Genetic.2.2.5\lib\AForge.Genetic.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="AForge.Math, Version=2.2.5.0, Culture=neutral, PublicKeyToken=abba2e25397ee8c9, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Math.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Neuro, Version=2.2.5.0, Culture=neutral, PublicKeyToken=2094f4ea39731d4f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Neuro.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Robotics.Lego, Version=2.2.5.0, Culture=neutral, PublicKeyToken=5f361631ec856b74, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Robotics.Lego.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Robotics.Surveyor, Version=2.2.4.0, Culture=neutral, PublicKeyToken=7ed9f718a0f5b2f6, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Robotics.Surveyor.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Robotics.TeRK, Version=2.2.5.0, Culture=neutral, PublicKeyToken=5c0f140128226168, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Robotics.TeRK.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video, Version=2.2.5.0, Culture=neutral, PublicKeyToken=cbfb6e07d173c401, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Video.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video.DirectShow, Version=2.2.5.0, Culture=neutral, PublicKeyToken=61ea4348d43881b7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Video.DirectShow.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video.FFMPEG, Version=2.2.5.0, Culture=neutral, PublicKeyToken=03563089b1be05dd, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Video.FFMPEG.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video.Kinect, Version=2.2.4.0, Culture=neutral, PublicKeyToken=96a9a097745e71d9, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Video.Kinect.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video.VFW, Version=2.2.4.0, Culture=neutral, PublicKeyToken=a82f807c999637c8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Video.VFW.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video.Ximea, Version=2.2.4.0, Culture=neutral, PublicKeyToken=5cdcd64958730f99, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Video.Ximea.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Vision, Version=2.2.5.0, Culture=neutral, PublicKeyToken=b612fa915eefaa06, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.Vision.dll</HintPath>
-    </Reference>
-    <Reference Include="IPPrototyper, Version=1.0.1.1, Culture=neutral, PublicKeyToken=deedab63545c06c9, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\IPPrototyper.exe</HintPath>
+      <HintPath>..\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -147,21 +79,26 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Card.cs" />
-    <Compile Include="FakePlayer.cs" />
     <Compile Include="Gene Grey.cs" />
-    <Compile Include="Genetic\Population.cs" />
+    <Compile Include="Genetic\GreedyFit.cs" />
+    <Compile Include="Genetic\GreedyGene.cs" />
+    <Compile Include="Genetic\SplendorPop.cs" />
     <Compile Include="Genetic\SplendorFit.cs" />
     <Compile Include="Genetic\SplendorGene.cs" />
     <Compile Include="Greedy.cs" />
     <Compile Include="Minimax.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="RecordHistory.cs" />
+    <Compile Include="SocketAPI.cs" />
     <Compile Include="Splendor.cs" />
     <Compile Include="Deck.cs" />
     <Compile Include="Gem.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

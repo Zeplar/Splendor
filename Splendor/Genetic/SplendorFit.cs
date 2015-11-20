@@ -12,16 +12,8 @@ namespace Splendor.Genetic
         public void runTournament(List<IChromosome> cur, List<IChromosome> next)
         {
             Debug.Assert(cur.Count == next.Count, cur.Count + " " + next.Count);
-
-            //foreach (SplendorGene g in cur)
-            //{
-            //    g.updateMoves();
-            //}
-            //foreach (SplendorGene g in next)
-            //{
-            //    g.updateMoves();
-            //}
-
+            ClearScore(cur);
+            ClearScore(next);
             int count = cur.Count;
 
             for (int i = 0; i < count; i++)
@@ -42,6 +34,13 @@ namespace Splendor.Genetic
                     winner.score += 1;
                 }
             }
+
+            //This is necessary to actually update the chromosomes' (private) value field.
+            for (int i=0; i < count; i++)
+            {
+                cur[count].Evaluate(this);
+                next[count].Evaluate(this);
+            }
             Debug.Assert(cur.Count == next.Count, "Something changed in the tournament");
 
         }
@@ -52,7 +51,7 @@ namespace Splendor.Genetic
             return g.score;
         }
 
-        public void ClearScore(List<IChromosome> population)
+        private void ClearScore(List<IChromosome> population)
         {
             foreach (SplendorGene g in population)
             {
@@ -60,7 +59,7 @@ namespace Splendor.Genetic
             }
         }
 
-        private Move getMoveByIndex(int super, int sub, Board b)
+        public Move getMoveByIndex(int super, int sub, Board b)
         {
             List<Move> moves;
             switch (super)
@@ -98,13 +97,18 @@ namespace Splendor.Genetic
             int i = 0;
             int j = 0;
             Move nextMove;
-            while (i < max.length && j < max.length)
+            while (true)
             {
                 nextMove = null;
                 while (i < max.length && nextMove == null)
                 {
                     nextMove = getMoveByIndex(max.moveTypes[i], max.moveValues[i], b);
                     i++;
+                }
+                if (nextMove == null)
+                {
+                    return b.maximizingPlayer.points - b.minimizingPlayer.points;
+
                 }
                 b = b.generate(nextMove);
                 nextMove = null;
@@ -113,9 +117,13 @@ namespace Splendor.Genetic
                     nextMove = getMoveByIndex(max.moveTypes[j], max.moveValues[j], b);
                     j++;
                 }
+                if (nextMove == null)
+                {
+                    return b.maximizingPlayer.points - b.minimizingPlayer.points;
+
+                }
                 b.generate(nextMove);
             }
-            return b.maximizingPlayer.points - b.minimizingPlayer.points;
         }
     }
 }

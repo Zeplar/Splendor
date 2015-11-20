@@ -75,6 +75,7 @@ namespace Splendor.Genetic
         protected SplendorGene(SplendorGene source)
         {
             //copy all properties
+            fitness = source.fitness;
             length = source.length;
             moveTypes = (Byte[])source.moveTypes.Clone();
             moveValues = (Byte[])source.moveValues.Clone();

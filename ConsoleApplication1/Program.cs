@@ -11,7 +11,6 @@ namespace Splendor_E
         static Splendor.Player p1;
         static Splendor.Player p2;
 
-
         static object dequeue()
         {
             int i;
@@ -41,6 +40,8 @@ namespace Splendor_E
                     return new Splendor.Greedy();
                 case "gene":
                     return new Splendor.Gene_Grey();
+                case "greedygene":
+                    return new Splendor.Genetic.GreedyGene();
                 case minimax:
                     i = int.Parse(commands.Dequeue());
                     return new Splendor.Minimax(i);

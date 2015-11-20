@@ -5,7 +5,7 @@ namespace Splendor
 {
 
 
-    public abstract class Player
+    public class Player
     {
 
         public int turnOrder;
@@ -15,7 +15,7 @@ namespace Splendor
         public int wins;
         public string name;
 
-        public abstract void takeTurn();
+        public virtual void takeTurn() { }
 
         public string detailedInfo
         {

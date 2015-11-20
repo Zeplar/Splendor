@@ -30,7 +30,7 @@ namespace Splendor.Genetic
     /// algorithms implementing <see cref="ISelectionMethod"/> interface.</para>
     /// </remarks>
     /// 
-    public class Population
+    public class SplendorPop
     {
         protected IFitnessFunction fitnessFunction;
         protected ISelectionMethod selectionMethod;
@@ -232,7 +232,7 @@ namespace Splendor.Genetic
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Population"/> class.
+        /// Initializes a new instance of the <see cref="SplendorPop"/> class.
         /// </summary>
         /// 
         /// <param name="size">Initial size of population.</param>
@@ -249,7 +249,7 @@ namespace Splendor.Genetic
         /// <exception cref="ArgumentException">Too small population's size was specified. The
         /// exception is thrown in the case if <paramref name="size"/> is smaller than 2.</exception>
         ///
-        public Population(int size,
+        public SplendorPop(int size,
                            IChromosome ancestor,
                            IFitnessFunction fitnessFunction,
                            ISelectionMethod selectionMethod)
@@ -468,7 +468,7 @@ namespace Splendor.Genetic
         /// each population using <paramref name="migrantsSelector">specified selection algorithms</paramref>
         /// and put into another population replacing worst members there.</para></remarks>
         /// 
-        public void Migrate(Population anotherPopulation, int numberOfMigrants, ISelectionMethod migrantsSelector)
+        public void Migrate(SplendorPop anotherPopulation, int numberOfMigrants, ISelectionMethod migrantsSelector)
         {
             int currentSize = this.size;
             int anotherSize = anotherPopulation.Size;
@@ -577,7 +577,7 @@ namespace Splendor.Genetic
         }
 
         // Find best chromosome in the population so far
-        private void FindBestChromosome()
+        public void FindBestChromosome()
         {
             bestChromosome = population[0];
             fitnessMax = bestChromosome.Fitness;

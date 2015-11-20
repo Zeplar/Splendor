@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System;
 
 namespace Splendor
 {
 
     public class Greedy : Player
     {
+        private static int noLegalMoves = 0;
 
         public override string ToString()
         {
-            return "Greedy " + this.name + " " + this.turnOrder;
+            return "" + this.name + "(" + this.turnOrder + ")";
         }
 
-        public Greedy(string name="")
+        public Greedy(string name="Greedy")
         {
             gems = new Gem();
             reserve = new List<Card>();
@@ -69,6 +71,8 @@ namespace Splendor
             }
 
             //If AI did not successfully buy a card, take gems, or reserve a card, halt the program.
+            noLegalMoves += 1;
+            Console.WriteLine("Greedy found no legal moves and was forced to restart " + noLegalMoves + " time(s).");
             Splendor.replayGame();
         }
     }
