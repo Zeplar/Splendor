@@ -86,6 +86,7 @@ namespace Splendor.Genetic
                 b = b.generate(nextMove);
                 i++;
             }
+            Debug.Assert(b.turn <= 2*max.length, "Board turn error");
             return b;
         }
 
@@ -102,6 +103,10 @@ namespace Splendor.Genetic
                 {
                     return 0;
                 }
+            }
+            if (b.turn < 2) //Penalize chromosomes with no legal moves
+            {
+                return 0;
             }
             return b.maximizingPlayer.points;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
+using System;
 
 namespace Splendor
 {
@@ -14,6 +15,8 @@ namespace Splendor
         public List<Card> field;
         public int wins;
         public string name;
+
+        protected Random random {get {return Splendor.random;}}
 
         public virtual void takeTurn() { }
 
@@ -37,31 +40,6 @@ namespace Splendor
             Gem.board -= x;
             gems += x;
         }
-
-        //public virtual void display()
-        //{
-        //    if (turnOrder == 0)
-        //    {
-        //        GUI.BeginGroup(new Rect(0, 15, Screen.width, Card.dimension.y * 2));
-        //        showField();
-        //        showReserve();
-        //        GUI.BeginGroup(new Rect(0, Card.dimension.y + 10, Screen.width, Card.dimension.y));
-        //        showGems();
-        //        GUI.EndGroup();
-        //        GUI.EndGroup();
-        //    }
-        //    else
-        //    {
-        //        GUI.BeginGroup(new Rect(0, Screen.height - 2 * Card.dimension.y, Screen.width, Card.dimension.y * 2));
-        //        showGems();
-        //        GUI.BeginGroup(new Rect(0, Card.dimension.y - 15, Screen.width, Card.dimension.y));
-        //        showField();
-        //        showReserve();
-        //        GUI.EndGroup();
-        //        GUI.EndGroup();
-
-        //    }
-        //}
 
         public int points
         {
@@ -136,62 +114,6 @@ namespace Splendor
             }
             reserve.Add(c);
             c.deck.removeCard(c);
-        }
-
-        protected virtual void showReserve()
-        {
-            //Vector2 pos = new Vector2((2 + field.Count + reserve.Count) * Card.dimension.x, 0);
-            //foreach (Card c in reserve)
-            //{
-            //    c.showCard(pos, "front");
-            //    pos -= new Vector2(Card.dimension.x + 10, 0);
-            //}
-            //pos -= new Vector2(Card.dimension.x, 0);
-            //GUIStyle x = new GUIStyle();
-            //x.fontSize = 30;
-            //x.normal.textColor = Color.white;
-            //GUI.Label(new Rect(pos, new Vector2(100, 50)), "Reserve", x);
-        }
-
-
-        private void showField()
-        {
-            Vector2 pos = new Vector2(15, 0);
-            foreach (Card c in field)
-            {
-                //c.showCard(pos, "front");
-                //pos += new Vector2(Card.dimension.x + 10, 0);
-            }
-        }
-
-        private void showGems()
-        {
-            //Vector2 position = new Vector2(15, 0);
-            //Vector2 spacing = new Vector2(75, 0);
-            //Vector2 dimension = new Vector2(50, 50);
-            //int i;
-            //GUI.BeginGroup(new Rect(position.x, position.y, 75 * 6, dimension.y));
-            //position = Vector2.zero;
-            //GUIStyle g = new GUIStyle();
-            //for (i = 0; i < 6; i++)
-            //{
-            //    g.normal.textColor = Color.black;
-            //    g.fontSize = 32;
-            //    GUI.Label(new Rect(position, dimension), Splendor.GemIcons[i]);
-            //    position += new Vector2(5, 5);
-            //    GUI.Label(new Rect(position, dimension), gems[i].ToString(), g);
-            //    g.fontSize = 26;
-            //    g.normal.textColor = Color.white;
-            //    position += new Vector2(2, 2);
-            //    GUI.Label(new Rect(position, dimension), gems[i].ToString(), g);
-            //    position -= new Vector2(7, 7);
-            //    position += spacing;
-            //}
-            //GUI.color = Color.yellow;
-            //GUI.Label(new Rect(position, dimension), Splendor.GemIcons[0]);
-            //GUI.color = Color.white;
-            //GUI.EndGroup();
-
         }
 
     }

@@ -8,18 +8,8 @@ namespace Splendor
 
     public class Deck
     {
-
-        public Vector position;
         private List<Card> cards = new List<Card>();
 
-        public void OnGUI()
-        {
-            if (cards.Count > 0)
-            {
-                showCards();
-                showDeck();
-            }
-        }
 
         public void removeCard(Card c)
         {
@@ -50,19 +40,7 @@ namespace Splendor
         }
 
 
-        //Displays the first four faceup cards.
-        private void showCards()
-        {
-            int i = 0;
-            foreach (Card c in viewableCards)
-            {
-                if (c.showCard(position + (1 + i) * (Card.dimension.X + 10) * new Vector(1,0), "front"))
-                {
-                    selectCard(c);
-                }
-                i++;
-            }
-        }
+        
         //!!! look for a better shuffling algorithm
         public void shuffle()
         {
@@ -73,20 +51,6 @@ namespace Splendor
                 Card temp = cards[i];
                 cards[i] = cards[j];
                 cards[j] = temp;
-            }
-        }
-
-        //Displays the facedown deck.
-        private void showDeck()
-        {
-            if (cards.Count <= 4)
-            {
-                return;
-            }
-            Card c = cards[4];
-            if (c.showCard(position, "back"))
-            {
-                selectCard(c);
             }
         }
 

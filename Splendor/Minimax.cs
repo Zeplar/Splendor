@@ -7,7 +7,7 @@ namespace Splendor
 
     public class Minimax : Player
     {
-
+        static int counter = 0;
         public int treeDepth;
         public Minimax(int i)
         {
@@ -111,7 +111,8 @@ namespace Splendor
             }
             else if (Move.getAllLegalMoves().Count == 0)
             {
-             //   Debug.Fail("No legal moves!");
+                counter++;
+                Console.WriteLine("No legal moves for the " + counter + " time");
                 Splendor.replayGame();
             }
             else

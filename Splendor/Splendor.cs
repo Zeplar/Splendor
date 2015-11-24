@@ -9,13 +9,8 @@ namespace Splendor
     public class Splendor
     {
 
-    //    static DisplayGems gemPiles;
         public static Deck[] decks;
         public static Deck nobles;
-   //     public Texture2D[] nobleSprites;
-   //     public Texture2D[] deckImages;
-   //     public Texture2D[] gemIcons;
-   //     public static Texture2D[] GemIcons;
         private static int t;
         public static int turn
         {
@@ -149,11 +144,6 @@ namespace Splendor
                 return players[0];
         }
 
-        //public static Texture2D gem(int i)
-        //{
-        //    return GemIcons[i];
-        //}
-
 
         //Load the cards from the .csv file
         void getCards()
@@ -201,17 +191,14 @@ namespace Splendor
                 switch (tier)
                 {
                     case 1:
-                        //c.backImage = deckImages[0];
                         c.deck = decks[0];
                         decks[0].getAllCards().Add(c);
                         break;
                     case 2:
-                        //c.backImage = deckImages[1];
                         c.deck = decks[1];
                         decks[1].getAllCards().Add(c);
                         break;
                     case 3:
-                        //c.backImage = deckImages[2];
                         c.deck = decks[2];
                         decks[2].getAllCards().Add(c);
                         break;
@@ -241,7 +228,6 @@ namespace Splendor
                 b = string.IsNullOrEmpty(vals[4]) ? 0 : int.Parse((vals[4]));
                 Card c = new Card(i);
                 c.cost = new Gem(w, u, b, r, g, 0);
-                //c.frontImage = nobleSprites[i];
                 c.points = 3;
                 c.deck = nobles;
                 nobles.getAllCards().Add(c);
@@ -257,15 +243,9 @@ namespace Splendor
             Console.WriteLine("Initializing game...");
             decks = new Deck[3] { new Deck(), new Deck(), new Deck() };
             nobles = new Deck();
-            //nobles.position = new Vector2(Screen.width / 3, Screen.height / 3);
-            //decks[2].position = new Vector2(15, Screen.height / 3 - 60);
-            //decks[1].position = new Vector3(15, Screen.height / 3 + 70);
-            //decks[0].position = new Vector3(15, Screen.height / 3 + 200);
-            //gemPiles = GameObject.FindObjectOfType<DisplayGems>();
             players = new Player[2] { p1, p2 };
             random = new Random(randomSeed);
             self = this;
-            //GemIcons = gemIcons;
             p1.turnOrder = 0;
             p2.turnOrder = 1;
             getCards();
@@ -293,18 +273,6 @@ namespace Splendor
                 RecordHistory.record(s.ToString());
                 currentPlayer.takeTurn();
             }         
-        }
-
-        void OnGUI()
-        {
-            if (gameOver)
-                return;
-            //players[0].display();
-            //players[1].display();
-            decks[0].OnGUI();
-            decks[1].OnGUI();
-            decks[2].OnGUI();
-            nobles.OnGUI();
         }
 
         public void select(int i)

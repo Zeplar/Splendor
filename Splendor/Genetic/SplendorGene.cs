@@ -24,7 +24,6 @@ namespace Splendor.Genetic
             return move % 5;
         }
 
-
         /// <summary>
         /// Probability of a large mutation instead of a small mutation
         /// </summary>
@@ -36,7 +35,7 @@ namespace Splendor.Genetic
         public int length;
 
         /// <summary>
-        /// Array of each move by type: 0,1,2,3 ==> TAKE3, TAKE2, BUY, RESERVE
+        /// Array of each move by type: 0,1,2,3 ==> TAKE2, TAKE3, BUY, RESERVE
         /// </summary>
         public byte[] moveTypes;
 
@@ -98,10 +97,10 @@ namespace Splendor.Genetic
                 switch (moveTypes[i])
                 {
                     case 0:
-                        MOVES = Move.TAKE3.getLegalMoves().ConvertAll(x => (Move)x);
+                        MOVES = Move.TAKE2.getLegalMoves().ConvertAll(x => (Move)x);
                         break;
                     case 1:
-                        MOVES = Move.TAKE2.getLegalMoves().ConvertAll(x => (Move)x);
+                        MOVES = Move.TAKE3.getLegalMoves().ConvertAll(x => (Move)x);
                         break;
                     case 2:
                         MOVES = Move.BUY.getLegalMoves().ConvertAll(x => (Move)x);
@@ -133,6 +132,7 @@ namespace Splendor.Genetic
                 sb.Append(':');
                 sb.Append(moveValues[i]);
             }
+            sb.Append("| Fitness: " + fitness);
             return sb.ToString();
         }
 

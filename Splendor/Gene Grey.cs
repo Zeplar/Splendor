@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using Splendor.Genetic;
-using System.Collections.Generic;
 
 namespace Splendor
 {

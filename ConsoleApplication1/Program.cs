@@ -40,6 +40,8 @@ namespace Splendor_E
                     return new Splendor.Greedy();
                 case "gene":
                     return new Splendor.Gene_Grey();
+                case "random":
+                    return new Splendor.RandomPlayer();
                 case "greedygene":
                     return new Splendor.Genetic.GreedyGene();
                 case minimax:
@@ -47,6 +49,9 @@ namespace Splendor_E
                     return new Splendor.Minimax(i);
                 case "clear":
                     Console.Clear();
+                    return null;
+                case "record":
+                    Splendor.Splendor.recording = !Splendor.Splendor.recording;
                     return null;
                 case "runseed":
                     Console.Clear();
@@ -102,18 +107,10 @@ namespace Splendor_E
 
         static void Main(string[] args)
         {
-            //findDiscrepancy(200);
-            //new Splendor.Splendor(new Splendor.Greedy("Bob"), new Splendor.Minimax(1), 100);
-            //for (int i=0; i < 52; i++)
-            //{
-            //    Splendor.Splendor.replayGame();
-            //}
             //Splendor.Splendor.recording = true;
+            //new Splendor.Splendor(new Splendor.Greedy(), new Splendor.Genetic.GreedyGene(), 100);
             //Splendor.Splendor.replayGame();
-
-            // n=2: 280 / 215
-            // n=3: 315 / 185
-            // n=4: 113 / 58
+            //return;
 
             while (true)
             {

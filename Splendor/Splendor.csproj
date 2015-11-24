@@ -85,9 +85,11 @@
     <Compile Include="Genetic\SplendorPop.cs" />
     <Compile Include="Genetic\SplendorFit.cs" />
     <Compile Include="Genetic\SplendorGene.cs" />
+    <Compile Include="Genetic\testRoulette.cs" />
     <Compile Include="Greedy.cs" />
     <Compile Include="Minimax.cs" />
     <Compile Include="Move.cs" />
+    <Compile Include="RandomPlayer.cs" />
     <Compile Include="RecordHistory.cs" />
     <Compile Include="SocketAPI.cs" />
     <Compile Include="Splendor.cs" />

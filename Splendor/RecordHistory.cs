@@ -27,7 +27,7 @@ namespace Splendor
             }
 
             file = new StreamWriter(directory + name + i + suffix);
-
+            file.AutoFlush = true;
             //Record the starting deck orders
             foreach (Deck d in Splendor.decks)
             {
@@ -40,6 +40,9 @@ namespace Splendor
             init = true;
         }
 
+        /// <summary>
+        /// Records the board and current player state.
+        /// </summary>
         public static void record()
         {
             if (!Splendor.recording)
@@ -51,8 +54,10 @@ namespace Splendor
             {
                 file.Write(c + ", ");
             }
-            file.WriteLine();
+            file.WriteLine(" Gems: " + Gem.board);
+            file.WriteLine(Splendor.currentPlayer + " gems: " + Splendor.currentPlayer.gems);
             file.Write(Splendor.currentPlayer + " has colors " + Splendor.currentPlayer.discount);
+            file.WriteLine();
         }
 
         public static void record(string s)
