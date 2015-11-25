@@ -48,7 +48,7 @@ namespace Splendor.Genetic
             {
                 while (i < max.length && nextMove == null)
                 {
-                    nextMove = getMoveByIndex(max.moveTypes[i], max.moveValues[i], b);
+                    nextMove = getMoveByIndex(max.major[i], max.minor[i], b);
                     i++;
                 }
                 if (nextMove == null || b.gameOver)

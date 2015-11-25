@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-namespace Splendor_E
+namespace Splendor
 {
     class Program
     {
         static Queue<string> commands = new Queue<string>();
         const string run = "run", repeat = "repeat", greedy = "greedy", minimax = "minimax";
-        static Splendor.Splendor currentGame;
-        static Splendor.Player p1;
-        static Splendor.Player p2;
+        static Splendor currentGame;
+        static Player p1;
+        static Player p2;
 
         static object dequeue()
         {
@@ -18,9 +18,9 @@ namespace Splendor_E
             {
                 case run:
                     Console.Clear();
-                    p1 = dequeue() as Splendor.Player;
-                    p2 = dequeue() as Splendor.Player;
-                    currentGame = new Splendor.Splendor(p1, p2);
+                    p1 = dequeue() as Player;
+                    p2 = dequeue() as Player;
+                    currentGame = new Splendor(p1, p2);
                     return null;
                 case repeat:
                     i = int.Parse(commands.Dequeue());
@@ -28,7 +28,7 @@ namespace Splendor_E
                     {
                         Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
                         Console.Write("Repeat " + i);
-                        Splendor.Splendor.replayGame();
+                        Splendor.replayGame();
                         recordScore();
                     }
                     return null;
@@ -37,28 +37,26 @@ namespace Splendor_E
                     recordScore();
                     return null;
                 case greedy:
-                    return new Splendor.Greedy();
+                    return new Greedy();
                 case "gene":
-                    return new Splendor.Gene_Grey();
+                    return new Genetic.Gene();
                 case "random":
-                    return new Splendor.RandomPlayer();
-                case "greedygene":
-                    return new Splendor.Genetic.GreedyGene();
+                    return new RandomPlayer();
                 case minimax:
                     i = int.Parse(commands.Dequeue());
-                    return new Splendor.Minimax(i);
+                    return new Minimax(i);
                 case "clear":
                     Console.Clear();
                     return null;
                 case "record":
-                    Splendor.Splendor.recording = !Splendor.Splendor.recording;
+                    Splendor.recording = !Splendor.recording;
                     return null;
                 case "runseed":
                     Console.Clear();
-                //    i = int.Parse(commands.Dequeue());
-                    p1 = dequeue() as Splendor.Player;
-                    p2 = dequeue() as Splendor.Player;
-                    currentGame = new Splendor.Splendor(p1, p2, 100);
+                    //    i = int.Parse(commands.Dequeue());
+                    p1 = dequeue() as Player;
+                    p2 = dequeue() as Player;
+                    currentGame = new Splendor(p1, p2, 100);
                     return null;
                 default:
                     return null;
@@ -77,28 +75,28 @@ namespace Splendor_E
 
         static void debugGame()
         {
-            Splendor.Splendor.replayGame();
+            Splendor.replayGame();
 
         }
 
         static void findDiscrepancy(int tries)
         {
-            Splendor.Greedy g1 = new Splendor.Greedy();
-            Splendor.Greedy g2 = new Splendor.Greedy();
-            Splendor.Greedy g3 = new Splendor.Greedy();
-            Splendor.Minimax m = new Splendor.Minimax(1);
+            Greedy g1 = new Greedy();
+            Greedy g2 = new Greedy();
+            Greedy g3 = new Greedy();
+            Minimax m = new Minimax(1);
             int[] winArray = new int[tries];
 
-            Splendor.Splendor greedy = new Splendor.Splendor(g1, g2, 100);
-            for (int i=0; i < tries; i++)
-            {
-                Splendor.Splendor.replayGame();
-                winArray[i] = g1.wins;
-            }
-            Splendor.Splendor mini = new Splendor.Splendor(g3, m, 100);
+            Splendor greedy = new Splendor(g1, g2, 100);
             for (int i = 0; i < tries; i++)
             {
-                Splendor.Splendor.replayGame();
+                Splendor.replayGame();
+                winArray[i] = g1.wins;
+            }
+            Splendor mini = new Splendor(g3, m, 100);
+            for (int i = 0; i < tries; i++)
+            {
+                Splendor.replayGame();
                 Debug.Assert(winArray[i] == g3.wins, "Games diverged at i= " + i);
             }
 
@@ -107,9 +105,9 @@ namespace Splendor_E
 
         static void Main(string[] args)
         {
-            //Splendor.Splendor.recording = true;
-            //new Splendor.Splendor(new Splendor.Greedy(), new Splendor.Genetic.GreedyGene(), 100);
-            //Splendor.Splendor.replayGame();
+            //recording = true;
+            //new Splendor(new Greedy(), new Genetic.GreedyGene(), 100);
+            //replayGame();
             //return;
 
             while (true)

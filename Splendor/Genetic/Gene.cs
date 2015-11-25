@@ -15,11 +15,11 @@ namespace Splendor.Genetic
     public class Gene : Player
     {
 
-        private int popSize = 100;
-        private int depth = 20;
-        private int generations = 10;
+        private int popSize = 200;
+        private int depth = 30;
+        private int generations = 20;
 
-        private GreedyFit fit = new GreedyFit();
+        private ExactFit fit = new ExactFit();
 
         public override string ToString()
         {
@@ -36,37 +36,20 @@ namespace Splendor.Genetic
             {
                 //Getting an index out of range exception here when using RouletteWheelSelection (16 rounds in, seed 100)
                 pop.Mutate();
-                //if (Splendor.turn > 30)
-                //{
-                //    Console.Write("Debug");
-                //}
                 pop.Selection();
             }
-            Move m = null;
             SplendorGene g = (SplendorGene)pop.BestChromosome;
-            int j = 0;
-            while (m == null && j < g.length)
+            Move m = null;
+            for (int i=0; i < g.length; i++)
             {
-                m = fit.getMoveByIndex(g.moveTypes[j], g.moveValues[j], Board.current);
-                j++;
+                m = fit.getExactMove(g[i][0], g[i][1]);
+                if (m != null) break;
             }
             if (m == null)
             {
-                if (Move.getAllLegalMoves().Count > 0)
-                {
-                    m = Move.getAllLegalMoves()[0];
-                    RecordHistory.record(this + " made random move " + m + " from chromosome " + g);
-                }
-                else
-                {
-                    Console.WriteLine("GreedyGene failed to find a move on chromosome " + g);
-                    RecordHistory.record("GreedyGene restarted the game with chromosome " + g);
-                    Splendor.replayGame();
-                    return;
-                }
-            } else
-            {
-                RecordHistory.record(this + " made move " + m + " from chromosome " + g);
+                Console.WriteLine("Gene restarted the game.");
+                Splendor.replayGame();
+                return;
             }
             m.takeAction();
             Board b = Board.current;

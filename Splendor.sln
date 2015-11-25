@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Splendor", "Splendor\Splendor.csproj", "{C1FAE8CD-7E98-4F9E-8D28-5416A9E2BAE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Splendor_E", "ConsoleApplication1\Splendor_E.csproj", "{2198C154-7BF1-4A9A-A36F-7D2ECD4F769A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,14 +21,6 @@ Global
 		{C1FAE8CD-7E98-4F9E-8D28-5416A9E2BAE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C1FAE8CD-7E98-4F9E-8D28-5416A9E2BAE3}.Release|x86.ActiveCfg = Release|x86
 		{C1FAE8CD-7E98-4F9E-8D28-5416A9E2BAE3}.Release|x86.Build.0 = Release|x86
-		{2198C154-7BF1-4A9A-A36F-7D2ECD4F769A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2198C154-7BF1-4A9A-A36F-7D2ECD4F769A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2198C154-7BF1-4A9A-A36F-7D2ECD4F769A}.Debug|x86.ActiveCfg = Debug|x86
-		{2198C154-7BF1-4A9A-A36F-7D2ECD4F769A}.Debug|x86.Build.0 = Debug|x86
-		{2198C154-7BF1-4A9A-A36F-7D2ECD4F769A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2198C154-7BF1-4A9A-A36F-7D2ECD4F769A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2198C154-7BF1-4A9A-A36F-7D2ECD4F769A}.Release|x86.ActiveCfg = Release|x86
-		{2198C154-7BF1-4A9A-A36F-7D2ECD4F769A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

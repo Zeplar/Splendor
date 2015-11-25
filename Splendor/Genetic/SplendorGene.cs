@@ -22,12 +22,12 @@ namespace Splendor.Genetic
         /// <summary>
         /// Array of each move by type: 0,1,2,3 ==> TAKE2, TAKE3, BUY, RESERVE
         /// </summary>
-        public byte[] moveTypes;
+        public byte[] major;
 
         /// <summary>
         /// Array of each move by index into #legal moves of that type
         /// </summary> 
-        public byte[] moveValues;
+        public byte[] minor;
 
         private List<Move> MOVES;
         public List<Move> moves
@@ -44,7 +44,13 @@ namespace Splendor.Genetic
 
         public int score = 0;
 
-
+        public int[] this[int i]
+        {
+            get
+            {
+                return new int[] { major[i], minor[i] };
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SplendorGene"/> class.
@@ -53,8 +59,8 @@ namespace Splendor.Genetic
         public SplendorGene(int len)
         {
             this.length = len;
-            this.moveTypes = new byte[len];
-            this.moveValues = new byte[len];
+            this.major = new byte[len];
+            this.minor = new byte[len];
             Generate();
         }
 
@@ -63,8 +69,8 @@ namespace Splendor.Genetic
             //copy all properties
             fitness = source.fitness;
             length = source.length;
-            moveTypes = (Byte[])source.moveTypes.Clone();
-            moveValues = (Byte[])source.moveValues.Clone();
+            major = (Byte[])source.major.Clone();
+            minor = (Byte[])source.minor.Clone();
         }
 
         /// <summary>
@@ -80,8 +86,8 @@ namespace Splendor.Genetic
 
             for (int i = 0; i < length; i++)
             {
-                moveValue = moveValues[i];
-                switch (moveTypes[i])
+                moveValue = minor[i];
+                switch (major[i])
                 {
                     case 0:
                         MOVES = Move.TAKE2.getLegalMoves().ConvertAll(x => (Move)x);
@@ -109,15 +115,15 @@ namespace Splendor.Genetic
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(moveTypes[0]);
+            sb.Append(major[0]);
             sb.Append(':');
-            sb.Append(moveValues[0]);
+            sb.Append(minor[0]);
             for (int i=1; i < length; i++)
             {
                 sb.Append(' ');
-                sb.Append(moveTypes[i]);
+                sb.Append(major[i]);
                 sb.Append(':');
-                sb.Append(moveValues[i]);
+                sb.Append(minor[i]);
             }
             sb.Append("| Fitness: " + fitness);
             return sb.ToString();
@@ -144,13 +150,13 @@ namespace Splendor.Genetic
             {
                 byte[] temp = new byte[crossOverLength];
 
-                Array.Copy(moveTypes, crossOverPoint, temp, 0, crossOverLength);
-                Array.Copy(p.moveTypes, crossOverPoint, moveTypes, crossOverPoint, crossOverLength);
-                Array.Copy(temp, 0, p.moveTypes, crossOverPoint, crossOverLength);
+                Array.Copy(major, crossOverPoint, temp, 0, crossOverLength);
+                Array.Copy(p.major, crossOverPoint, major, crossOverPoint, crossOverLength);
+                Array.Copy(temp, 0, p.major, crossOverPoint, crossOverLength);
 
-                Array.Copy(moveValues, crossOverPoint, temp, 0, crossOverLength);
-                Array.Copy(p.moveValues, crossOverPoint, moveValues, crossOverPoint, crossOverLength);
-                Array.Copy(temp, 0, p.moveValues, crossOverPoint, crossOverLength);
+                Array.Copy(minor, crossOverPoint, temp, 0, crossOverLength);
+                Array.Copy(p.minor, crossOverPoint, minor, crossOverPoint, crossOverLength);
+                Array.Copy(temp, 0, p.minor, crossOverPoint, crossOverLength);
 
             }
         }
@@ -160,11 +166,11 @@ namespace Splendor.Genetic
         /// </summary>
         public override void Generate()
         {
-            Splendor.random.NextBytes(moveTypes);
-            Splendor.random.NextBytes(moveValues);
+            Splendor.random.NextBytes(major);
+            Splendor.random.NextBytes(minor);
             for (int i=0; i < length; i++)
             {
-                moveTypes[i] = (byte)(moveTypes[i] % 4);
+                major[i] = (byte)(major[i] % 4);
             }
 
         }
@@ -178,12 +184,12 @@ namespace Splendor.Genetic
             int i = Splendor.random.Next(length);
             if (large)
             {
-                moveTypes[i] = (byte)Splendor.random.Next(4);
-                moveValues[i] = (byte)Splendor.random.Next();
+                major[i] = (byte)Splendor.random.Next(4);
+                minor[i] = (byte)Splendor.random.Next();
             }
             else
             {
-                moveValues[i] = (byte)Splendor.random.Next();
+                minor[i] = (byte)Splendor.random.Next();
             }
         }
         

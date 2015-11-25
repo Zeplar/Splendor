@@ -148,7 +148,7 @@ namespace Splendor
         //Load the cards from the .csv file
         void getCards()
         {
-            StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\..\splendor_cards.csv"));
+            StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\splendor_cards.csv"));
             file.ReadLine();
             int id = 0;
             while (!file.EndOfStream)
@@ -214,7 +214,7 @@ namespace Splendor
 
         void populate(Deck nobles)
         {
-            StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\..\splendor_nobles.csv"));
+            StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\splendor_nobles.csv"));
             file.ReadLine();
             int i = -1;
             while (!file.EndOfStream)

@@ -65,6 +65,12 @@ namespace Splendor.Genetic
             }
         }
 
+        public Move getExactMove(int major, int minor)
+        {
+            return getExactMove((byte)major, (byte)minor);
+        }
+
+
         public Move getExactMove(byte major, byte minor)
         {
             switch (major)
@@ -114,7 +120,7 @@ namespace Splendor.Genetic
                 //Do the "Generate-next-move" loop for max
                 do
                 {
-                    nextMove = getExactMove(max.moveTypes[i], max.moveValues[i]);
+                    nextMove = getExactMove(max.major[i], max.minor[i]);
                     i++;
                 }
                 while (i < max.length && !nextMove.isLegal(b));
@@ -159,7 +165,7 @@ namespace Splendor.Genetic
                 //Do the "Generate-next-move" loop for max
                 do
                 {
-                    nextMove = getExactMove(max.moveTypes[i], max.moveValues[i]);
+                    nextMove = getExactMove(max.major[i], max.minor[i]);
                     i++;
                 }
                 while (i < max.length && !nextMove.isLegal(b));
@@ -175,7 +181,7 @@ namespace Splendor.Genetic
                 //Do the "Generate-next-move" loop for min
                 do
                 {
-                    nextMove = getExactMove(max.moveTypes[j], max.moveValues[j]);
+                    nextMove = getExactMove(max.major[j], max.minor[j]);
                     j++;
                 }
                 while (j < max.length && !nextMove.isLegal(b));
