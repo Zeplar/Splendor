@@ -116,5 +116,10 @@ namespace Splendor
             c.deck.removeCard(c);
         }
 
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+
     }
 }

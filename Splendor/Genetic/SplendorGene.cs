@@ -9,21 +9,6 @@ namespace Splendor.Genetic
     public class SplendorGene : ChromosomeBase
     {
 
-        public Gem take3ref(Byte move)
-        {
-            int a = move & 1;
-            int b = move & 2;
-            int c = move & 4;
-            int d = move & 8;
-            int e = move & 16;
-            return new Gem(a, b, c, d, e, 0);
-        }
-
-        public int take2ref(Byte move)
-        {
-            return move % 5;
-        }
-
         /// <summary>
         /// Probability of a large mutation instead of a small mutation
         /// </summary>
@@ -58,6 +43,8 @@ namespace Splendor.Genetic
         }
 
         public int score = 0;
+
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SplendorGene"/> class.

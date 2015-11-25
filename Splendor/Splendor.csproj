@@ -79,11 +79,10 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Card.cs" />
-    <Compile Include="Gene Grey.cs" />
     <Compile Include="Genetic\GreedyFit.cs" />
-    <Compile Include="Genetic\GreedyGene.cs" />
+    <Compile Include="Genetic\Gene.cs" />
     <Compile Include="Genetic\SplendorPop.cs" />
-    <Compile Include="Genetic\SplendorFit.cs" />
+    <Compile Include="Genetic\ExactFit.cs" />
     <Compile Include="Genetic\SplendorGene.cs" />
     <Compile Include="Genetic\testRoulette.cs" />
     <Compile Include="Greedy.cs" />

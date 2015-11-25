@@ -173,7 +173,34 @@ public class Board
             return x;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() != typeof (Board))
+            {
+                return false;
+            }
+            Board other = (Board)obj;
+            bool same = true;
+            same = this.viewableCards.Zip(other.viewableCards, (x, y) => x.id - y.id).Count(x => x != 0) == 0; //Zips the difference of each card ID and counts the number of nonzeroes.
+            same &= this.gems.Equals(other.gems);
+            same &= this.currentPlayer.field.Zip(other.currentPlayer.field, (x, y) => x.id - y.id).Count(x => x != 0) == 0;
+            same &= this.currentPlayer.gems.Equals(other.currentPlayer.gems);
+            same &= this.notCurrentPlayer.field.Zip(other.notCurrentPlayer.field, (x, y) => x.id - y.id).Count(x => x != 0) == 0;
+            same &= this.notCurrentPlayer.gems.Equals(other.notCurrentPlayer.gems);
+            return same;
+        }
 
+        public override int GetHashCode()
+        {
+            int i = 0;
+            foreach (Card c in viewableCards)
+            {
+                i += c.id;
+            }
+            i *= gems.magnitude;
+            i *= currentPlayer.GetHashCode() + notCurrentPlayer.GetHashCode();
+            return i;
+        }
 
     }
 

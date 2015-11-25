@@ -14,27 +14,6 @@ namespace Splendor.Genetic
             return score(g);
         }
 
-        public Move getGreedyMove(Board b)
-        {
-            Move bestMove = null;
-            int points = -1;
-
-            List<Move.BUY> buys = Move.BUY.getLegalMoves(b);
-            foreach (Move.BUY m in buys)
-            {
-                if (m.card.points > points)
-                {
-                    points = m.card.points;
-                    bestMove = m;
-                }
-            }
-            if (points < 0)
-            {
-                bestMove = Move.getAllLegalMoves(b).Find(x => true);
-            }
-            return bestMove;
-        }
-
         public Move getMoveByIndex(int super, int sub, Board b)
         {
             List<Move> moves;
@@ -78,7 +57,7 @@ namespace Splendor.Genetic
                 }
                 b = b.generate(nextMove);
 
-                nextMove = getGreedyMove(b);
+                nextMove = Greedy.getGreedyMove(b);
                 if (nextMove == null || b.gameOver)
                 {
                     return b;

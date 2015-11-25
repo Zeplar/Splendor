@@ -22,6 +22,10 @@ namespace Splendor
         public static Gem zero = new Gem(0, 0, 0, 0, 0, 0);
         public static Gem board = new Gem(4, 4, 4, 4, 4, 8);
         public static Gem selected = Gem.zero;
+        public static Gem[] AllThree = { new Gem(0, 0, 1, 1, 1, 0), new Gem(0,1,0,1,1,0), new Gem(1,0,0,1,1,0),
+                                         new Gem(0,1,1,1,0,0), new Gem(1,0,1,1,0,0), new Gem(1,1,0,1,0,0),
+                                         new Gem(1,1,1,0,0,0), new Gem(1,0,1,0,1,0), new Gem(1,1,0,0,1,0), new Gem(0,1,0,0,1,0)};
+        public static Gem[] AllTwo = { new Gem(2, 0, 0, 0, 0, 0), new Gem(0, 2, 0, 0, 0, 0), new Gem(0, 0, 2, 0, 0, 0), new Gem(0, 0, 0, 2, 0, 0), new Gem(0, 0, 0, 0, 2, 0) };
 
         public static void Reset()
         {
@@ -269,13 +273,22 @@ namespace Splendor
         }
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            if (obj.GetType() != typeof (Gem))
+            {
+                return false;
+            }
+            return this == (Gem)obj;
 
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            int i = 0;
+            for (int j=0; j < 6; j++)
+            {
+                i += (int)Math.Pow(10, j) * this[j];
+            }
+            return i;
         }
 
     }

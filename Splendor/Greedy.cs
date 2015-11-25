@@ -23,56 +23,41 @@ namespace Splendor
 
         }
 
-        private void getBiggestBuy(List<Move.BUY> buys)
+        public static Move getGreedyMove(Board b)
         {
-            int bestScore = -1;
-            int temp = 0;
-            Move.BUY bestMove = null;
-            foreach (Move.BUY b in buys)
+            Move bestMove = null;
+            int points = -1;
+
+            List<Move.BUY> buys = Move.BUY.getLegalMoves(b);
+            foreach (Move.BUY m in buys)
             {
-                temp = Board.current.generate(b).maximizingPlayer.points;
-                if (temp > bestScore)
+                if (b.generate(m).maximizingPlayer.points > points)
                 {
-                    bestScore = temp;
-                    bestMove = b;
+                    points = m.card.points;
+                    bestMove = m;
                 }
             }
-            if (Splendor.recording)
+            if (points < 0)
             {
-                RecordHistory.record(this.ToString() + " made greedy move " + bestMove);
+                bestMove = Move.getAllLegalMoves(b).Find(x => true);
             }
-            bestMove.takeAction();
+            return bestMove;
         }
 
         public override void takeTurn()
         {
 
-            //Get a list of cards that are affordable
-            List<Move.BUY> buys = Move.BUY.getLegalMoves();
-
-            //Attempt to buy the highest-tier affordable card
-            if (buys.Count > 0)
+            Move m = getGreedyMove(Board.current);
+            if (m != null)
             {
-                getBiggestBuy(buys);
+                m.takeAction();
+                RecordHistory.record(this + " took move " + m);
                 return;
             }
-            else
-            {
-                List<Move> allMoves = Move.getAllLegalMoves();
-                if (allMoves.Count > 0)
-                {
-                    if (Splendor.recording)
-                    {
-                        RecordHistory.record(this.ToString() + " made random move " + allMoves[0].ToString());
-                    }
-                    allMoves[0].takeAction();
-                    return;
-                }
-            }
-
-            //If AI did not successfully buy a card, take gems, or reserve a card, halt the program.
+            //If AI did not successfully take a move, restart the game
             noLegalMoves += 1;
             Console.WriteLine("Greedy found no legal moves and was forced to restart " + noLegalMoves + " time(s).");
+            RecordHistory.record("Greedy found no legal moves and was forced to restart " + noLegalMoves + " time(s).");
             Splendor.replayGame();
         }
     }
