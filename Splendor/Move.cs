@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Collections.Generic;
-using System;
+using System.Text;
 
 
 namespace Splendor
@@ -10,6 +10,16 @@ namespace Splendor
     {
 
         public int moveType;
+
+        public static string ListToString(List<Move> m)
+        {
+            StringBuilder s = new StringBuilder();
+            foreach (Move move in m)
+            {
+                s.Append(move.ToString() + ", ");
+            }
+            return s.ToString();
+        }
 
         public abstract bool isLegal();
         public abstract bool isLegal(Board b);
@@ -187,17 +197,11 @@ namespace Splendor
             public static List<TAKE3> getLegalMoves(Board b)
             {
                 List<TAKE3> l = new List<TAKE3>();
-                l.Add(new TAKE3(0, 1, 2));
-                l.Add(new TAKE3(0, 1, 3));
-                l.Add(new TAKE3(0, 1, 4));
-                l.Add(new TAKE3(0, 2, 3));
-                l.Add(new TAKE3(0, 2, 4));
-                l.Add(new TAKE3(0, 3, 4));
-                l.Add(new TAKE3(1, 2, 3));
-                l.Add(new TAKE3(1, 2, 4));
-                l.Add(new TAKE3(1, 3, 4));
-                l.Add(new TAKE3(2, 3, 4));
-                l.RemoveAll(x => !x.isLegal(b));
+                foreach (Gem g in Gem.AllThree)
+                {
+                    TAKE3 t = new TAKE3(g);
+                    if (t.isLegal(b)) l.Add(new TAKE3(g));
+                }
                 return l;
             }
 

@@ -115,7 +115,7 @@ public class Board
 
         public Board generate(Move m)
         {
-
+            Debug.Assert(m.isLegal(this), "Illegal generating move!");
             Board b = new Board(players, turn, viewableCards, gems);
             b.gems = gems;
             Player p = b.currentPlayer;

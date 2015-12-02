@@ -3,20 +3,36 @@ using System.Diagnostics;
 using System;
 namespace Splendor.Genetic
 {
+    //(Population, Depth, Generations)
 
     //11-89 vs Greedy with 9 restarts
     //12-88 with random search(5000,20,1)
 
-        //Check fitness not increasing monotonically -- print moves
-        //Mutation/Crossover may be unstable
-        //Check random search (>> popsize, 1 generation)
+    //34-66 with ExactFit(200,30,20)
+    //41-59 with ExactFit(500,40,20)
+    //20-20 with ExactFit(1000,40,20)
+    //50-50 with ExactFit(300,100,20)
+    //57-43 with ExactFit(1000,100,20)
+    //21-79 vs Minimax(3) with ExactFit(1000,100,20)
+
+    //55-45 vs Greedy with ExactFit(500,40,20) and upgraded chromosome
+    //49-51 vs Minimax(3) with same
+    //28-72 vs Minimax(4) with same
+
+    //40-60 vs Greedy with same and adjusted scoring (deltaP * turn)
+    //25-75 vs Minimax(3) with same and adjusted scoring
+
+    
+
+        //Mutate with next-move legal
+        //
 
 
     public class Gene : Player
     {
 
         private int popSize = 200;
-        private int depth = 30;
+        private int depth = 10;
         private int generations = 20;
 
         private ExactFit fit = new ExactFit();
@@ -39,22 +55,19 @@ namespace Splendor.Genetic
                 pop.Selection();
             }
             SplendorGene g = (SplendorGene)pop.BestChromosome;
-            Move m = null;
-            for (int i=0; i < g.length; i++)
-            {
-                m = fit.getExactMove(g[i][0], g[i][1]);
-                if (m != null) break;
-            }
+            Move m = g.moves[0];
             if (m == null)
             {
-                Console.WriteLine("Gene restarted the game.");
-                Splendor.replayGame();
+                Console.WriteLine();
+                Console.Write("Gene took a random turn.");
+                takeRandomTurn();
                 return;
             }
             m.takeAction();
             Board b = Board.current;
-            Console.WriteLine();
-            Console.Write("   " + b.notCurrentPlayer + " " + b.notCurrentPlayer.points + " - " + b.currentPlayer + " " + b.currentPlayer.points + "   Fitness: " + pop.BestChromosome.Fitness + "  " + m);
+            //Console.WriteLine();
+            //Console.Write("    Dead moves:" + g.score);
+            //Console.Write("   " + b.notCurrentPlayer + " " + b.notCurrentPlayer.points + " - " + b.currentPlayer + " " + b.currentPlayer.points + "   Fitness: " + pop.BestChromosome.Fitness + "  " + m);
         }
 
 

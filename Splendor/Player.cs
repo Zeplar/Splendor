@@ -121,5 +121,49 @@ namespace Splendor
             return this.ToString().GetHashCode();
         }
 
+        protected void takeRandomTurn()
+        {
+            List<Move> moves = Move.getAllLegalMoves();
+            if (moves.Count > 0)
+            {
+                moves[random.Next(moves.Count)].takeAction();
+                return;
+            }
+            returnRandomGems();
+            returnRandomGems();
+            moves = Move.TAKE2.getLegalMoves().ConvertAll(x => (Move)x);
+            if (moves.Count > 0)
+            {
+                moves[random.Next(moves.Count)].takeAction();
+                return;
+            }
+            returnRandomGems();
+            moves = Move.TAKE3.getLegalMoves().ConvertAll(x => (Move)x);
+            if (moves.Count > 0)
+            {
+                moves[random.Next(moves.Count)].takeAction();
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Returns a random gem to the pile.
+        /// </summary>
+        private void returnRandomGems()
+        {
+            int k = 0;
+
+            while (true)
+            {
+                k = random.Next(5);
+                if (gems[k] > 0)
+                {
+                    Gem.board[k] += 1;
+                    gems[k] -= 1;
+                    return;
+                }
+            }
+        }
+
     }
 }

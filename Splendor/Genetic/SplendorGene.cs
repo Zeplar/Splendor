@@ -12,7 +12,7 @@ namespace Splendor.Genetic
         /// <summary>
         /// Probability of a large mutation instead of a small mutation
         /// </summary>
-        public static float largeMutationRate = 0.5f;
+        public static float largeMutationRate = 0.3f;
 
         /// <summary>
         /// Chromosome's length (#moves simulated)
@@ -29,18 +29,9 @@ namespace Splendor.Genetic
         /// </summary> 
         public byte[] minor;
 
-        private List<Move> MOVES;
-        public List<Move> moves
-        {
-            get
-            {
-                if (MOVES == null)
-                {
-                    updateMoves();
-                }
-                return MOVES;
-            }
-        }
+
+        public List<Move> moves;
+
 
         public int score = 0;
 
@@ -52,6 +43,8 @@ namespace Splendor.Genetic
             }
         }
 
+        static int ID = 0;
+        private int id;
         /// <summary>
         /// Initializes a new instance of the <see cref="SplendorGene"/> class.
         /// </summary>
@@ -62,6 +55,8 @@ namespace Splendor.Genetic
             this.major = new byte[len];
             this.minor = new byte[len];
             Generate();
+            id = ID;
+            ID++;
         }
 
         protected SplendorGene(SplendorGene source)
@@ -71,6 +66,10 @@ namespace Splendor.Genetic
             length = source.length;
             major = (Byte[])source.major.Clone();
             minor = (Byte[])source.minor.Clone();
+            score = source.score;
+            moves = new List<Move>();
+            moves.AddRange(source.moves);
+            id = source.id;
         }
 
         /// <summary>
@@ -81,7 +80,10 @@ namespace Splendor.Genetic
             
             Board b = Board.current;
             byte moveValue;
-            MOVES = new List<Move>();
+            moves = new List<Move>();
+            List<Card> CARDS = new List<Card>();
+            CARDS.AddRange(b.viewableCards);
+            CARDS.AddRange(b.currentPlayer.reserve);
             
 
             for (int i = 0; i < length; i++)
@@ -90,24 +92,20 @@ namespace Splendor.Genetic
                 switch (major[i])
                 {
                     case 0:
-                        MOVES = Move.TAKE2.getLegalMoves().ConvertAll(x => (Move)x);
+                        moves.Add(new Move.TAKE2(moveValue % 5));
                         break;
                     case 1:
-                        MOVES = Move.TAKE3.getLegalMoves().ConvertAll(x => (Move)x);
+                        moves.Add(new Move.TAKE3(Gem.AllThree[moveValue % 10]));
                         break;
                     case 2:
-                        MOVES = Move.BUY.getLegalMoves().ConvertAll(x => (Move)x);
+                        moves.Add(new Move.BUY(CARDS[moveValue % CARDS.Count]));
                         break;
                     case 3:
-                        MOVES = Move.RESERVE.getLegalMoves().ConvertAll(x => (Move)x);
+                        moves.Add(new Move.RESERVE(b.viewableCards[moveValue % b.viewableCards.Count]));
                         break;
                     default:
                         Debug.Fail("Invalid move type.");
                         return;
-                }
-                if (MOVES.Count > 0)
-                {
-                    moves.Add(MOVES[moveValue % MOVES.Count]);
                 }
             }
         }
@@ -159,6 +157,8 @@ namespace Splendor.Genetic
                 Array.Copy(temp, 0, p.minor, crossOverPoint, crossOverLength);
 
             }
+            p.updateMoves();
+            this.updateMoves();
         }
 
         /// <summary>
@@ -172,6 +172,7 @@ namespace Splendor.Genetic
             {
                 major[i] = (byte)(major[i] % 4);
             }
+            moves = new List<Move>();
 
         }
 
@@ -191,7 +192,13 @@ namespace Splendor.Genetic
             {
                 minor[i] = (byte)Splendor.random.Next();
             }
+            updateMoves();
         }
-        
+
+        public override int GetHashCode()
+        {
+            return id;
+        }
+
     }
 }

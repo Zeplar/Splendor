@@ -1,50 +1,13 @@
 ﻿using System.Collections.Generic;
 using AForge.Genetic;
 using System.Diagnostics;
+using System;
+using System.IO;
 
 namespace Splendor.Genetic
 {
     public class ExactFit : IFitnessFunction
     {
-
-        /// <summary>
-        /// Scores chromosomes by pitting them against all enemy chromosomes.
-        /// </summary>
-        public void runTournament(List<IChromosome> cur, List<IChromosome> next)
-        {
-            Debug.Assert(cur.Count == next.Count, cur.Count + " " + next.Count);
-            ClearScore(cur);
-            ClearScore(next);
-            int count = cur.Count;
-
-            for (int i = 0; i < count; i++)
-            {
-                for (int j = 0; j < count; j++)
-                {
-                    SplendorGene winner;
-                    bool curWon = score(cur[i], next[i]) > 0;
-                    if (curWon)
-                    {
-                        winner = (SplendorGene)cur[i];
-                    }
-                    else
-                    //!!! This gives ties to the opponent, but I doubt that throws it off too much (if scoring accounts for tiebreakers).
-                    {
-                        winner = (SplendorGene)next[i];
-                    }
-                    winner.score += 1;
-                }
-            }
-
-            //This is necessary to actually update the chromosomes' (private) value field.
-            for (int i=0; i < count; i++)
-            {
-                cur[count].Evaluate(this);
-                next[count].Evaluate(this);
-            }
-            Debug.Assert(cur.Count == next.Count, "Something changed in the tournament");
-
-        }
 
         //public double Evaluate(IChromosome chromosome)
         //{
@@ -57,145 +20,83 @@ namespace Splendor.Genetic
 
         }
 
-        private void ClearScore(List<IChromosome> population)
+        public Move getExactMove(Board b)
         {
-            foreach (SplendorGene g in population)
+            List<Move> moves = Move.getAllLegalMoves(b);
+            if (moves.Count == 0)
             {
-                g.score = 0;
+                return null;
             }
+            return moves[Splendor.random.Next(moves.Count)];
         }
+       
 
-        public Move getExactMove(int major, int minor)
+        /// <summary>
+        /// Generates the next boardstate or returns false if unable
+        /// </summary>
+        private Board generate(SplendorGene max, Board b)
         {
-            return getExactMove((byte)major, (byte)minor);
-        }
-
-
-        public Move getExactMove(byte major, byte minor)
-        {
-            switch (major)
+            Debug.Assert(b.turn % 2 == 0);
+            int i = b.turn / 2;
+            if (max.moves.Count <= i)
             {
-                case 0:
-                    return new Move.TAKE2(minor % 5);
-                case 1:
-                    return new Move.TAKE3(Gem.AllThree[minor % 10]);
-                case 2:
-                    return new Move.BUY(Card.allCardsByID[minor % 90]);
-                case 3:
-                    return new Move.RESERVE(Card.allCardsByID[minor % 90]);
-                default:
-                    Debug.Fail("Invalid major move");
+                max.moves.Add(null);
+            }
+            if (max.moves[i] == null || !max.moves[i].isLegal(b))
+            {
+                max.moves[i] = getExactMove(b);
+                if (max.moves[i] == null)
+                {
                     return null;
+                }
             }
+            return b.generate(max.moves[i]);
         }
-
-        private int score(IChromosome max, IChromosome min)
-        {
-            SplendorGene m = (SplendorGene)max;
-            SplendorGene n = (SplendorGene)min;
-            return score(m, n);
-        }
-
-
 
         /// <summary>
         /// Evaluates a chromosome against Greedy
         /// </summary>
-        /// <param name="max"></param>
-        /// <returns></returns>
         private int score(SplendorGene max)
         {
-            Board b = Board.current;
-            int i = -1;
-            int j = -1;
+            Board current = Board.current;
+            Board next;
             Move nextMove;
-            while (i < max.length)
+            while (!current.gameOver && current.turn < 20)
             {
-                //Return at gameOver, so we go at most one turn too far.
-                if (b.gameOver)
+                next = generate(max, current);
+                if (next == null)
                 {
-                    return b.maximizingPlayer.points - b.minimizingPlayer.points;
+                    break;
                 }
-
-                //Do the "Generate-next-move" loop for max
-                do
+                current = next;
+                //Do the "Generate-next-move" loop for greedy
+                nextMove = Greedy.getGreedyMove(current);
+                if (nextMove != null)
                 {
-                    nextMove = getExactMove(max.major[i], max.minor[i]);
-                    i++;
-                }
-                while (i < max.length && !nextMove.isLegal(b));
-
-                if (!nextMove.isLegal(b))
-                {
-                    return b.maximizingPlayer.points - b.minimizingPlayer.points;
+                    current = current.generate(nextMove);
                 }
                 else
                 {
-                    b = b.generate(nextMove);
+                    recordPop(max, current, score(current));
+                    return score(current);
                 }
-
-                //Do the "Generate-next-move" loop for greedy
-                nextMove = Greedy.getGreedyMove(b);
-                if (nextMove != null)
-                {
-                    b = b.generate(nextMove);
-                } else
-                {
-                    return b.maximizingPlayer.points - b.minimizingPlayer.points;
-                }
-
             }
-            return b.maximizingPlayer.points - b.minimizingPlayer.points; //If either chromosome runs out of genes
+            recordPop(max, current, score(current));
+            return score(current);
         }
 
-        private int score(SplendorGene max, SplendorGene min)
+        private int score(Board b)
         {
-            Board b = Board.current;
-            int i = -1;
-            int j = -1;
-            Move nextMove;
-            while (i < max.length && j < max.length)
-            {
-                //Return at gameOver, so we go at most one turn too far.
-                if (b.gameOver)
-                {
-                    return b.maximizingPlayer.points - b.minimizingPlayer.points;
-                }
-
-                //Do the "Generate-next-move" loop for max
-                do
-                {
-                    nextMove = getExactMove(max.major[i], max.minor[i]);
-                    i++;
-                }
-                while (i < max.length && !nextMove.isLegal(b));
-
-                if (!nextMove.isLegal(b))
-                {
-                    return b.maximizingPlayer.points - b.minimizingPlayer.points;
-                } else
-                {
-                    b = b.generate(nextMove);
-                }
-                
-                //Do the "Generate-next-move" loop for min
-                do
-                {
-                    nextMove = getExactMove(max.major[j], max.minor[j]);
-                    j++;
-                }
-                while (j < max.length && !nextMove.isLegal(b));
-
-                if (!nextMove.isLegal(b))
-                {
-                    return b.maximizingPlayer.points - b.minimizingPlayer.points;
-                } else
-                {
-                    b = b.generate(nextMove);
-                }
-
-            }
-            return b.maximizingPlayer.points - b.minimizingPlayer.points; //If either chromosome runs out of genes
+            return Math.Max(b.maximizingPlayer.points - b.minimizingPlayer.points, 0);
         }
+
+        const string directory = @"..\..\..\..\Splendor\History\";
+
+        private void recordPop(SplendorGene g, Board b, int fitness)
+        {
+            return;
+            File.AppendAllText(directory + "fitness" + Splendor.turn + ".csv", g.GetHashCode() + "," + b.turn + "," + fitness + Environment.NewLine);
+        }
+
     }
 }
