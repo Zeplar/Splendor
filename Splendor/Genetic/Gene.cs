@@ -4,6 +4,7 @@ using System;
 namespace Splendor.Genetic
 {
     //51-49 vs Greedy with 500,10,20
+    //59-41 vs Greedy with 500,10,40
 
     public class Gene : Player
     {
@@ -11,7 +12,7 @@ namespace Splendor.Genetic
         private int popSize = 200;
         private int depth = 10;
         private int generations = 20;
-
+        
         private ExactFit fit = new ExactFit();
 
         public Gene(int popsize, int depth, int generations)

@@ -141,24 +141,7 @@ namespace Splendor.Genetic
 
         public override void Crossover(IChromosome pair)
         {
-            SplendorGene p = (SplendorGene)pair;
-            int crossOverPoint = Splendor.random.Next(length - 1) + 1;
-            int crossOverLength = length - crossOverPoint;
-            if (p != null && p.length == length)
-            {
-                byte[] temp = new byte[crossOverLength];
 
-                Array.Copy(major, crossOverPoint, temp, 0, crossOverLength);
-                Array.Copy(p.major, crossOverPoint, major, crossOverPoint, crossOverLength);
-                Array.Copy(temp, 0, p.major, crossOverPoint, crossOverLength);
-
-                Array.Copy(minor, crossOverPoint, temp, 0, crossOverLength);
-                Array.Copy(p.minor, crossOverPoint, minor, crossOverPoint, crossOverLength);
-                Array.Copy(temp, 0, p.minor, crossOverPoint, crossOverLength);
-
-            }
-            p.updateMoves();
-            this.updateMoves();
         }
 
         /// <summary>
@@ -166,33 +149,16 @@ namespace Splendor.Genetic
         /// </summary>
         public override void Generate()
         {
-            Splendor.random.NextBytes(major);
-            Splendor.random.NextBytes(minor);
-            for (int i=0; i < length; i++)
-            {
-                major[i] = (byte)(major[i] % 4);
-            }
             moves = new List<Move>();
-
         }
 
         /// <summary>
-        /// Changes one byte in moveTypes or moveValues depending on largeMutationRate.
+        /// Changes a random move to null so that it will be recalculated in the next generation.
         /// </summary>
         public override void Mutate()
         {
-            bool large = Splendor.random.NextDouble() < largeMutationRate;
-            int i = Splendor.random.Next(length);
-            if (large)
-            {
-                major[i] = (byte)Splendor.random.Next(4);
-                minor[i] = (byte)Splendor.random.Next();
-            }
-            else
-            {
-                minor[i] = (byte)Splendor.random.Next();
-            }
-            updateMoves();
+           // bool large = Splendor.random.NextDouble() < largeMutationRate;
+            moves[Splendor.random.Next(moves.Count)] = null;
         }
 
         public override int GetHashCode()
