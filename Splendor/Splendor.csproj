@@ -83,7 +83,7 @@
     <Compile Include="Board.cs" />
     <Compile Include="Card.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Genetic\GreedyFit.cs" />
+    <Compile Include="Genetic\IndexFit.cs" />
     <Compile Include="Genetic\Gene.cs" />
     <Compile Include="Genetic\SplendorPop.cs" />
     <Compile Include="Genetic\ExactFit.cs" />
