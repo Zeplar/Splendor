@@ -6,6 +6,11 @@ namespace Splendor.Genetic
     //51-49 vs Greedy with 500,10,20
     //56-44 {54-46} vs Greedy with 500,10,20 and new mutate
 
+        //With Crossover:
+    //50-50 vs Greedy with (200,10,20)
+    //74-26 vs Greedy with (500,10,40)
+    //55-45 vs Minimax(3) with (500,10,40)
+
     public class Gene : Player
     {
 
