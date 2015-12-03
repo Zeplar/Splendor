@@ -94,8 +94,7 @@ namespace Splendor.Genetic
 
         private void recordPop(SplendorGene g, Board b, int fitness)
         {
-            return;
-            File.AppendAllText(directory + "fitness" + Splendor.turn + ".csv", g.GetHashCode() + "," + b.turn + "," + fitness + Environment.NewLine);
+            //File.AppendAllText(directory + "fitness" + Splendor.turn + ".csv", g.GetHashCode() + "," + b.turn + "," + fitness + Environment.NewLine);
         }
 
     }

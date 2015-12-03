@@ -3,30 +3,7 @@ using System.Diagnostics;
 using System;
 namespace Splendor.Genetic
 {
-    //(Population, Depth, Generations)
-
-    //11-89 vs Greedy with 9 restarts
-    //12-88 with random search(5000,20,1)
-
-    //34-66 with ExactFit(200,30,20)
-    //41-59 with ExactFit(500,40,20)
-    //20-20 with ExactFit(1000,40,20)
-    //50-50 with ExactFit(300,100,20)
-    //57-43 with ExactFit(1000,100,20)
-    //21-79 vs Minimax(3) with ExactFit(1000,100,20)
-
-    //55-45 vs Greedy with ExactFit(500,40,20) and upgraded chromosome
-    //49-51 vs Minimax(3) with same
-    //28-72 vs Minimax(4) with same
-
-    //40-60 vs Greedy with same and adjusted scoring (deltaP * turn)
-    //25-75 vs Minimax(3) with same and adjusted scoring
-
-    
-
-        //Mutate with next-move legal
-        //
-
+    //51-49 vs Greedy with 500,10,20
 
     public class Gene : Player
     {
@@ -36,6 +13,16 @@ namespace Splendor.Genetic
         private int generations = 20;
 
         private ExactFit fit = new ExactFit();
+
+        public Gene(int popsize, int depth, int generations)
+        {
+            this.popSize = popsize;
+            this.depth = depth;
+            this.generations = generations;
+            Console.WriteLine("Gene: " + popsize + " " + depth + " " + generations);
+        }
+
+        public Gene() : this(200, 10, 20) { }
 
         public override string ToString()
         {
