@@ -39,6 +39,10 @@ namespace Splendor
                 case greedy:
                     return new Greedy();
                 case "gene":
+                    if (int.TryParse(commands.Peek(), out i))
+                    {
+                        return new Genetic.Gene(int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()));
+                    }
                     return new Genetic.Gene();
                 case "random":
                     return new RandomPlayer();
@@ -113,7 +117,7 @@ namespace Splendor
             while (true)
             {
 
-                foreach (string s in Console.ReadLine().Split())
+                foreach (string s in Console.ReadLine().Replace('(', ' ').Replace(')', ' ').Replace(',', ' ').Split())
                 {
                     commands.Enqueue(s);
                 }
