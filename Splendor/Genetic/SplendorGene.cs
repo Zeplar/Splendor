@@ -99,7 +99,7 @@ namespace Splendor.Genetic
                 }
             }
         }
-
+        
         private void CrossoverFrom(SplendorGene other, int thisStart, int otherStart)
         {
             List<Move> temp = new List<Move>();
