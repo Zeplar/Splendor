@@ -23,6 +23,8 @@ namespace Splendor
                     currentGame = new Splendor(p1, p2);
                     return null;
                 case repeat:
+                    Stopwatch watch = new Stopwatch();
+                    watch.Start();
                     i = int.Parse(commands.Dequeue());
                     for (; i > 0; i--)
                     {
@@ -31,6 +33,8 @@ namespace Splendor
                         Splendor.replayGame();
                         recordScore();
                     }
+                    watch.Stop();
+                    Console.WriteLine("" + watch.Elapsed);
                     return null;
                 case "debug":
                     debugGame();

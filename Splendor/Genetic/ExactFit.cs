@@ -50,6 +50,7 @@ namespace Splendor.Genetic
                     return null;
                 }
             }
+            max.boardState[i] = hash(b);
             return b.generate(max.moves[i]);
         }
 
@@ -61,7 +62,7 @@ namespace Splendor.Genetic
             Board current = Board.current;
             Board next;
             Move nextMove;
-            while (!current.gameOver && current.turn < 20)
+            while (!current.gameOver && current.turn < max.length)
             {
                 next = generate(max, current);
                 if (next == null)
@@ -95,6 +96,40 @@ namespace Splendor.Genetic
         private void recordPop(SplendorGene g, Board b, int fitness)
         {
             //File.AppendAllText(directory + "fitness" + Splendor.turn + ".csv", g.GetHashCode() + "," + b.turn + "," + fitness + Environment.NewLine);
+        }
+
+        private uint hash(Board b)
+        {
+            Gem bp = b.currentPlayer.gems + b.currentPlayer.discount;
+            Byte[] buyingPower = new Byte[6];
+            for (int i=0; i < 6; i++)
+            {
+                buyingPower[i] = Convert.ToByte(bp[i] % 8);
+            }
+
+            Byte[] fieldState = new Byte[2];
+            List<Card> startingCards = Splendor.viewableCards;
+            for (int i=0; i < 8 && i < startingCards.Count; i++)
+            {
+                if (b.viewableCards.Contains(startingCards[i]))
+                {
+                    fieldState[0] <<= 1;
+                    fieldState[0] += 1;
+                }
+            }
+            for (int i = 8; i < 16 && i < startingCards.Count; i++)
+            {
+                if (b.viewableCards.Contains(startingCards[i]))
+                {
+                    fieldState[1] <<= 1;
+                    fieldState[1] += 1;
+                }
+            }
+
+            uint res1, res2;
+            res1 = buyingPower[0]; res1 <<= 8; res1 += buyingPower[1]; res1 <<= 8; res1 += buyingPower[2]; res1 <<= 8; res1 += buyingPower[3];
+            res2 = buyingPower[4]; res2 <<= 8; res2 += buyingPower[5]; res2 <<= 8; res2 += fieldState[0]; res2 <<= 8; res2 += fieldState[1];
+            return res1 ^ res2;
         }
 
     }

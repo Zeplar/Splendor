@@ -20,28 +20,15 @@ namespace Splendor.Genetic
         public int length;
 
         /// <summary>
-        /// Array of each move by type: 0,1,2,3 ==> TAKE2, TAKE3, BUY, RESERVE
-        /// </summary>
-        public byte[] major;
-
-        /// <summary>
-        /// Array of each move by index into #legal moves of that type
+        /// Represents boardstate at each turn
         /// </summary> 
-        public byte[] minor;
+        public uint[] boardState;
 
 
         public List<Move> moves;
 
 
         public int score = 0;
-
-        public int[] this[int i]
-        {
-            get
-            {
-                return new int[] { major[i], minor[i] };
-            }
-        }
 
         static int ID = 0;
         private int id;
@@ -52,8 +39,7 @@ namespace Splendor.Genetic
         public SplendorGene(int len)
         {
             this.length = len;
-            this.major = new byte[len];
-            this.minor = new byte[len];
+            this.boardState = new uint[len];
             Generate();
             id = ID;
             ID++;
@@ -64,64 +50,22 @@ namespace Splendor.Genetic
             //copy all properties
             fitness = source.fitness;
             length = source.length;
-            major = (Byte[])source.major.Clone();
-            minor = (Byte[])source.minor.Clone();
+            boardState = (uint[])source.boardState.Clone();
             score = source.score;
             moves = new List<Move>();
             moves.AddRange(source.moves);
             id = source.id;
         }
 
-        /// <summary>
-        /// List all the moves described by this chromosome.
-        /// </summary>
-        public void updateMoves()
-        {
-            
-            Board b = Board.current;
-            byte moveValue;
-            moves = new List<Move>();
-            List<Card> CARDS = new List<Card>();
-            CARDS.AddRange(b.viewableCards);
-            CARDS.AddRange(b.currentPlayer.reserve);
-            
-
-            for (int i = 0; i < length; i++)
-            {
-                moveValue = minor[i];
-                switch (major[i])
-                {
-                    case 0:
-                        moves.Add(new Move.TAKE2(moveValue % 5));
-                        break;
-                    case 1:
-                        moves.Add(new Move.TAKE3(Gem.AllThree[moveValue % 10]));
-                        break;
-                    case 2:
-                        moves.Add(new Move.BUY(CARDS[moveValue % CARDS.Count]));
-                        break;
-                    case 3:
-                        moves.Add(new Move.RESERVE(b.viewableCards[moveValue % b.viewableCards.Count]));
-                        break;
-                    default:
-                        Debug.Fail("Invalid move type.");
-                        return;
-                }
-            }
-        }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(major[0]);
-            sb.Append(':');
-            sb.Append(minor[0]);
+            sb.Append(boardState[0]);
             for (int i=1; i < length; i++)
             {
                 sb.Append(' ');
-                sb.Append(major[i]);
-                sb.Append(':');
-                sb.Append(minor[i]);
+                sb.Append(boardState[i]);
             }
             sb.Append("| Fitness: " + fitness);
             return sb.ToString();
@@ -141,11 +85,42 @@ namespace Splendor.Genetic
 
         public override void Crossover(IChromosome pair)
         {
+            SplendorGene other = (SplendorGene)pair;
+            for (int i=0; i < length; i++)
+            {
+                uint hash = boardState[i];
+                for (int j=0; j < length; j++)
+                {
+                    if (other.boardState[j] == hash)
+                    {
+                        CrossoverFrom(other, i, j);
+                        return;
+                    }
+                }
+            }
+        }
 
+        private void CrossoverFrom(SplendorGene other, int thisStart, int otherStart)
+        {
+            List<Move> temp = new List<Move>();
+            for (int i=thisStart; i < length && i < moves.Count; i++)
+            {
+                temp.Add(moves[i]);
+                if (moves[i]?.moveType == 2) break;
+            }
+            int j = thisStart;
+            for (int i= otherStart; i < length && i < other.moves.Count; i++)
+            {
+                moves.Insert(i, other.moves[i]);
+                if (other.moves[i]?.moveType == 2) break;
+            }
+            moves = moves.GetRange(0, Math.Min(moves.Count, length));
+            other.moves.InsertRange(otherStart, temp);
+            other.moves = other.moves.GetRange(0, Math.Min(other.moves.Count, length));
         }
 
         /// <summary>
-        /// Generates random values for the chromosome. MoveTypes are mod 4, but moveValues can be any byte.
+        ///
         /// </summary>
         public override void Generate()
         {
@@ -153,11 +128,11 @@ namespace Splendor.Genetic
         }
 
         /// <summary>
-        /// Changes a random move to null so that it will be recalculated in the next generation.
+        /// Changes one move to null, so that it will be re-evaluated next generation.
         /// </summary>
         public override void Mutate()
         {
-           // bool large = Splendor.random.NextDouble() < largeMutationRate;
+            //bool large = Splendor.random.NextDouble() < largeMutationRate;
             moves[Splendor.random.Next(moves.Count)] = null;
         }
 

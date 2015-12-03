@@ -4,7 +4,7 @@ using System;
 namespace Splendor.Genetic
 {
     //51-49 vs Greedy with 500,10,20
-    //59-41 vs Greedy with 500,10,40
+    //56-44 {54-46} vs Greedy with 500,10,20 and new mutate
 
     public class Gene : Player
     {
@@ -12,7 +12,7 @@ namespace Splendor.Genetic
         private int popSize = 200;
         private int depth = 10;
         private int generations = 20;
-        
+
         private ExactFit fit = new ExactFit();
 
         public Gene(int popsize, int depth, int generations)
@@ -39,6 +39,7 @@ namespace Splendor.Genetic
             for (int i=0; i < generations; i++)
             {
                 //Getting an index out of range exception here when using RouletteWheelSelection (16 rounds in, seed 100)
+                pop.Crossover();
                 pop.Mutate();
                 pop.Selection();
             }

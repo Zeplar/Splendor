@@ -9,6 +9,9 @@ namespace Splendor
     public abstract class Move
     {
 
+        /// <summary>
+        /// TAKE2, TAKE3, BUY, RESERVE
+        /// </summary>
         public int moveType;
 
         public static string ListToString(List<Move> m)
