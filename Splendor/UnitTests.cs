@@ -8,15 +8,8 @@ namespace Splendor
     {
 
 
-        void Start()
-        {
-            testGems();
-            //		testBoard ();
-            //		testBuy ();
-        }
 
-
-        void testGems()
+        public static void testGems()
         {
             Gem test = new Gem(1, 1, 1, 1, 1, 0);
             Gem testGold = new Gem(0, 0, 0, 0, 0, 1);
@@ -29,6 +22,16 @@ namespace Splendor
             Debug.Assert(!(test2 > test));
 
             Debug.Assert(test.takeaway(test2) == new Gem(0, 1, 1, 1, 1, 0));
+
+            foreach (Gem g in Gem.AllThree)
+            {
+                int i = 0;
+                foreach (Gem k in Gem.AllThree)
+                {
+                    if (g == k) i++;
+                    Debug.Assert(i < 2, "AllThree contained duplicates!");
+                }
+            }
         }
 
         public static void testBoard()

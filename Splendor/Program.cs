@@ -10,15 +10,15 @@ namespace Splendor
         static Splendor currentGame;
         static Player p1;
         static Player p2;
-        static int ties = 0;
 
         static object dequeue()
         {
+            int ties = 0;
+            int p1Wins = 0;
             int i;
             switch (commands.Dequeue())
             {
                 case run:
-                    Console.Clear();
                     p1 = dequeue() as Player;
                     p2 = dequeue() as Player;
                     currentGame = new Splendor(p1, p2);
@@ -35,18 +35,19 @@ namespace Splendor
                         bool tied;
                         Player winner = Splendor.getMaxPlayer(out tied);
                         if (tied) ties++;
+                        else if (winner == Splendor.players[0]) p1Wins++;
                         recordScore();
                     }
                     watch.Stop();
                     Console.WriteLine("" + watch.Elapsed);
-                    Console.WriteLine("P1 wins  : " + ties);
+                    Console.WriteLine("P1 wins : " + p1Wins + "     Ties: " + ties);
                     return null;
                 case "debug":
                     debugGame();
                     recordScore();
                     return null;
                 case greedy:
-                    return new Greedy();
+                    return new Greedy(commands.Dequeue());
                 case "gene":
                     if (int.TryParse(commands.Peek(), out i))
                     {
@@ -65,11 +66,10 @@ namespace Splendor
                     Splendor.recording = !Splendor.recording;
                     return null;
                 case "runseed":
-                    Console.Clear();
                     //    i = int.Parse(commands.Dequeue());
                     p1 = dequeue() as Player;
                     p2 = dequeue() as Player;
-                    currentGame = new Splendor(p1, p2, 100);
+                    currentGame = new Splendor(p1, p2, 3);
                     return null;
                 default:
                     return null;
@@ -88,6 +88,7 @@ namespace Splendor
 
         static void debugGame()
         {
+            Console.WriteLine("Go");
             Splendor.replayGame();
 
         }

@@ -212,6 +212,7 @@ namespace Splendor
             {
                 bool haveRoom = b.currentPlayer.gems.magnitude <= 7;
                 bool avail = b.gems > colors;
+                if (!haveRoom || !avail)
                 for (int i = 0; i < 5; i++)
                 {
                     if (colors[i] < 0 || colors[i] > 1)

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Numerics;
 using System;
+using System.Diagnostics;
 
 namespace Splendor
 {
@@ -121,29 +121,43 @@ namespace Splendor
             return this.ToString().GetHashCode();
         }
 
-        protected void takeRandomTurn()
+        protected bool takeRandomTurn()
         {
+ //           if (Splendor.turn >= 47) Debug.Assert(false);
             List<Move> moves = Move.getAllLegalMoves();
             if (moves.Count > 0)
             {
                 moves[random.Next(moves.Count)].takeAction();
-                return;
+                return true;
             }
-            returnRandomGems();
-            returnRandomGems();
-            moves = Move.TAKE2.getLegalMoves().ConvertAll(x => (Move)x);
-            if (moves.Count > 0)
-            {
-                moves[random.Next(moves.Count)].takeAction();
-                return;
-            }
-            returnRandomGems();
+            Gem priorGems = this.gems;
+            this.gems = Gem.zero;
+
+
             moves = Move.TAKE3.getLegalMoves().ConvertAll(x => (Move)x);
             if (moves.Count > 0)
             {
-                moves[random.Next(moves.Count)].takeAction();
-                return;
+                moves[0].takeAction();
+                this.gems += priorGems;
+                while (this.gems.magnitude > 10)
+                {
+                    returnRandomGems();
+                }
+                return true;
             }
+
+            moves = Move.TAKE2.getLegalMoves().ConvertAll(x => (Move)x);
+            if (moves.Count > 0)
+            {
+                moves[0].takeAction();
+                this.gems += priorGems;
+                while (this.gems.magnitude > 10)
+                {
+                    returnRandomGems();
+                }
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

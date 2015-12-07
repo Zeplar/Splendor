@@ -251,7 +251,6 @@ namespace Splendor
             getCards();
             gameOver = false;
             timer = Stopwatch.StartNew();
-
         }
 
         public Splendor(Player p1, Player p2) : this(p1, p2, new Random().Next())
