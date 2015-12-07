@@ -10,6 +10,12 @@ namespace Splendor.Genetic
     //50-50 vs Greedy with (200,10,20)
     //74-26 vs Greedy with (500,10,40)
     //55-45 vs Minimax(3) with (500,10,40)
+    //45-39 vs Greedy with (100, 20, 40)
+    //15-27 vs Minimax(3) with (100,20,40)
+    //5-5 vs Minimax(3) with (100,20,100)
+        
+
+        //ThreadPool.QueueUserWorkItem()
 
     public class Gene : Player
     {
@@ -25,7 +31,7 @@ namespace Splendor.Genetic
             this.popSize = popsize;
             this.depth = depth;
             this.generations = generations;
-            Console.WriteLine("Gene: " + popsize + " " + depth + " " + generations);
+            //Console.WriteLine("Gene: " + popsize + " " + depth + " " + generations);
         }
 
         public Gene() : this(200, 10, 20) { }
@@ -47,6 +53,7 @@ namespace Splendor.Genetic
                 pop.Crossover();
                 pop.Mutate();
                 pop.Selection();
+                //Console.WriteLine("Best fitness in gen " + i + ": " + pop.BestChromosome.Fitness);
             }
             SplendorGene g = (SplendorGene)pop.BestChromosome;
             Move m = g.moves[0];

@@ -120,7 +120,7 @@ namespace Splendor
         }
 
         //Returns the player with the highest score, with ties broken by least gem mines.
-        static Player getMaxPlayer(out bool tied)
+        public static Player getMaxPlayer(out bool tied)
         {
             tied = false;
             if (players[0].points > players[1].points)

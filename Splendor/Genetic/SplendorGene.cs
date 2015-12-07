@@ -106,13 +106,13 @@ namespace Splendor.Genetic
             for (int i=thisStart; i < length && i < moves.Count; i++)
             {
                 temp.Add(moves[i]);
-                if (moves[i]?.moveType == 2) break;
+ //               if (moves[i]?.moveType == 2) break;
             }
             int j = thisStart;
             for (int i= otherStart; i < length && i < other.moves.Count; i++)
             {
                 moves.Insert(i, other.moves[i]);
-                if (other.moves[i]?.moveType == 2) break;
+ //               if (other.moves[i]?.moveType == 2) break;
             }
             moves = moves.GetRange(0, Math.Min(moves.Count, length));
             other.moves.InsertRange(otherStart, temp);

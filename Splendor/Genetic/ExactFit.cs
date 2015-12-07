@@ -88,7 +88,8 @@ namespace Splendor.Genetic
 
         private int score(Board b)
         {
-            return Math.Max(b.maximizingPlayer.points - b.minimizingPlayer.points, 0);
+            return b.maximizingPlayer.points;
+            //return Math.Max(b.maximizingPlayer.points - b.minimizingPlayer.points, 0);
         }
 
         const string directory = @"..\..\..\..\Splendor\History\";

@@ -10,6 +10,7 @@ namespace Splendor
         static Splendor currentGame;
         static Player p1;
         static Player p2;
+        static int ties = 0;
 
         static object dequeue()
         {
@@ -31,10 +32,14 @@ namespace Splendor
                         Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
                         Console.Write("Repeat " + i);
                         Splendor.replayGame();
+                        bool tied;
+                        Player winner = Splendor.getMaxPlayer(out tied);
+                        if (tied) ties++;
                         recordScore();
                     }
                     watch.Stop();
                     Console.WriteLine("" + watch.Elapsed);
+                    Console.WriteLine("P1 wins  : " + ties);
                     return null;
                 case "debug":
                     debugGame();
