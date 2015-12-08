@@ -1,6 +1,7 @@
 ﻿using AForge.Genetic;
 using System.Diagnostics;
 using System;
+using System.Collections.Generic;
 namespace Splendor.Genetic
 {
     //51-49 vs Greedy with 500,10,20
@@ -45,7 +46,7 @@ namespace Splendor.Genetic
         {
             RecordHistory.record();
 
-            Population pop = new Population(popSize, new SplendorGene(depth), fit, new RankSelection());
+            Population pop = new Population(popSize, new SplendorGene(depth), fit, new testRoulette());
 
             for (int i=0; i < generations; i++)
             {
