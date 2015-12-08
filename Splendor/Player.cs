@@ -41,6 +41,15 @@ namespace Splendor
             gems += x;
         }
 
+        protected Player opponent { get
+            {
+                foreach (Player p in Splendor.players)
+                {
+                    if (p != this) return p;
+                }
+                throw new IndexOutOfRangeException();
+            } }
+
         public int points
         {
             get
