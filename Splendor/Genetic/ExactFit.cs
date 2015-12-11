@@ -86,6 +86,7 @@ namespace Splendor.Genetic
             return score(current);
         }
 
+        //Boost faster scores
         private int score(Board b)
         {
             return b.maximizingPlayer.points;

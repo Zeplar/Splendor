@@ -46,7 +46,7 @@ namespace Splendor.Genetic
         {
             RecordHistory.record();
 
-            Population pop = new Population(popSize, new SplendorGene(depth), fit, new testRoulette());
+            Population pop = new Population(popSize, new SplendorGene(depth), fit, new RankSelection());
 
             for (int i=0; i < generations; i++)
             {

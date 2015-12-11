@@ -82,14 +82,12 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Card.cs" />
-    <Compile Include="Genetic\EliteRankSelection.cs" />
+    <Compile Include="JoshAI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Genetic\IndexFit.cs" />
     <Compile Include="Genetic\Gene.cs" />
-    <Compile Include="Genetic\SplendorPop.cs" />
     <Compile Include="Genetic\ExactFit.cs" />
     <Compile Include="Genetic\SplendorGene.cs" />
-    <Compile Include="Genetic\testRoulette.cs" />
     <Compile Include="Greedy.cs" />
     <Compile Include="Minimax.cs" />
     <Compile Include="Move.cs" />
