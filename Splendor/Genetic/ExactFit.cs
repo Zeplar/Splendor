@@ -16,7 +16,7 @@ namespace Splendor.Genetic
 
         public double Evaluate(IChromosome chromosome)
         {
-            return score((SplendorGene)chromosome);
+            return score((ExactChromosome)chromosome);
 
         }
 
@@ -34,7 +34,7 @@ namespace Splendor.Genetic
         /// <summary>
         /// Generates the next boardstate or returns false if unable
         /// </summary>
-        private Board generate(SplendorGene max, Board b)
+        private Board generate(ExactChromosome max, Board b)
         {
             Debug.Assert(b.turn % 2 == 0);
             int i = b.turn / 2;
@@ -57,7 +57,7 @@ namespace Splendor.Genetic
         /// <summary>
         /// Evaluates a chromosome against Greedy
         /// </summary>
-        private int score(SplendorGene max)
+        private int score(ExactChromosome max)
         {
             Board current = Board.current;
             Board next;
@@ -95,7 +95,7 @@ namespace Splendor.Genetic
 
         const string directory = @"..\..\..\..\Splendor\History\";
 
-        private void recordPop(SplendorGene g, Board b, int fitness)
+        private void recordPop(ExactChromosome g, Board b, int fitness)
         {
             //File.AppendAllText(directory + "fitness" + Splendor.turn + ".csv", g.GetHashCode() + "," + b.turn + "," + fitness + Environment.NewLine);
         }

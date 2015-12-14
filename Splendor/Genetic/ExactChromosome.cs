@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Splendor.Genetic
 {
-    public class SplendorGene : ChromosomeBase
+    public class ExactChromosome : ChromosomeBase
     {
 
         /// <summary>
@@ -33,10 +33,10 @@ namespace Splendor.Genetic
         static int ID = 0;
         private int id;
         /// <summary>
-        /// Initializes a new instance of the <see cref="SplendorGene"/> class.
+        /// Initializes a new instance of the <see cref="ExactChromosome"/> class.
         /// </summary>
         /// <param name="len"></param>Chromosome's length in moves.
-        public SplendorGene(int len)
+        public ExactChromosome(int len)
         {
             this.length = len;
             this.boardState = new uint[len];
@@ -45,7 +45,7 @@ namespace Splendor.Genetic
             ID++;
         }
 
-        protected SplendorGene(SplendorGene source)
+        protected ExactChromosome(ExactChromosome source)
         {
             //copy all properties
             fitness = source.fitness;
@@ -75,17 +75,17 @@ namespace Splendor.Genetic
 
         public override IChromosome Clone()
         {
-            return new SplendorGene(this);
+            return new ExactChromosome(this);
         }
 
         public override IChromosome CreateNew()
         {
-            return new SplendorGene(length);
+            return new ExactChromosome(length);
         }
 
         public override void Crossover(IChromosome pair)
         {
-            SplendorGene other = (SplendorGene)pair;
+            ExactChromosome other = (ExactChromosome)pair;
             for (int i=0; i < length; i++)
             {
                 uint hash = boardState[i];
@@ -100,7 +100,7 @@ namespace Splendor.Genetic
             }
         }
         
-        private void CrossoverFrom(SplendorGene other, int thisStart, int otherStart)
+        private void CrossoverFrom(ExactChromosome other, int thisStart, int otherStart)
         {
             List<Move> temp = new List<Move>();
             for (int i=thisStart; i < length && i < moves.Count; i++)

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Diagnostics;
+using System;
 namespace Splendor
 {
     public static class RecordHistory

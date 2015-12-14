@@ -51,9 +51,12 @@ namespace Splendor
                 case "gene":
                     if (int.TryParse(commands.Peek(), out i))
                     {
-                        return new Genetic.Gene(int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()));
+                        return new Genetic.ExactGene(int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()));
                     }
-                    return new Genetic.Gene();
+                    return new Genetic.ExactGene();
+                case "gsharp":
+                    return new Genetic.GSharpExactGene(20, 10, 100);
+
                 case "random":
                     return new RandomPlayer();
                 case minimax:

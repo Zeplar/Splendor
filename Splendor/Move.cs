@@ -93,6 +93,22 @@ namespace Splendor
             return l;
         }
 
+        public static Move getRandomMove()
+        {
+            return getRandomMove(Board.current);
+        }
+
+        /// <summary>
+        /// Returns a random legal move for the given board, or null if there are none.
+        /// </summary>
+        /// <param name="bd"></param>
+        /// <returns></returns>
+        public static Move getRandomMove(Board bd)
+        {
+            List<Move> m = getAllLegalMoves(bd);
+            return (m.Count > 0) ? m[Splendor.random.Next(m.Count)] : null;
+        }
+
         public class TAKE2 : Move
         {
 
