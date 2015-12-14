@@ -9,11 +9,8 @@ namespace Splendor.Genetic
     {
         public double Evaluate(IChromosome chromosome)
         {
-            Console.CursorLeft = 0;
-            Console.Write("Getting a fitness...");
             GSharpChromosome c = (GSharpChromosome)chromosome;
             GSharpChromosome.gene gene = c.GetGene(c.legalLength - 1).Value as GSharpChromosome.gene;
-            Console.CursorLeft = 0; Console.Write("We got this far....");
             return score(gene.beforeState);
         }
 
@@ -22,10 +19,10 @@ namespace Splendor.Genetic
             Debug.Assert(b != null);
             if (b.gameOver)
             {
-                if (b.maximizingPlayer.points > b.minimizingPlayer.points) return 100;
-                else return 1;
+                if (b.minimizingPlayer.points < b.maximizingPlayer.points) return 100;
+                else return 1/100;
             }
-            return 1 + b.maximizingPlayer.points;
+            return Math.Max(1, 3*b.maximizingPlayer.points + b.maximizingPlayer.field.Count);
         }
     }
 }

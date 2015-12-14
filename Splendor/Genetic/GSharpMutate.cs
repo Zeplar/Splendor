@@ -9,16 +9,16 @@ namespace Splendor.Genetic
 
         protected override void PerformMutate(IChromosome chromosome, float probability)
         {
-            //GSharpChromosome c = (GSharpChromosome)chromosome;
-            //if (Splendor.random.NextDouble() < probability)
-            //{
-            //    int pointOfMutation = Splendor.random.Next(c.legalLength);
-            //    c.legalLength = pointOfMutation;
-            //    for (; pointOfMutation < c.Length; pointOfMutation++)
-            //    {
-            //        c.ReplaceGene(pointOfMutation, c.GenerateGene(pointOfMutation));
-            //    }
-            //}
+            GSharpChromosome c = (GSharpChromosome)chromosome;
+            if (Splendor.random.NextDouble() < probability)
+            {
+                int pointOfMutation = Splendor.random.Next(c.legalLength);
+                c.legalLength = pointOfMutation;
+                for (; pointOfMutation < c.Length; pointOfMutation++)
+                {
+                    c.ReplaceGene(pointOfMutation, c.GenerateGene(pointOfMutation));
+                }
+            }
         }
     }
 }

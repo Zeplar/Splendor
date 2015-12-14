@@ -55,7 +55,7 @@ namespace Splendor
                     }
                     return new Genetic.ExactGene();
                 case "gsharp":
-                    return new Genetic.GSharpExactGene(20, 10, 100);
+                    return new Genetic.GSharpExactGene(30, 20, 500);
 
                 case "random":
                     return new RandomPlayer();

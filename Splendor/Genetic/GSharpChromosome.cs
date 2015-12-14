@@ -48,9 +48,7 @@ namespace Splendor.Genetic
 
         public override IChromosome CreateNew()
         {
-            Console.CursorLeft = 0; Console.Write("Creating a chromosome.");
             var ret = new GSharpChromosome(this.Length);
-            Console.CursorLeft = 0; Console.Write("Created a chromosome of legal length {0}.", ret.legalLength);
             return ret;
         }
 
@@ -63,7 +61,9 @@ namespace Splendor.Genetic
             }
             else
             {
-                var ret = new Gene(new gene((gene)GetGene(geneIndex - 1).Value));
+                var prior = (gene)GetGene(geneIndex - 1).Value;
+                if (prior.beforeState.gameOver) return GetGene(geneIndex - 1);
+                var ret = new Gene(new gene(prior));
                 if (((gene)ret.Value).move != null) legalLength++;
                 return ret;
             }

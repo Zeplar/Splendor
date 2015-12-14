@@ -17,6 +17,7 @@ namespace Splendor.Genetic
             this.size = size;
             this.generations = generations;
             this.length = length;
+            this.name = "GSharp";
         }
 
 
@@ -24,7 +25,7 @@ namespace Splendor.Genetic
         {
             lastBest = (lastBest == null) ? new GSharpChromosome(length) : lastBest;
             var population = new Population(size, size, lastBest);
-            var selection = new RouletteWheelSelection();
+            var selection = new EliteSelection();
             var mutation = new GSharpMutate();
             var fitness = new GSharpFitness();
             var crossover = new GSharpCrossover();
@@ -33,8 +34,8 @@ namespace Splendor.Genetic
             ga.Termination = new GeneticSharp.Domain.Terminations.GenerationNumberTermination(generations);
 
             ga.Start();
-
-            Console.WriteLine("GSharp GA finished with a best fitness of " + ga.BestChromosome.Fitness);
+            lastBest = (GSharpChromosome)ga.BestChromosome;
+            Console.WriteLine("Best Fitness: " + ga.BestChromosome.Fitness + " Real Score: " + this.points);
             ((GSharpChromosome.gene)ga.BestChromosome.GetGene(0).Value).move.takeAction();
         }
 
