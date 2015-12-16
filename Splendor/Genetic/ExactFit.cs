@@ -110,10 +110,10 @@ namespace Splendor.Genetic
             }
 
             Byte[] fieldState = new Byte[2];
-            List<Card> startingCards = Splendor.viewableCards;
+            List<Card> startingCards = Splendor.boardCards;
             for (int i=0; i < 8 && i < startingCards.Count; i++)
             {
-                if (b.viewableCards.Contains(startingCards[i]))
+                if (b.boardCards.Contains(startingCards[i]))
                 {
                     fieldState[0] <<= 1;
                     fieldState[0] += 1;
@@ -121,7 +121,7 @@ namespace Splendor.Genetic
             }
             for (int i = 8; i < 16 && i < startingCards.Count; i++)
             {
-                if (b.viewableCards.Contains(startingCards[i]))
+                if (b.boardCards.Contains(startingCards[i]))
                 {
                     fieldState[1] <<= 1;
                     fieldState[1] += 1;

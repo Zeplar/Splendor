@@ -10,8 +10,17 @@ public class Board
 
         public List<Player> players;
         public Gem gems;
-        public List<Card> viewableCards;
+        public List<Card> boardCards;
         public int turn;
+
+        public List<Card> viewableCards {
+            get {
+                List<Card> ret = new List<Card>();
+                ret.AddRange(boardCards);
+                ret.AddRange(currentPlayer.reserve);
+                return ret;
+            }
+        }
 
         /// <summary>
         /// Creates a deep copy of the given board. Turn indicates the current player as well as the "starting" player.
@@ -23,7 +32,7 @@ public class Board
             {
                 this.players.Add(copyPlayer(p));
             }
-            viewableCards = cards.ToList();
+            boardCards = cards.ToList();
             this.gems = gems;
             this.turn = turn;
         }
@@ -37,7 +46,7 @@ public class Board
             }
             this.gems = Gem.board;
             this.turn = 0;
-            this.viewableCards = Splendor.viewableCards;
+            this.boardCards = Splendor.boardCards;
             
         }
 
@@ -116,7 +125,7 @@ public class Board
         public Board generate(Move m)
         {
             Debug.Assert(m.isLegal(this), "Illegal generating move!");
-            Board b = new Board(players, turn, viewableCards, gems);
+            Board b = new Board(players, turn, boardCards, gems);
             b.gems = gems;
             Player p = b.currentPlayer;
 
@@ -138,19 +147,19 @@ public class Board
                     b.gems += (p.gems - temp);
                     p.gems = temp;
                     p.field.Add(z.card);
-                    b.viewableCards.Remove(z.card);
+                    b.boardCards.Remove(z.card);
                     p.reserve.Remove(z.card);
                     Card noble;
                     if (p.canGetNoble(out noble))
                     {
                         p.field.Add(noble);
-                        b.viewableCards.Remove(noble);
+                        b.boardCards.Remove(noble);
                     }
                     break;
                 case 3:
                     Move.RESERVE w = (Move.RESERVE)m;
                     p.gems[5] += 1;
-                    b.viewableCards.Remove(w.card);
+                    b.boardCards.Remove(w.card);
                     p.reserve.Add(w.card);
                     break;
                 default:
@@ -181,7 +190,7 @@ public class Board
             }
             Board other = (Board)obj;
             bool same = true;
-            same = this.viewableCards.Zip(other.viewableCards, (x, y) => x.id - y.id).Count(x => x != 0) == 0; //Zips the difference of each card ID and counts the number of nonzeroes.
+            same = this.boardCards.Zip(other.boardCards, (x, y) => x.id - y.id).Count(x => x != 0) == 0; //Zips the difference of each card ID and counts the number of nonzeroes.
             same &= this.gems.Equals(other.gems);
             same &= this.currentPlayer.field.Zip(other.currentPlayer.field, (x, y) => x.id - y.id).Count(x => x != 0) == 0;
             same &= this.currentPlayer.gems.Equals(other.currentPlayer.gems);
@@ -193,7 +202,7 @@ public class Board
         public override int GetHashCode()
         {
             int i = 0;
-            foreach (Card c in viewableCards)
+            foreach (Card c in boardCards)
             {
                 i += c.id;
             }

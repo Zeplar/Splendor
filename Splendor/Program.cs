@@ -59,6 +59,8 @@ namespace Splendor
 
                 case "random":
                     return new RandomPlayer();
+                case "buyer":
+                    return new BlindBuyer();
                 case minimax:
                     i = int.Parse(commands.Dequeue());
                     return new Minimax(i);

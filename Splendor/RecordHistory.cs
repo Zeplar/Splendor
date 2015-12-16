@@ -51,7 +51,7 @@ namespace Splendor
                 return;
             }
             file.Write("Board State: ");
-            foreach (Card c in Splendor.viewableCards)
+            foreach (Card c in Splendor.boardCards)
             {
                 file.Write(c + ", ");
             }

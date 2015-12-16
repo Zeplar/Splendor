@@ -282,7 +282,7 @@ namespace Splendor
                 List<BUY> l = new List<BUY>();
                 BUY temp;
 
-                foreach (Card c in b.viewableCards)
+                foreach (Card c in b.boardCards)
                 {
                     temp = new BUY(c);
                     if (temp.isLegal(b))
@@ -308,7 +308,7 @@ namespace Splendor
 
             public override bool isLegal(Board b)
             {
-                bool exists = b.viewableCards.Contains(card) || b.currentPlayer.reserve.Contains(card);
+                bool exists = b.boardCards.Contains(card) || b.currentPlayer.reserve.Contains(card);
                 exists &= (card.deck != Splendor.nobles);
                 bool affordable = (b.currentPlayer.gems + b.currentPlayer.discount - card.cost).deficit <= b.currentPlayer.gems[5];
                 return exists && affordable;
@@ -361,7 +361,7 @@ namespace Splendor
                     return l;
                 }
 
-                foreach (Card c in b.viewableCards)
+                foreach (Card c in b.boardCards)
                 {
                     if (c.id >= 0)
                     {
@@ -385,7 +385,7 @@ namespace Splendor
                 {
                     return false;
                 }
-                bool isAvail = b.viewableCards.Contains(card) && card.deck != Splendor.nobles;
+                bool isAvail = b.boardCards.Contains(card) && card.deck != Splendor.nobles;
                 return isAvail;
             }
 

@@ -95,6 +95,12 @@ namespace Splendor
 
 
 
+        /// <summary>
+        /// Returns a nonnegative gem.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static Gem operator +(Gem a, Gem b)
         {
             Gem ret = new Gem();
@@ -106,6 +112,13 @@ namespace Splendor
             return ret;
         }
 
+
+        /// <summary>
+        /// Standard vector subtraction.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static Gem operator -(Gem a, Gem b)
         {
             Gem ret = new Gem();
@@ -186,6 +199,9 @@ namespace Splendor
             }
         }
 
+        /// <summary>
+        /// Adds up all the negative gems. Returns a nonpositive number.
+        /// </summary>
         public int deficit
         {
             get
@@ -206,7 +222,7 @@ namespace Splendor
         /// <summary>
         /// Returns the gem with all colors nonnegative.
         /// </summary>
-        private Gem positive
+        public Gem positive
         {
             get
             {
@@ -217,6 +233,11 @@ namespace Splendor
                 }
                 return ret;
             }
+        }
+
+        public Gem requiredToBuy(Gem target)
+        {
+            return (target - this).positive;
         }
 
         /// <summary>

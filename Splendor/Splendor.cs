@@ -36,7 +36,7 @@ namespace Splendor
             }
         }
 
-        public static List<Card> viewableCards
+        public static List<Card> boardCards
         {
             get
             {
@@ -240,7 +240,7 @@ namespace Splendor
         //Initialize the cards, players, and recording tool. Then start the game.
         public Splendor(Player p1, Player p2, int randomSeed)
         {
-            Console.WriteLine("Initializing game...");
+            Console.WriteLine("Initializing game with " + p1 + " and " + p2);
             decks = new Deck[3] { new Deck(), new Deck(), new Deck() };
             nobles = new Deck();
             players = new Player[2] { p1, p2 };
@@ -278,10 +278,6 @@ namespace Splendor
         {
             Gem.selected[i] += 1;
             Gem.tryTake();
-        }
-        public void reset()
-        {
-            Gem.Reset();
         }
 
     }

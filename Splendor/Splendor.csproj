@@ -108,6 +108,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlindBuyer.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="Card.cs" />
     <Compile Include="Genetic\GSharpChromosome.cs" />
@@ -115,7 +116,7 @@
     <Compile Include="Genetic\GSharpExactGene.cs" />
     <Compile Include="Genetic\GSharpFitness.cs" />
     <Compile Include="Genetic\GSharpMutate.cs" />
-    <Compile Include="JoshAI.cs" />
+    <Compile Include="BuySeeker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Genetic\IndexFit.cs" />
     <Compile Include="Genetic\ExactGene.cs" />
