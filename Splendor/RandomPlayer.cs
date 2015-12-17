@@ -8,7 +8,9 @@ namespace Splendor
     {
         public override void takeTurn()
         {
-            takeRandomTurn();
+            Move m = Move.getRandomMove();
+            Debug.Assert(m != null, "Random couldn't find a legal move.");
+            m.takeAction();
         }
 
         public override string ToString()

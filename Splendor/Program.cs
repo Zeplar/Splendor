@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using CH.Combinatorics;
 namespace Splendor
 {
     class Program
@@ -10,11 +11,23 @@ namespace Splendor
         static Splendor currentGame;
         static Player p1;
         static Player p2;
+        static int ties = 0;
+        static int p1Wins = 0;
+        static int stalemates = 0;
+
+
+        static void getStats()
+        {
+            bool tied, stalemated;
+            Player winner = Splendor.getMaxPlayer(out tied, out stalemated);
+            if (stalemated) stalemates++;
+            else if (tied) ties++;
+            else if (winner == Splendor.players[0]) p1Wins++;
+            recordScore();
+        }
 
         static object dequeue()
         {
-            int ties = 0;
-            int p1Wins = 0;
             int i;
             switch (commands.Dequeue())
             {
@@ -32,15 +45,12 @@ namespace Splendor
                         Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
                         Console.Write("Repeat " + i);
                         Splendor.replayGame();
-                        bool tied;
-                        Player winner = Splendor.getMaxPlayer(out tied);
-                        if (tied) ties++;
-                        else if (winner == Splendor.players[0]) p1Wins++;
-                        recordScore();
+                        getStats();
+                       
                     }
                     watch.Stop();
                     Console.WriteLine("" + watch.Elapsed);
-                    Console.WriteLine("P1 wins : " + p1Wins + "     Ties: " + ties);
+                    Console.WriteLine("P1 wins : " + p1Wins + "     Ties: " + ties + "      Stalemates: " + stalemates);
                     return null;
                 case "debug":
                     debugGame();
@@ -124,11 +134,6 @@ namespace Splendor
 
         static void Main(string[] args)
         {
-            //recording = true;
-            //new Splendor(new Greedy(), new Genetic.GreedyGene(), 100);
-            //replayGame();
-            //return;
-
             while (true)
             {
 

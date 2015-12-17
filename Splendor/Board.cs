@@ -69,7 +69,7 @@ public class Board
         {
             get
             {
-                return (currentPlayer.turnOrder == 0) && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15);
+                return (Move.getRandomMove(this) == null || (currentPlayer.turnOrder == 0) && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15));
             }
         }
 
@@ -133,8 +133,8 @@ public class Board
             {
                 case 0:
                     Move.TAKE2 x = (Move.TAKE2)m;
-                    b.gems[x.color] -= 2;
-                    p.gems[x.color] += 2;
+                    b.gems -= x.color;
+                    p.gems += x.color;
                     break;
                 case 1:
                     Move.TAKE3 y = (Move.TAKE3)m;

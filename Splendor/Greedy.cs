@@ -7,7 +7,6 @@ namespace Splendor
 
     public class Greedy : Player
     {
-        private int noLegalMoves = 0;
         private int scoringFunction = 0;
 
 
@@ -80,10 +79,9 @@ namespace Splendor
                 RecordHistory.record(this + " took move " + m);
                 return;
             }
-            if (takeRandomTurn()) return;
-            noLegalMoves++;
-            Console.WriteLine(this + " found no legal move and restarted for the " + noLegalMoves + " time.");
-            Splendor.replayGame();
+            m = Move.getRandomMove();
+            Debug.Assert(m != null, "Greedy couldn't even find a random move.");
+            m.takeAction();
         }
     }
 }

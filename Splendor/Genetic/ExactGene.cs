@@ -61,8 +61,8 @@ namespace Splendor.Genetic
             {
                 Console.WriteLine();
                 Console.Write("Gene took a random turn.");
-                takeRandomTurn();
-                return;
+                m = Move.getRandomMove();
+                Debug.Assert(m != null, "ExactGene couldn't even find a random move.");
             }
             m.takeAction();
             Board b = Board.current;

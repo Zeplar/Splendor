@@ -64,6 +64,10 @@
       <HintPath>..\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="CH.Combinatorics, Version=1.0.2.0, Culture=neutral, PublicKeyToken=9ba62c7481cc8055, processorArchitecture=MSIL">
+      <HintPath>..\packages\CH.Combinatorics.1.0.2\lib\net40\CH.Combinatorics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GeneticSharp.Domain, Version=1.0.5801.38650, Culture=neutral, PublicKeyToken=d63d2a65268366c6, processorArchitecture=MSIL">
       <HintPath>..\packages\GeneticSharp.1.0.94\lib\net35\GeneticSharp.Domain.dll</HintPath>
       <Private>True</Private>

@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System;
+using CH.Combinatorics;
+using System.Collections.Generic;
 
 namespace Splendor
 {
@@ -18,14 +20,77 @@ namespace Splendor
             this.gold = g;
         }
 
+        public Gem(string gemArray)
+        {
+            Debug.Assert(gemArray.Length == 5, gemArray);
+            a = gemArray[0];
+            b = gemArray[1];
+            c = gemArray[2];
+            d = gemArray[3];
+            e = gemArray[4];
+            gold = 0;  
+        }
+
+        public Gem(int[] gemArray)
+        {
+            Debug.Assert(gemArray.Length == 5);
+            a = gemArray[0];
+            b = gemArray[1];
+            c = gemArray[2];
+            d = gemArray[3];
+            e = gemArray[4];
+            gold = 0;
+        }
+
+        private static List<Gem> generateFrom(params int[] generator)
+        {
+            Debug.Assert(generator.Length == 5);
+            List<Gem> ret = new List<Gem>();
+            foreach (IEnumerable<int> i in generator.Permute())
+            {
+                ret.Add(new Gem(new List<int>(i).ToArray()));
+            }
+            for (int i = 0; i < ret.Count; i++)
+            {
+                for (int j = ret.Count-1; j > i; j--)
+                {
+                    if (ret[j] == ret[i]) ret.RemoveAt(j);
+                }
+            }
+            return ret;
+        }
+
+        private static List<Gem> AllThrees()
+        {
+            List<Gem> a = generateFrom(1, 1, 1, -1, 0);
+            List<Gem> b = generateFrom(1, 1, 1, -1, -1);
+            List<Gem> c = generateFrom(1, 1, 1, -2, 0);
+            List<Gem> d = generateFrom(1, 1, 1, -2, -1);
+            List<Gem> e = generateFrom(1, 1, 1, -3, 0);
+            List<Gem> f = generateFrom(1, 1, -1, -1, 0);
+            List<Gem> g = generateFrom(1, -1, 0, 0, 0);
+
+            a.AddRange(b); a.AddRange(c); a.AddRange(d); a.AddRange(e); a.AddRange(f); a.AddRange(g);
+            return a;
+        }
+
+        private static List<Gem> AllTwos()
+        {
+            List<Gem> a = generateFrom(2, -1, 0, 0, 0);
+            List<Gem> b = generateFrom(2, -1, -1, 0, 0);
+            List<Gem> c = generateFrom(2, -2, 0, 0, 0);
+            a.AddRange(b); a.AddRange(c);
+            return a;
+    }
+
 
         public static Gem zero = new Gem(0, 0, 0, 0, 0, 0);
         public static Gem board = new Gem(4, 4, 4, 4, 4, 8);
         public static Gem selected = Gem.zero;
-        public static Gem[] AllThree = { new Gem(0, 0, 1, 1, 1, 0), new Gem(0,1,0,1,1,0), new Gem(1,0,0,1,1,0),
-                                         new Gem(0,1,1,1,0,0), new Gem(1,0,1,1,0,0), new Gem(1,1,0,1,0,0),
-                                         new Gem(1,1,1,0,0,0), new Gem(1,0,1,0,1,0), new Gem(1,1,0,0,1,0), new Gem(0,1,0,0,1,0)};
-        public static Gem[] AllTwo = { new Gem(2, 0, 0, 0, 0, 0), new Gem(0, 2, 0, 0, 0, 0), new Gem(0, 0, 2, 0, 0, 0), new Gem(0, 0, 0, 2, 0, 0), new Gem(0, 0, 0, 0, 2, 0) };
+        public static List<Gem> ThreeNetThree = generateFrom(1, 1, 1, 0, 0);
+        public static List<Gem> ExchangeThree = AllThrees();
+        public static List<Gem> TwoNetTwo = generateFrom(2, 0, 0, 0, 0);
+        public static List<Gem> ExchangeTwo = AllTwos();
 
         public static void Reset()
         {
@@ -95,19 +160,14 @@ namespace Splendor
 
 
 
-        /// <summary>
-        /// Returns a nonnegative gem.
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+   
         public static Gem operator +(Gem a, Gem b)
         {
             Gem ret = new Gem();
             int i;
             for (i = 0; i < 6; i++)
             {
-                ret[i] = Math.Max(0, a[i] + b[i]);
+                ret[i] = a[i] + b[i];
             }
             return ret;
         }
@@ -266,32 +326,7 @@ namespace Splendor
             return ret;
         }
 
-        public static void tryTake()
-        {
-            Move x;
-            if (selected.magnitude == 2)
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    if (selected[i] == 2)
-                    {
-                        x = new Move.TAKE2(i);
-                        if (x.isLegal())
-                        {
-                            x.takeAction();
-                        }
-                    }
-                }
-            }
-            else if (selected.magnitude == 3)
-            {
-                x = new Move.TAKE3(selected);
-                if (x.isLegal())
-                {
-                    x.takeAction();
-                }
-            }
-        }
+
         public override bool Equals(object obj)
         {
             if (obj.GetType() != typeof (Gem))

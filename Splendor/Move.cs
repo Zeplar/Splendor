@@ -112,19 +112,33 @@ namespace Splendor
         public class TAKE2 : Move
         {
 
-            public int color;
+            public Gem color;
+            public int index;
 
             public TAKE2(int i)
             {
-                color = i;
+                color = new Gem();
+                color[i] = 2;
+                index = i;
+                moveType = 0;
+            }
+            public TAKE2(Gem g)
+            {
+                color = g;
+                for (int i=0; i < 5; i++)
+                {
+                    if (g[i] > 0)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
                 moveType = 0;
             }
 
             public override string ToString()
             {
-                Gem v = new Gem();
-                v[color] = 2;
-                return v.ToString();
+                return color.ToString();
             }
 
 
@@ -141,9 +155,9 @@ namespace Splendor
             /// </summary>
             public override bool isLegal(Board b)
             {
-
-                bool haveRoom = b.currentPlayer.gems.magnitude <= 8;
-                bool avail = b.gems[color] >= 4;
+                Gem after = b.currentPlayer.gems + color;
+                bool haveRoom = after.magnitude <= 10 && after.deficit == 0;
+                bool avail = b.gems[index] >= 4;
                 return (haveRoom && avail);
             }
 
@@ -152,11 +166,8 @@ namespace Splendor
      //           Console.WriteLine(Splendor.currentPlayer + " chose move " + this.ToString());
                 if (isLegal())
                 {
-                    Gem c = new Gem();
-                    c[color] = 2;
-                    Splendor.currentPlayer.gems += c;
-                    Gem.board -= c;
-                    Splendor.nextTurn();
+                    Splendor.currentPlayer.gems += color;
+                    Gem.board -= color;
                 }
                 else
                 {
@@ -173,13 +184,23 @@ namespace Splendor
             {
                 List<TAKE2> l = new List<TAKE2>();
                 TAKE2 temp;
-                for (int i = 0; i < 5; i++)
+                if (b.currentPlayer.gems.magnitude <= 8)
                 {
-                    temp = new TAKE2(i);
-                    if (temp.isLegal(b))
+                    for (int i = 0; i < 5; i++)
                     {
-                        l.Add(temp);
+                        temp = new TAKE2(i);
+                        if (temp.isLegal(b))
+                        {
+                            l.Add(temp);
+                        }
                     }
+                    return l;
+                }
+
+                foreach (Gem g in Gem.ExchangeTwo)
+                {
+                    temp = new TAKE2(g);
+                    if (temp.isLegal(b)) l.Add(temp);
                 }
                 return l;
             }
@@ -190,17 +211,11 @@ namespace Splendor
 
             public Gem colors;
 
-            public TAKE3(Gem x)
+            private TAKE3(Gem x)
             {
 
                 moveType = 1;
                 colors = x;
-            }
-
-            public TAKE3(int i, int j, int k)
-            {
-                moveType = 1;
-                colors[i] = colors[j] = colors[k] = 1;
             }
 
             public override string ToString()
@@ -216,27 +231,35 @@ namespace Splendor
             public static List<TAKE3> getLegalMoves(Board b)
             {
                 List<TAKE3> l = new List<TAKE3>();
-                foreach (Gem g in Gem.AllThree)
+
+                if (b.currentPlayer.gems.magnitude > 7)
+                {
+                    foreach (Gem g in Gem.ExchangeThree)
+                    {
+                        if (g.magnitude + b.currentPlayer.gems.magnitude <= 10)
+                        {
+                            TAKE3 t = new TAKE3(g);
+                            if (t.isLegal(b)) l.Add(t);
+                        }
+                    }
+                    return l;
+                }
+
+                foreach (Gem g in Gem.ThreeNetThree)
                 {
                     TAKE3 t = new TAKE3(g);
-                    if (t.isLegal(b)) l.Add(new TAKE3(g));
+                    if (t.isLegal(b)) l.Add(t);
                 }
                 return l;
             }
 
             public override bool isLegal(Board b)
             {
-                bool haveRoom = b.currentPlayer.gems.magnitude <= 7;
+                Gem after = b.currentPlayer.gems + this.colors;
                 bool avail = b.gems > colors;
-                if (!haveRoom || !avail)
-                for (int i = 0; i < 5; i++)
-                {
-                    if (colors[i] < 0 || colors[i] > 1)
-                    {
-                        return false;
-                    }
-                }
-                return avail && haveRoom && (colors.magnitude == 3) && (colors[5] == 0);
+                bool haveRoom = after.magnitude <= 10 && after.deficit == 0;
+                if (!haveRoom || !avail) return false;
+                return avail && haveRoom && (colors[5] == 0);
             }
 
             public override bool isLegal()
@@ -250,7 +273,6 @@ namespace Splendor
                 if (isLegal())
                 {
                     Splendor.currentPlayer.takeGems(colors);
-                    Splendor.nextTurn();
                 }
                 else
                 {
@@ -326,7 +348,6 @@ namespace Splendor
                 if (isLegal())
                 {
                     Splendor.currentPlayer.Buy(card);
-                    Splendor.nextTurn();
                 }
                 else
                 {
@@ -396,12 +417,9 @@ namespace Splendor
 
             public override void takeAction()
             {
-          //      Console.WriteLine(Splendor.currentPlayer + " chose move " + this.ToString());
-
                 if (isLegal())
                 {
                     Splendor.currentPlayer.Reserve(card);
-                    Splendor.nextTurn();
                 }
                 else
                 {

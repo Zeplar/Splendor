@@ -27,7 +27,6 @@ namespace Splendor
         public static Stopwatch timer;
         public static bool recording = false;
 
-
         public static Player currentPlayer
         {
             get
@@ -54,41 +53,45 @@ namespace Splendor
         //Signal the current AI to stop, the turn to increment, and the scores to be checked.
         public static void nextTurn()
         {
-            turn += 1;
             Gem.Reset();
-            //gemPiles.updateTexts();
-            if (Board.current.gameOver)
+            RecordHistory.record(currentPlayer + " has " + currentPlayer.points + " points");
+            StringWriter s = new StringWriter();
+            s.Write(currentPlayer + " has field: ");
+            foreach (Card c in currentPlayer.field)
             {
-                endGame();
-                return;
-
+                s.Write(c.id + ", ");
             }
-            takingTurn = false;
+            RecordHistory.record(s.ToString());
+            currentPlayer.takeTurn();
+            turn += 1;
+            gameOver = Board.current.gameOver;
         }
+
         //Stop the AIs and close the recording tool.
         static void endGame()
         {
             gameOver = true;
             bool tied;
-            Player winner = getMaxPlayer(out tied);
+            bool stalemated;
+            Player winner = getMaxPlayer(out tied, out stalemated);
+            if (stalemated)
+            {
+                RecordHistory.record("Stalemate.");
+            }
             Player loser = winner;
             foreach (Player p in players)
             {
                 if (p != winner)
                     loser = p;
             }
-            if (tied)
+            if (tied & !stalemated)
             {
                 RecordHistory.record("Tie game!");
                 RecordHistory.close();
                 return;
             }
-            winner.wins += 1;
-            if (gamesPlayed > 0) { 
-                Console.Title = ("   Game " + gamesPlayed + " / 100     Average Time: " + (timer.ElapsedMilliseconds / gamesPlayed));
-            }
-            RecordHistory.record(winner + " won with " + winner.points);
-            RecordHistory.record(loser + " lost with " + loser.points);
+            if (!tied && !stalemated) winner.wins += 1;
+            RecordHistory.record(winner + ": " + winner.points + " | " + loser + ": " + loser.points);
             RecordHistory.close();
         }
 
@@ -115,14 +118,16 @@ namespace Splendor
             takingTurn = false;
             while (!gameOver)
             {
-                Update();
+                nextTurn();
             }
+            endGame();
         }
 
         //Returns the player with the highest score, with ties broken by least gem mines.
-        public static Player getMaxPlayer(out bool tied)
+        public static Player getMaxPlayer(out bool tied, out bool stalemated)
         {
             tied = false;
+            stalemated = Move.getRandomMove() == null;
             if (players[0].points > players[1].points)
             {
                 return players[0];
@@ -256,28 +261,6 @@ namespace Splendor
         public Splendor(Player p1, Player p2) : this(p1, p2, new Random().Next())
         {
 
-        }
-
-        public static void Update()
-        {
-            if (!gameOver && !takingTurn)
-            {
-                RecordHistory.record(currentPlayer + " has " + currentPlayer.points + " points");
-                StringWriter s = new StringWriter();
-                s.Write(currentPlayer + " has field: ");
-                foreach (Card c in currentPlayer.field)
-                {
-                    s.Write(c.id + ", ");
-                }
-                RecordHistory.record(s.ToString());
-                currentPlayer.takeTurn();
-            }         
-        }
-
-        public void select(int i)
-        {
-            Gem.selected[i] += 1;
-            Gem.tryTake();
         }
 
     }

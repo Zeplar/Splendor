@@ -130,45 +130,6 @@ namespace Splendor
             return this.ToString().GetHashCode();
         }
 
-        protected bool takeRandomTurn()
-        {
- //           if (Splendor.turn >= 47) Debug.Assert(false);
-            List<Move> moves = Move.getAllLegalMoves();
-            if (moves.Count > 0)
-            {
-                moves[random.Next(moves.Count)].takeAction();
-                return true;
-            }
-            Gem priorGems = this.gems;
-            this.gems = Gem.zero;
-
-
-            moves = Move.TAKE3.getLegalMoves().ConvertAll(x => (Move)x);
-            if (moves.Count > 0)
-            {
-                moves[0].takeAction();
-                this.gems += priorGems;
-                while (this.gems.magnitude > 10)
-                {
-                    returnRandomGems();
-                }
-                return true;
-            }
-
-            moves = Move.TAKE2.getLegalMoves().ConvertAll(x => (Move)x);
-            if (moves.Count > 0)
-            {
-                moves[0].takeAction();
-                this.gems += priorGems;
-                while (this.gems.magnitude > 10)
-                {
-                    returnRandomGems();
-                }
-                return true;
-            }
-            return false;
-        }
-
         /// <summary>
         /// Returns a random gem to the pile.
         /// </summary>

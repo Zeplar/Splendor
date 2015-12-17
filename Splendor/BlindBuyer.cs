@@ -16,14 +16,13 @@ namespace Splendor
             {
                 if (!buyOrder.Contains(c)) buyOrder.Add(c);
             }
-            foreach (Card c in buyOrder)
+            while (buyOrder.Count > 0)
             {
-                if (!Splendor.boardCards.Contains(c))
+                if (!Board.current.boardCards.Contains(buyOrder[0])) buyOrder.RemoveAt(0);
+                else
                 {
-                    buyOrder.Remove(c);
-                } else
-                {
-                    new BuySeeker(c).getMove().takeAction();
+                    Move m = new BuySeeker(buyOrder[0]).getMove();
+                    m.takeAction();
                     return;
                 }
             }

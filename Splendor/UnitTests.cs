@@ -23,10 +23,10 @@ namespace Splendor
 
             Debug.Assert(test.takeaway(test2) == new Gem(0, 1, 1, 1, 1, 0));
 
-            foreach (Gem g in Gem.AllThree)
+            foreach (Gem g in Gem.ThreeNetThree)
             {
                 int i = 0;
-                foreach (Gem k in Gem.AllThree)
+                foreach (Gem k in Gem.ThreeNetThree)
                 {
                     if (g == k) i++;
                     Debug.Assert(i < 2, "AllThree contained duplicates!");
@@ -48,7 +48,7 @@ namespace Splendor
             {
                 g += p.gems;
             }
-            Debug.Assert(g == new Gem(4, 4, 4, 4, 4, 8));
+            Debug.Assert(g == new Gem(4, 4, 4, 4, 4, 8), "Gems didn't add up.");
         }
 
     }
