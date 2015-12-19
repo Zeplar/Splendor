@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System;
 using System.IO;
 
-namespace Splendor.Genetic
+namespace Splendor.Exact
 {
     public class ExactFit : IFitnessFunction
     {

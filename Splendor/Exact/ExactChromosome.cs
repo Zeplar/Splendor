@@ -4,7 +4,7 @@ using AForge.Genetic;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Splendor.Genetic
+namespace Splendor.Exact
 {
     public class ExactChromosome : ChromosomeBase
     {

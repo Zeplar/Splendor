@@ -39,20 +39,13 @@ namespace Splendor
             }
         }
 
-
-        
-        //!!! look for a better shuffling algorithm
         public void shuffle()
         {
-            int i = 0;
-            for (; i < cards.Count; i++)
-            {
-                int j = Splendor.random.Next(i, cards.Count);
-                Card temp = cards[i];
-                cards[i] = cards[j];
-                cards[j] = temp;
-            }
+            this.cards.shuffle();
         }
+        
+        
+        
 
     }
 

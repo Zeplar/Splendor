@@ -114,18 +114,21 @@
   <ItemGroup>
     <Compile Include="BlindBuyer.cs" />
     <Compile Include="Board.cs" />
+    <Compile Include="BuyOrder\Chromosome.cs" />
     <Compile Include="Card.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Genetic\GSharpChromosome.cs" />
     <Compile Include="Genetic\GSharpCrossover.cs" />
     <Compile Include="Genetic\GSharpExactGene.cs" />
     <Compile Include="Genetic\GSharpFitness.cs" />
     <Compile Include="Genetic\GSharpMutate.cs" />
     <Compile Include="BuySeeker.cs" />
+    <Compile Include="Human.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Genetic\IndexFit.cs" />
-    <Compile Include="Genetic\ExactGene.cs" />
-    <Compile Include="Genetic\ExactFit.cs" />
-    <Compile Include="Genetic\ExactChromosome.cs" />
+    <Compile Include="Exact\ExactGene.cs" />
+    <Compile Include="Exact\ExactFit.cs" />
+    <Compile Include="Exact\ExactChromosome.cs" />
     <Compile Include="Greedy.cs" />
     <Compile Include="Minimax.cs" />
     <Compile Include="Move.cs" />

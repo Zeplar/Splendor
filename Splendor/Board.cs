@@ -189,13 +189,12 @@ public class Board
                 return false;
             }
             Board other = (Board)obj;
-            bool same = true;
-            same = this.boardCards.Zip(other.boardCards, (x, y) => x.id - y.id).Count(x => x != 0) == 0; //Zips the difference of each card ID and counts the number of nonzeroes.
-            same &= this.gems.Equals(other.gems);
-            same &= this.currentPlayer.field.Zip(other.currentPlayer.field, (x, y) => x.id - y.id).Count(x => x != 0) == 0;
+            bool same = this.boardCards.addUp() == other.boardCards.addUp();
+            same &= this.turn == other.turn;
+            same &= this.gems == other.gems;
+            same &= this.currentPlayer.field.addUp() == other.currentPlayer.field.addUp();
             same &= this.currentPlayer.gems.Equals(other.currentPlayer.gems);
-            same &= this.notCurrentPlayer.field.Zip(other.notCurrentPlayer.field, (x, y) => x.id - y.id).Count(x => x != 0) == 0;
-            same &= this.notCurrentPlayer.gems.Equals(other.notCurrentPlayer.gems);
+            same &= this.notCurrentPlayer.field.addUp() == this.notCurrentPlayer.field.addUp();
             return same;
         }
 
@@ -206,8 +205,7 @@ public class Board
             {
                 i += c.id;
             }
-            i *= gems.magnitude;
-            i *= currentPlayer.GetHashCode() + notCurrentPlayer.GetHashCode();
+            i *= gems.GetHashCode();
             return i;
         }
 

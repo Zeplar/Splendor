@@ -5,11 +5,6 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Splendor", "Splendor\Splendor.csproj", "{C1FAE8CD-7E98-4F9E-8D28-5416A9E2BAE3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{59F8B6F8-56D1-44B9-9AB4-44089130BAD4}"
-	ProjectSection(SolutionItems) = preProject
-		Permutation.cs = Permutation.cs
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

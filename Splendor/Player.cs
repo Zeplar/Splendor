@@ -16,9 +16,20 @@ namespace Splendor
         public int wins;
         public string name;
 
-        protected Random random {get {return Splendor.random;}}
+        protected Random random { get { return Splendor.random; } }
 
         public virtual void takeTurn() { }
+
+        private static Dictionary<string, Func<Player>> PlayerFactory = new Dictionary<string, Func<Player>>();
+        public static Player CreateNew(string args)
+        {
+            return PlayerFactory[args]();
+        }
+        protected static bool Register(string name, Func<Player> f)
+        {
+            PlayerFactory.Add(name, f);
+            return true;
+        }
 
         public string detailedInfo
         {
@@ -34,6 +45,8 @@ namespace Splendor
             reserve = new List<Card>();
             field = new List<Card>();
         }
+        static bool reg1 = Register("Player", () => new Player());
+        
 
         public void takeGems(Gem x)
         {

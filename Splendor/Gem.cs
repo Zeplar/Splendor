@@ -342,7 +342,7 @@ namespace Splendor
             int i = 0;
             for (int j=0; j < 6; j++)
             {
-                i += (int)Math.Pow(10, j) * this[j];
+                i += (1<< (2*j)) * this[j];
             }
             return i;
         }

@@ -21,9 +21,9 @@ namespace Splendor
                 if (!Board.current.boardCards.Contains(buyOrder[0])) buyOrder.RemoveAt(0);
                 else
                 {
-                    Console.WriteLine("BlindBuyer aiming for " + buyOrder[0] + " with buying power " + (this.gems + this.discount));
+                    //Console.WriteLine("BlindBuyer aiming for " + buyOrder[0] + " with buying power " + (this.gems + this.discount));
                     Move m = new BuySeeker(buyOrder[0]).getMove();
-                    Console.WriteLine("BlindBuyer taking move " + m);
+                    //Console.WriteLine("BlindBuyer taking move " + m);
                     m.takeAction();
                     return;
                 }

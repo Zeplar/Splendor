@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System;
 using System.Collections.Generic;
-namespace Splendor.Genetic
+namespace Splendor.Exact
 {
     //51-49 vs Greedy with 500,10,20
     //56-44 {54-46} vs Greedy with 500,10,20 and new mutate

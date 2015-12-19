@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using CH.Combinatorics;
 namespace Splendor
 {
     class Program
@@ -61,9 +60,9 @@ namespace Splendor
                 case "gene":
                     if (int.TryParse(commands.Peek(), out i))
                     {
-                        return new Genetic.ExactGene(int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()));
+                        return new Exact.ExactGene(int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()));
                     }
-                    return new Genetic.ExactGene();
+                    return new Exact.ExactGene();
                 case "gsharp":
                     return new Genetic.GSharpExactGene(30, 20, 500);
 
@@ -80,6 +79,8 @@ namespace Splendor
                 case "record":
                     Splendor.recording = !Splendor.recording;
                     return null;
+                case "human":
+                    return new Human();
                 case "runseed":
                     //    i = int.Parse(commands.Dequeue());
                     p1 = dequeue() as Player;
@@ -134,6 +135,7 @@ namespace Splendor
 
         static void Main(string[] args)
         {
+
             while (true)
             {
 
