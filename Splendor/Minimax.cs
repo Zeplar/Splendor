@@ -1,126 +1,81 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Splendor
 {
 
     public class Minimax : Player
     {
-        static int counter = 0;
         public int treeDepth;
-        public Minimax(int i)
+        public Minimax(int i, Func<Board,int> f)
         {
             gems = Gem.zero;
             reserve = new List<Card>();
             field = new List<Card>();
             treeDepth = i;
-
+            scoringFunction = f;
+            name = "Minimax " + treeDepth;
         }
 
-        class simMove
-        {
+        private Func<Board, int> scoringFunction;
 
-            public Move move;
-            public int score;
-            public simMove(Move m, int s)
-            {
-                move = m;
-                score = s;
-            }
-        }
-
-        simMove generateMove(Board b, int depth, bool maxPlayer)
+        public static Move minimax(Board startingPoint, int depth, Func<Board,int> scoringFunction, out int score)
         {
             Move bestMove = null;
-            List<Move> legalMoves = b.legalMoves;
-            legalMoves.RemoveAll(x => x.moveType == 3);
-            int bestScore, val;
+            List<Move> legalMoves = startingPoint.legalMoves;
+            int[] bestScore = new int[legalMoves.Count];
+            //int val;
+            Func<int, int, bool> comp = (x,y) => (x > y);
 
-            if (depth == treeDepth || legalMoves.Count == 0 || b.gameOver)
+            if (depth == 0 || legalMoves.Count == 0 || startingPoint.gameOver)
             {
-                return new simMove(null, score(b));
+                score = scoringFunction(startingPoint);
+                return null;
             }
-            if (maxPlayer)
-            {
-                bestScore = -100;
-                foreach (Move m in legalMoves)
-                {
-                    val = generateMove(b.generate(m), depth + 1, false).score;
-                    if (val > bestScore)
-                    {
-                        bestScore = val;
-                        bestMove = m;
-                    }
-                }
-                return new simMove(bestMove, bestScore);
-            }
-            else
-            {
-                bestScore = 100;
-                foreach (Move m in legalMoves)
-                {
-                    val = generateMove(b.generate(m), depth + 1, true).score;
-                    if (val < bestScore)
-                    {
-                        bestScore = val;
-                        bestMove = m;
-                    }
-                }
-                return new simMove(bestMove, bestScore);
-            }
-        }
 
-        /// <summary>
-        /// Scores the board from the perspective of the generating player	
-        /// </summary>
-        private int score(Board b)
-        {
-            Player self = b.maximizingPlayer;
-            Player opp = b.minimizingPlayer;
-            Debug.Assert(self != opp);
-            int points = self.points - opp.points;
-            if (b.gameOver)
+            if (startingPoint.turn % 2 == 1)
             {
-                if (points < 0)
+                for(int i=0; i < bestScore.Length; i++) bestScore[i] = int.MaxValue;
+                comp = (x, y) => (x < y);
+            }
+            else for (int i = 0; i < bestScore.Length; i++) bestScore[i] = int.MinValue;
+
+
+            Parallel.For(0, legalMoves.Count, (x) =>
+           {
+               Move m = legalMoves[x];
+               minimax(startingPoint.generate(m), depth - 1, scoringFunction, out bestScore[x]);
+                //if (comp(val, bestScore))
                 {
-                    return -1000;
+                    //bestScore = val;
+                    //bestMove = m;
                 }
-                if (points > 0)
+           });
+            bestMove = legalMoves[0];
+            for (int i=0; i < bestScore.Length; i++)
+            {
+                if (comp(bestScore[i], bestScore[0]))
                 {
-                    return 1000;
-                }
-                if (points == 0)
-                {
-                    return 1000 * (opp.field.Count - self.field.Count);
+                    bestScore[0] = bestScore[i];
+                    bestMove = legalMoves[i];
                 }
             }
-            return points;
+            score = bestScore[0];
+            return bestMove;
         }
 
 
         public override void takeTurn()
         {
             Board b = Board.current;
-            simMove m = generateMove(b, 0, true);
-            if (m.move != null)
-            {
-                RecordHistory.record(this + " made move " + m.move.ToString());
-                m.move.takeAction();
+            int x;
+            Move k = minimax(b, treeDepth, scoringFunction, out x);
+            RecordHistory.record(this + " made move " + k?.ToString());
+            k.takeAction();
 
-            }
-            else if (Move.getAllLegalMoves().Count == 0)
-            {
-                counter++;
-                Console.WriteLine("No legal moves for the " + counter + " time");
-                Splendor.replayGame();
-            }
-            else
-            {
-                RecordHistory.record(this + " made random move " + Move.getAllLegalMoves()[0].ToString());
-                Move.getAllLegalMoves()[0].takeAction();
-                
-            }
         }
 
     }

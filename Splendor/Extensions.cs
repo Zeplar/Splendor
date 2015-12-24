@@ -31,7 +31,7 @@ namespace Splendor
             StringBuilder sb = new StringBuilder();
             foreach (Card c in list)
             {
-                sb.Append(c.ToString() + " ,");
+                sb.Append(c.ToString() + ", ");
             }
             return sb.ToString();
         }

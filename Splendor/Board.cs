@@ -69,7 +69,7 @@ public class Board
         {
             get
             {
-                return (Move.getRandomMove(this) == null || (currentPlayer.turnOrder == 0) && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15));
+                return Move.getAllLegalMoves(this).Count == 0 || (currentPlayer.turnOrder == 0 && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15));
             }
         }
 

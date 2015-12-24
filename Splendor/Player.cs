@@ -20,15 +20,24 @@ namespace Splendor
 
         public virtual void takeTurn() { }
 
-        private static Dictionary<string, Func<Player>> PlayerFactory = new Dictionary<string, Func<Player>>();
-        public static Player CreateNew(string args)
+        public override string ToString()
         {
-            return PlayerFactory[args]();
+            return name;
         }
-        protected static bool Register(string name, Func<Player> f)
+
+        protected void showState()
         {
-            PlayerFactory.Add(name, f);
-            return true;
+            Console.Clear();
+            Console.WriteLine("Board:");
+            Console.WriteLine(Gem.board + "    Nobles: " + Splendor.nobles.viewableCards.String());
+            Console.WriteLine("Tier1: " + Splendor.decks[2].viewableCards.String());
+            Console.WriteLine("Tier2: " + Splendor.decks[1].viewableCards.String());
+            Console.WriteLine("Tier3: " + Splendor.decks[0].viewableCards.String());
+            Console.WriteLine();
+            Console.WriteLine("Opponent: " + opponent.gems + "|Field: " + opponent.field.String());
+            Console.WriteLine();
+            Console.WriteLine("Self: " + gems + "|Field: " + field.String() + "   |Reserve: " + reserve.String());
+
         }
 
         public string detailedInfo
@@ -44,8 +53,8 @@ namespace Splendor
             gems = new Gem();
             reserve = new List<Card>();
             field = new List<Card>();
+            name = "BasePlayer";
         }
-        static bool reg1 = Register("Player", () => new Player());
         
 
         public void takeGems(Gem x)

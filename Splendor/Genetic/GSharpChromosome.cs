@@ -29,7 +29,7 @@ namespace Splendor.Genetic
                 }
                 else
                 {
-                    beforeState = prior.beforeState.generate(Greedy.getGreedyMove(prior.beforeState));
+                    beforeState = prior.beforeState.generate(Greedy.getGreedyMove(prior.beforeState, ScoringMethods.DeltaPoints));
                     move = Move.getRandomMove(beforeState);
                 }
             }

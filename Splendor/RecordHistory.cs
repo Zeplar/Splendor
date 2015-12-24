@@ -12,6 +12,8 @@ namespace Splendor
         static StreamWriter file;
         static bool init;
 
+
+
         public static void initialize()
         {
             if (!Splendor.recording)
@@ -107,33 +109,6 @@ namespace Splendor
         public static void recordWins(string winner, string loser, int winscore, int losescore)
         {
             File.AppendAllText(directory + name + suffix, winner + "," + winscore + "," + loser + "," + losescore + "\n");
-        }
-
-        public static void recordMinimaxTree(int[][] history)
-        {
-            using (FileStream fs = new FileStream(directory + "Tree" + ".txt", FileMode.Append, FileAccess.Write))
-            using (StreamWriter sw = new StreamWriter(fs))
-            { 
-
-                for (int i = 0; i < history.Length; i++)
-                {
-                    for (int j = 0; j < history[i].Length; j++)
-                    {
-                        while (j < history[i].Length && history[i][j] == -200)
-                        {
-                            sw.Write(" ");
-                            j++;
-                        }
-                        if (j < history[i].Length)
-                        {
-                            sw.Write(history[i][j] + "-");
-                        }
-                    }
-                    sw.WriteLine();
-                }
-                sw.WriteLine();
-                sw.WriteLine();
-            }
         }
 
     }

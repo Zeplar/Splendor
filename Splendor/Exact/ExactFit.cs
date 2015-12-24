@@ -71,7 +71,7 @@ namespace Splendor.Exact
                 }
                 current = next;
                 //Do the "Generate-next-move" loop for greedy
-                nextMove = Greedy.getGreedyMove(current);
+                nextMove = Greedy.getGreedyMove(current, ScoringMethods.DeltaPoints);
                 if (nextMove != null)
                 {
                     current = current.generate(nextMove);

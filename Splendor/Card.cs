@@ -16,6 +16,7 @@ namespace Splendor
         public Deck deck;
         public int id;
         public static Card[] allCardsByID = new Card[90]; //currently not including Nobles
+        private static string[] colors = { "W", "U", "B", "R", "G" };
 
         public Card(int id)
         {
@@ -29,8 +30,7 @@ namespace Splendor
 
         public override string ToString()
         {
-            string name = "C" + id.ToString() + ": " + cost.ToString() + ":" + color.ToString();
-            return name;
+            return (deck == Splendor.nobles) ? "N" + (-id) + ":" + cost + points : "C" + id + cost + points + "(" + colors[color] + ")";
         }
 
         public static bool operator ==(Card a, Card b)

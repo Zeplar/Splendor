@@ -6,7 +6,7 @@ using System;
 namespace Splendor
 {
 
-    public class Splendor
+    public static class Splendor
     {
 
         public static Deck[] decks;
@@ -21,9 +21,7 @@ namespace Splendor
         public static Card selected;
         public static bool gameOver = true;
         public static bool takingTurn;
-        static int gamesPlayed = 0;
         public static Random random;
-        public static Splendor self;
         public static Stopwatch timer;
         public static bool recording = false;
 
@@ -55,14 +53,9 @@ namespace Splendor
         {
             Gem.Reset();
             RecordHistory.record(currentPlayer + " has " + currentPlayer.points + " points");
-            StringWriter s = new StringWriter();
-            s.Write(currentPlayer + " has field: ");
-            foreach (Card c in currentPlayer.field)
-            {
-                s.Write(c.id + ", ");
-            }
-            RecordHistory.record(s.ToString());
+            RecordHistory.record((currentPlayer + " has field: " + currentPlayer.field.String()));
             currentPlayer.takeTurn();
+            RecordHistory.record("Random: " + random.Next());
             turn += 1;
             gameOver = Board.current.gameOver;
         }
@@ -110,8 +103,8 @@ namespace Splendor
                 p.turnOrder = (p.turnOrder + 1) % 2;
             }
             players = new Player[2] { players[1], players[0] };
-            Splendor.turn = 0;
-            self.getCards();
+            turn = 0;
+            getCards();
             Gem.board = new Gem(4, 4, 4, 4, 4, 8);
             RecordHistory.initialize ();
             gameOver = false;
@@ -151,7 +144,7 @@ namespace Splendor
 
 
         //Load the cards from the .csv file
-        void getCards()
+        static void getCards()
         {
             StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\splendor_cards.csv"));
             file.ReadLine();
@@ -217,7 +210,7 @@ namespace Splendor
 
         }
 
-        void populate(Deck nobles)
+        static void populate(Deck nobles)
         {
             StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\splendor_nobles.csv"));
             file.ReadLine();
@@ -243,14 +236,13 @@ namespace Splendor
         }
 
         //Initialize the cards, players, and recording tool. Then start the game.
-        public Splendor(Player p1, Player p2, int randomSeed)
+        public static void Start(Player p1, Player p2, int randomSeed)
         {
             Console.WriteLine("Initializing game with " + p1 + " and " + p2);
             decks = new Deck[3] { new Deck(), new Deck(), new Deck() };
             nobles = new Deck();
             players = new Player[2] { p1, p2 };
             random = new Random(randomSeed);
-            self = this;
             p1.turnOrder = 0;
             p2.turnOrder = 1;
             getCards();
@@ -258,9 +250,9 @@ namespace Splendor
             timer = Stopwatch.StartNew();
         }
 
-        public Splendor(Player p1, Player p2) : this(p1, p2, new Random().Next())
+        public static void Start(Player p1, Player p2)
         {
-
+            Start(p1, p2, new Random().Next());
         }
 
     }

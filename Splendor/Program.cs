@@ -6,14 +6,10 @@ namespace Splendor
     class Program
     {
         static Queue<string> commands = new Queue<string>();
-        const string run = "run", repeat = "repeat", greedy = "greedy", minimax = "minimax";
-        static Splendor currentGame;
-        static Player p1;
-        static Player p2;
         static int ties = 0;
         static int p1Wins = 0;
         static int stalemates = 0;
-
+        static List<Player> PLAYERS;
 
         static void getStats()
         {
@@ -30,12 +26,7 @@ namespace Splendor
             int i;
             switch (commands.Dequeue())
             {
-                case run:
-                    p1 = dequeue() as Player;
-                    p2 = dequeue() as Player;
-                    currentGame = new Splendor(p1, p2);
-                    return null;
-                case repeat:
+                case "repeat":
                     Stopwatch watch = new Stopwatch();
                     watch.Start();
                     i = int.Parse(commands.Dequeue());
@@ -55,37 +46,15 @@ namespace Splendor
                     debugGame();
                     recordScore();
                     return null;
-                case greedy:
-                    return new Greedy(commands.Dequeue());
-                case "gene":
-                    if (int.TryParse(commands.Peek(), out i))
-                    {
-                        return new Exact.ExactGene(int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()), int.Parse(commands.Dequeue()));
-                    }
-                    return new Exact.ExactGene();
-                case "gsharp":
-                    return new Genetic.GSharpExactGene(30, 20, 500);
 
-                case "random":
-                    return new RandomPlayer();
-                case "buyer":
-                    return new BlindBuyer();
-                case minimax:
-                    i = int.Parse(commands.Dequeue());
-                    return new Minimax(i);
                 case "clear":
                     Console.Clear();
                     return null;
                 case "record":
                     Splendor.recording = !Splendor.recording;
                     return null;
-                case "human":
-                    return new Human();
                 case "runseed":
-                    //    i = int.Parse(commands.Dequeue());
-                    p1 = dequeue() as Player;
-                    p2 = dequeue() as Player;
-                    currentGame = new Splendor(p1, p2, 3);
+                    Splendor.Start(PLAYERS[0], PLAYERS[1], 100);
                     return null;
                 default:
                     return null;
@@ -97,7 +66,7 @@ namespace Splendor
             int i = Console.CursorTop;
             Console.SetCursorPosition(0, 8);
             Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
-            Console.Write(p1 + ": " + p1.wins + " --- " + p2 + ": " + p2.wins);
+            Console.Write(PLAYERS[0] + ": " + PLAYERS[0].wins + " --- " + PLAYERS[1] + ": " + PLAYERS[1].wins);
             Console.SetCursorPosition(0, i);
 
         }
@@ -114,19 +83,23 @@ namespace Splendor
             Greedy g1 = new Greedy();
             Greedy g2 = new Greedy();
             Greedy g3 = new Greedy();
-            Minimax m = new Minimax(1);
+            Minimax m = new Minimax(1, ScoringMethods.combine(ScoringMethods.DeltaPoints, ScoringMethods.WinLoss));
             int[] winArray = new int[tries];
 
-            Splendor greedy = new Splendor(g1, g2, 100);
+           Splendor.Start(g1, g2, 100);
             for (int i = 0; i < tries; i++)
             {
                 Splendor.replayGame();
+                Console.Write("" + i);
+                Console.CursorLeft = 0;
                 winArray[i] = g1.wins;
             }
-            Splendor mini = new Splendor(g3, m, 100);
+            Splendor.Start(g3, m, 100);
             for (int i = 0; i < tries; i++)
             {
                 Splendor.replayGame();
+                Console.Write("" + i);
+                Console.CursorLeft = 0;
                 Debug.Assert(winArray[i] == g3.wins, "Games diverged at i= " + i);
             }
 
@@ -135,13 +108,29 @@ namespace Splendor
 
         static void Main(string[] args)
         {
-
+            List<Player> players = new List<Player>();
+            PlayerFactory.Load();
+            Console.WriteLine("Available players: " + PlayerFactory.listAll);
             while (true)
             {
-
-                foreach (string s in Console.ReadLine().Replace('(', ' ').Replace(')', ' ').Replace(',', ' ').Split())
+                string[] s = Console.ReadLine().Replace('(', ' ').Replace(')', ' ').Replace(',', ' ').Split();
+                if (PlayerFactory.Exists(s[0]))
                 {
-                    commands.Enqueue(s);
+                    var parameters = new List<string>(s);
+                    parameters.RemoveAt(0);
+                    players.Add(PlayerFactory.CreateNew(s[0], parameters));
+                    if (players.Count == 2)
+                    {
+                        Console.WriteLine("Initializing new game manager");
+                        Splendor.Start(players[0], players[1]);
+                        PLAYERS = players.GetRange(0, 2);
+                        players.Clear();
+                    }
+                }
+                else
+                {
+                    foreach (string x in s)
+                    commands.Enqueue(x);
                 }
                 if (commands.Count > 0)
                 {

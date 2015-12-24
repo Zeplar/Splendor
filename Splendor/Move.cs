@@ -27,44 +27,7 @@ namespace Splendor
         public abstract bool isLegal();
         public abstract bool isLegal(Board b);
 
-        public virtual void takeAction()
-        {
-            switch (moveType)
-            {
-                case 0:
-                    ((TAKE2)this).takeAction();
-                    return;
-                case 1:
-                    ((TAKE3)this).takeAction();
-                    return;
-                case 2:
-                    ((BUY)this).takeAction();
-                    return;
-                case 3:
-                    ((RESERVE)this).takeAction();
-                    return;
-                default:
-                   Debug.Fail("Illegal Move");
-                    return;
-            }
-        }
-
-        public override string ToString()
-        {
-            switch (moveType)
-            {
-                case 0:
-                    return ((TAKE2)this).ToString();
-                case 1:
-                    return ((TAKE3)this).ToString();
-                case 2:
-                    return ((BUY)this).ToString();
-                case 3:
-                    return ((RESERVE)this).ToString();
-                default:
-                    return "Illegal Move";
-            }
-        }
+        public abstract void takeAction();
 
         public static List<Move> getAllLegalMoves()
         {
@@ -204,6 +167,17 @@ namespace Splendor
                 }
                 return l;
             }
+
+            public override bool Equals(object obj)
+            {
+                if (obj.GetType() != typeof(Move.TAKE2)) return false;
+                return ((Move.TAKE2)obj).color == color;
+            }
+
+            public override int GetHashCode()
+            {
+                return color.GetHashCode();
+            }
         }
 
         public class TAKE3 : Move
@@ -280,6 +254,17 @@ namespace Splendor
                 }
             }
 
+            public override bool Equals(object obj)
+            {
+                if (obj.GetType() != typeof(Move.TAKE3)) return false;
+                return ((Move.TAKE3)obj).colors == colors;
+            }
+
+            public override int GetHashCode()
+            {
+                return colors.GetHashCode();
+            }
+
         }
 
         public class BUY : Move
@@ -354,6 +339,17 @@ namespace Splendor
                    Debug.Fail("Illegal move! " + this);
                 }
             }
+
+            public override bool Equals(object obj)
+            {
+                if (obj.GetType() != typeof(Move.BUY)) return false;
+                return ((Move.BUY)obj).card == card;
+            }
+
+            public override int GetHashCode()
+            {
+                return card.GetHashCode();
+            }
         }
 
         public class RESERVE : Move
@@ -426,6 +422,18 @@ namespace Splendor
                     Debug.Fail("Illegal move! " + this);
                 }
             }
+
+            public override bool Equals(object obj)
+            {
+                if (obj.GetType() != typeof(Move.RESERVE)) return false;
+                return ((Move.RESERVE)obj).card == card;
+            }
+
+            public override int GetHashCode()
+            {
+                return card.GetHashCode();
+            }
+
         }
 
     }
