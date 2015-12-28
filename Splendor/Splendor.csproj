@@ -52,18 +52,6 @@
     <StartupObject>Splendor.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
-      <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="AForge.Genetic, Version=2.2.4.0, Culture=neutral, PublicKeyToken=4336634eeb41b69b, processorArchitecture=MSIL">
-      <HintPath>..\packages\AForge.Genetic.2.2.5\lib\AForge.Genetic.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="AForge.Math, Version=2.2.5.0, Culture=neutral, PublicKeyToken=abba2e25397ee8c9, processorArchitecture=MSIL">
-      <HintPath>..\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="CH.Combinatorics, Version=1.0.2.0, Culture=neutral, PublicKeyToken=9ba62c7481cc8055, processorArchitecture=MSIL">
       <HintPath>..\packages\CH.Combinatorics.1.0.2\lib\net40\CH.Combinatorics.dll</HintPath>
       <Private>True</Private>
@@ -115,18 +103,26 @@
     <Compile Include="BlindBuyer.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="BuyOrder\Chromosome.cs" />
+    <Compile Include="BuyOrder\Crossover.cs" />
+    <Compile Include="BuyOrder\Fitness.cs" />
+    <Compile Include="BuyOrder\Mutate.cs" />
+    <Compile Include="BuyOrder\SelfishGene.cs" />
     <Compile Include="Card.cs" />
+    <Compile Include="Console.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Genetic\GSharpChromosome.cs" />
-    <Compile Include="Genetic\GSharpCrossover.cs" />
-    <Compile Include="Genetic\GSharpExactGene.cs" />
-    <Compile Include="Genetic\GSharpFitness.cs" />
-    <Compile Include="Genetic\GSharpMutate.cs" />
+    <Compile Include="GSharp\GSharpChromosome.cs" />
+    <Compile Include="GSharp\GSharpCrossover.cs" />
+    <Compile Include="GSharp\GSharpExactGene.cs" />
+    <Compile Include="GSharp\GSharpFitness.cs" />
+    <Compile Include="GSharp\GSharpMutate.cs" />
     <Compile Include="BuySeeker.cs" />
     <Compile Include="Human.cs" />
+    <Compile Include="OldBuyOrder\BuyFit.cs" />
+    <Compile Include="OldBuyOrder\Chromosome.cs" />
+    <Compile Include="OldBuyOrder\SelfishGene.cs" />
     <Compile Include="PlayerFactory.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Genetic\IndexFit.cs" />
+    <Compile Include="GSharp\IndexFit.cs" />
     <Compile Include="Exact\ExactGene.cs" />
     <Compile Include="Exact\ExactFit.cs" />
     <Compile Include="Exact\ExactChromosome.cs" />
@@ -146,6 +142,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Desktop\AForge\Genetic\Genetic.csproj">
+      <Project>{2efaa327-1789-4438-b9f5-e83acae12db2}</Project>
+      <Name>Genetic</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

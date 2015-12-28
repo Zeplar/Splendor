@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GeneticSharp.Domain.Chromosomes;
 using System.Diagnostics;
 
-namespace Splendor.Genetic
+namespace Splendor.GSharp
 {
     class GSharpChromosome : ChromosomeBase
     {

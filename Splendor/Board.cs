@@ -13,6 +13,10 @@ public class Board
         public List<Card> boardCards;
         public int turn;
 
+        private List<Move> moves;
+        private bool gameOverValue;
+        private bool GameOverFlag = false;
+
         public List<Card> viewableCards {
             get {
                 List<Card> ret = new List<Card>();
@@ -35,6 +39,7 @@ public class Board
             boardCards = cards.ToList();
             this.gems = gems;
             this.turn = turn;
+
         }
 
         private Board()
@@ -69,7 +74,10 @@ public class Board
         {
             get
             {
-                return Move.getAllLegalMoves(this).Count == 0 || (currentPlayer.turnOrder == 0 && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15));
+                if (GameOverFlag) return gameOverValue;
+                gameOverValue = legalMoves.Count == 0 || (currentPlayer.turnOrder == 0 && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15));
+                GameOverFlag = true;
+                return gameOverValue;
             }
         }
 
@@ -80,7 +88,8 @@ public class Board
         {
             get
             {
-                return Move.getAllLegalMoves(this);
+                if (moves == null) moves = Move.getAllLegalMoves(this);
+                return moves;
             }
         }
 

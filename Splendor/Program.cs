@@ -121,7 +121,6 @@ namespace Splendor
                     players.Add(PlayerFactory.CreateNew(s[0], parameters));
                     if (players.Count == 2)
                     {
-                        Console.WriteLine("Initializing new game manager");
                         Splendor.Start(players[0], players[1]);
                         PLAYERS = players.GetRange(0, 2);
                         players.Clear();

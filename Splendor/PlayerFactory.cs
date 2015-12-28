@@ -68,6 +68,12 @@ namespace Splendor
 
                 return new Minimax(i, parseScoringFunction(x, 1));
             });
+            Register("exact", x => new Exact.ExactGene(parseScoringFunction(x,0)));
+            Register("selfish", x =>
+            {
+                return x.Length > 2 ? new OldBuyOrder.SelfishGene(parseScoringFunction(x, 2), int.Parse(x[0]), int.Parse(x[1])) : new OldBuyOrder.SelfishGene(parseScoringFunction(x, 0));
+            });
+            Register("blindbuyer", x => new BlindBuyer());
 
         }
     }

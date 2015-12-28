@@ -8,11 +8,12 @@ namespace Splendor.Exact
 {
     public class ExactFit : IFitnessFunction
     {
+        private Func<Board, int> scoringFunction;
 
-        //public double Evaluate(IChromosome chromosome)
-        //{
-        //    return ((SplendorGene)chromosome).score;
-        //}
+        public ExactFit(Func<Board,int> scoringFunction)
+        {
+            this.scoringFunction = scoringFunction;
+        }
 
         public double Evaluate(IChromosome chromosome)
         {
@@ -78,26 +79,10 @@ namespace Splendor.Exact
                 }
                 else
                 {
-                    recordPop(max, current, score(current));
-                    return score(current);
+                    return scoringFunction(current);
                 }
             }
-            recordPop(max, current, score(current));
-            return score(current);
-        }
-
-        //Boost faster scores
-        private int score(Board b)
-        {
-            return b.maximizingPlayer.points;
-            //return Math.Max(b.maximizingPlayer.points - b.minimizingPlayer.points, 0);
-        }
-
-        const string directory = @"..\..\..\..\Splendor\History\";
-
-        private void recordPop(ExactChromosome g, Board b, int fitness)
-        {
-            //File.AppendAllText(directory + "fitness" + Splendor.turn + ".csv", g.GetHashCode() + "," + b.turn + "," + fitness + Environment.NewLine);
+            return scoringFunction(current);
         }
 
         private uint hash(Board b)

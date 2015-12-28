@@ -13,6 +13,8 @@ namespace Splendor
         /// TAKE2, TAKE3, BUY, RESERVE
         /// </summary>
         public int moveType;
+        private static Dictionary<int, Move> dictIntMove;
+        private static Dictionary<Move, int> dictMoveInt;
 
         public static string ListToString(List<Move> m)
         {
@@ -32,6 +34,51 @@ namespace Splendor
         public static List<Move> getAllLegalMoves()
         {
             return getAllLegalMoves(Board.current);
+        }
+
+        public static Move getMove(int i)
+        {
+            return dictIntMove[i];
+        }
+
+        public static int getInt(Move m)
+        {
+            return dictMoveInt[m];
+        }
+
+        public static void initialize()
+        {
+            TAKE2.generate();
+            TAKE3.generate();
+            BUY.generate();
+            RESERVE.generate();
+            int i = 0;
+            dictIntMove = new Dictionary<int, Move>();
+            dictMoveInt = new Dictionary<Move, int>();
+            foreach (Move m in TAKE2.AllTAKE2)
+            {
+                dictIntMove[i] = m;
+                dictMoveInt[m] = i;
+                i++;
+            }
+            foreach (Move m in TAKE3.allTAKE3)
+            {
+                dictIntMove[i] = m;
+                dictMoveInt[m] = i;
+                i++;
+            }
+            foreach (Move m in BUY.allBUY)
+            {
+                dictIntMove[i] = m;
+                dictMoveInt[m] = i;
+                i++;
+            }
+            foreach (Move m in RESERVE.allRESERVE)
+            {
+                dictIntMove[i] = m;
+                dictMoveInt[m] = i;
+                i++;
+            }
         }
 
         
@@ -77,6 +124,7 @@ namespace Splendor
 
             public Gem color;
             public int index;
+            private static List<TAKE2> all;
 
             public TAKE2(int i)
             {
@@ -98,6 +146,7 @@ namespace Splendor
                 }
                 moveType = 0;
             }
+
 
             public override string ToString()
             {
@@ -143,27 +192,41 @@ namespace Splendor
                 return getLegalMoves(Board.current);
             }
 
-            public static List<TAKE2> getLegalMoves(Board b)
+
+            public static List<TAKE2> AllTAKE2
+            {
+                get
+                {
+                    if (all == null) generate();
+                    return all;
+                }
+            }
+
+            public static void generate()
             {
                 List<TAKE2> l = new List<TAKE2>();
                 TAKE2 temp;
-                if (b.currentPlayer.gems.magnitude <= 8)
+                for (int i = 0; i < 5; i++)
                 {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        temp = new TAKE2(i);
-                        if (temp.isLegal(b))
-                        {
-                            l.Add(temp);
-                        }
-                    }
-                    return l;
+                    temp = new TAKE2(i);
+                    l.Add(temp);
                 }
 
                 foreach (Gem g in Gem.ExchangeTwo)
                 {
                     temp = new TAKE2(g);
-                    if (temp.isLegal(b)) l.Add(temp);
+                    l.Add(temp);
+                }
+                all = l;
+            }
+
+            
+            public static List<TAKE2> getLegalMoves(Board b)
+            {
+                List<TAKE2> l = new List<TAKE2>();
+                foreach (TAKE2 t in AllTAKE2)
+                {
+                    if (t.isLegal(b)) l.Add(t);
                 }
                 return l;
             }
@@ -184,6 +247,7 @@ namespace Splendor
         {
 
             public Gem colors;
+            private static List<TAKE3> all;
 
             private TAKE3(Gem x)
             {
@@ -202,26 +266,32 @@ namespace Splendor
                 return getLegalMoves(Board.current);
             }
 
-            public static List<TAKE3> getLegalMoves(Board b)
+            public static void generate()
             {
                 List<TAKE3> l = new List<TAKE3>();
 
-                if (b.currentPlayer.gems.magnitude > 7)
+                foreach (Gem g in Gem.ExchangeThree)
                 {
-                    foreach (Gem g in Gem.ExchangeThree)
-                    {
-                        if (g.magnitude + b.currentPlayer.gems.magnitude <= 10)
-                        {
-                            TAKE3 t = new TAKE3(g);
-                            if (t.isLegal(b)) l.Add(t);
-                        }
-                    }
-                    return l;
+                    l.Add(new TAKE3(g));
                 }
 
                 foreach (Gem g in Gem.ThreeNetThree)
                 {
-                    TAKE3 t = new TAKE3(g);
+                    l.Add(new TAKE3(g));
+                }
+                all = l;
+            }
+
+            public static List<TAKE3> allTAKE3
+            {
+                get { return all; }
+            }
+
+            public static List<TAKE3> getLegalMoves(Board b)
+            {
+                List<TAKE3> l = new List<TAKE3>();
+                foreach (TAKE3 t in all)
+                {
                     if (t.isLegal(b)) l.Add(t);
                 }
                 return l;
@@ -271,6 +341,7 @@ namespace Splendor
         {
 
             public Card card;
+            private static List<BUY> all;
 
             public BUY(Card c)
             {
@@ -282,6 +353,18 @@ namespace Splendor
             {
                 return "BUY " + card.id;
             }
+
+            public static void generate()
+            {
+                List<BUY> l = new List<BUY>();
+                foreach (Card c in Card.allCardsByID)
+                {
+                    l.Add(new BUY(c));
+                }
+                all = l;
+            }
+
+            public static List<BUY> allBUY { get { return all; } }
 
             public static List<BUY> getLegalMoves(Board b)
             {
@@ -356,6 +439,7 @@ namespace Splendor
         {
 
             public Card card;
+            private static List<RESERVE> all;
 
             public RESERVE(Card c)
             {
@@ -393,6 +477,18 @@ namespace Splendor
             {
                 return getLegalMoves(Board.current);
             }
+
+            public static void generate()
+            {
+                List<RESERVE> l = new List<RESERVE>();
+                foreach (Card c in Card.allCardsByID)
+                {
+                    l.Add(new RESERVE(c));
+                }
+                all = l;
+            }
+
+            public static List<RESERVE> allRESERVE { get { return all; } }
 
             public override bool isLegal(Board b)
             {

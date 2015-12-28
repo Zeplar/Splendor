@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GeneticSharp.Domain.Chromosomes;
 using GeneticSharp.Domain.Crossovers;
 using System.Diagnostics;
-namespace Splendor.Genetic
+namespace Splendor.GSharp
 {
     class GSharpCrossover : CrossoverBase
     {

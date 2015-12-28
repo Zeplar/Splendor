@@ -11,8 +11,7 @@ namespace Splendor
         const string name = @"game";
         static StreamWriter file;
         static bool init;
-
-
+        static string plottingDirectory;
 
         public static void initialize()
         {
@@ -104,6 +103,20 @@ namespace Splendor
             init = false;
         }
 
+        public static void plot(string info)
+        {
+            if (plottingDirectory == null)
+            {
+                int i = 0;
+                plottingDirectory = @"C:\Users\JHep\Desktop\plot_0.csv";
+                while (File.Exists(plottingDirectory))
+                {
+                    i++;
+                    plottingDirectory = @"C:\Users\JHep\Desktop\SelfishGenePlots\plot_" + i + ".csv";
+                }
+            }
+            File.AppendAllText(plottingDirectory, info);
+        }
 
 
         public static void recordWins(string winner, string loser, int winscore, int losescore)

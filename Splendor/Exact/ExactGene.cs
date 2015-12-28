@@ -1,4 +1,4 @@
-﻿using AForge.Genetic;
+﻿using GeneticSharp;
 using System.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -25,17 +25,17 @@ namespace Splendor.Exact
         private int depth = 10;
         private int generations = 20;
 
-        private ExactFit fit = new ExactFit();
+        private ExactFit fit;
 
-        public ExactGene(int popsize, int depth, int generations)
+        public ExactGene(int popsize, int depth, int generations, Func<Board,int> scoringFunction)
         {
             this.popSize = popsize;
             this.depth = depth;
             this.generations = generations;
-            //Console.WriteLine("Gene: " + popsize + " " + depth + " " + generations);
+            fit = new ExactFit(scoringFunction);
         }
 
-        public ExactGene() : this(200, 10, 20) { }
+        public ExactGene(Func<Board,int> fn) : this(1000, 10, 50, fn) { }
 
         public override string ToString()
         {
@@ -46,7 +46,7 @@ namespace Splendor.Exact
         {
             RecordHistory.record();
 
-            Population pop = new Population(popSize, new ExactChromosome(depth), fit, new RankSelection());
+            AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RankSelection());
             for (int i=0; i < generations; i++)
             {
                 //Getting an index out of range exception here when using RouletteWheelSelection (16 rounds in, seed 100)
@@ -54,6 +54,7 @@ namespace Splendor.Exact
                 pop.Crossover();
                 pop.Mutate();
                 //Console.WriteLine("Best fitness in gen " + i + ": " + pop.BestChromosome.Fitness);
+                RecordHistory.plot(i + "," + pop.FitnessMax + System.Environment.NewLine);
             }
             ExactChromosome g = (ExactChromosome)pop.BestChromosome;
             Move m = g.moves[0];

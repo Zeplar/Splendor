@@ -2,7 +2,7 @@
 using GeneticSharp.Domain.Chromosomes;
 using GeneticSharp.Domain.Mutations;
 
-namespace Splendor.Genetic
+namespace Splendor.GSharp
 {
     class GSharpMutate : MutationBase
     {

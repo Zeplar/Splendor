@@ -3,7 +3,7 @@ using System.Diagnostics;
 using GeneticSharp.Domain.Chromosomes;
 using GeneticSharp.Domain.Fitnesses;
 
-namespace Splendor.Genetic
+namespace Splendor.GSharp
 {
     class GSharpFitness : IFitness
     {

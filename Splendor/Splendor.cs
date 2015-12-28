@@ -247,6 +247,7 @@ namespace Splendor
             p2.turnOrder = 1;
             getCards();
             gameOver = false;
+            Move.initialize();
             timer = Stopwatch.StartNew();
         }
 

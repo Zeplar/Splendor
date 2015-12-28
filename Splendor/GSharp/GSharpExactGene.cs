@@ -3,7 +3,7 @@ using GeneticSharp.Domain;
 using GeneticSharp.Domain.Selections;
 using GeneticSharp.Domain.Populations;
 
-namespace Splendor.Genetic
+namespace Splendor.GSharp
 {
     class GSharpExactGene : Player
     {

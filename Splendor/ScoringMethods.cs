@@ -21,6 +21,7 @@ namespace Splendor
                 dictionary.Add("winloss", WinLoss);
                 dictionary.Add("prestige", Prestige);
                 dictionary.Add("legalmoves", LegalMoves);
+                dictionary.Add("all", All);
                 return true;
             }
         }
@@ -80,6 +81,11 @@ namespace Splendor
         public static int LegalMoves(Board b)
         {
             return b.legalMoves.Count(x => x.moveType == 2 || x.moveType == 3);
+        }
+
+        public static int All(Board b)
+        {
+            return 3 * (b.maximizingPlayer.points - b.minimizingPlayer.points) + 2 * (b.maximizingPlayer.field.Count - b.minimizingPlayer.field.Count) + (b.maximizingPlayer.gems.magnitude);
         }
         
 
