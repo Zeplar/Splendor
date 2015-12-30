@@ -4,7 +4,7 @@ using AForge.Genetic;
 using System.Diagnostics;
 using System.Text;
 
-namespace Splendor.OldBuyOrder
+namespace Splendor.BuyOrder
 {
     public class BuyFit : IFitnessFunction
     {
@@ -22,7 +22,7 @@ namespace Splendor.OldBuyOrder
             PermutationChromosome c = (PermutationChromosome)chromosome;
             Board current = Board.current;
             int i = 0;
-            while (i < 20)
+            while (i < 10)
             {
                 if (current.gameOver) break;
                 current = simulateMyTurn(c, current);

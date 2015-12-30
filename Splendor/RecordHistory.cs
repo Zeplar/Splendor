@@ -107,15 +107,25 @@ namespace Splendor
         {
             if (plottingDirectory == null)
             {
+                string folder = @"C:\Users\JHep\Desktop\SelfishGenePlots\" + DateTime.Today.ToShortDateString();
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
                 int i = 0;
-                plottingDirectory = @"C:\Users\JHep\Desktop\plot_0.csv";
+                plottingDirectory = folder + @"\plot_0.csv";
                 while (File.Exists(plottingDirectory))
                 {
                     i++;
-                    plottingDirectory = @"C:\Users\JHep\Desktop\SelfishGenePlots\plot_" + i + ".csv";
+                    plottingDirectory = folder + @"\plot_" + i + ".csv";
                 }
             }
             File.AppendAllText(plottingDirectory, info);
+        }
+
+        public static void clearPlot()
+        {
+            plottingDirectory = null;
         }
 
 

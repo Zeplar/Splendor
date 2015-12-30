@@ -26,6 +26,16 @@ namespace Splendor
             return ret;
         }
 
+        public static string String<T>(this IList<T> list)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (T t in list)
+            {
+                sb.Append(t.ToString());
+            }
+            return sb.ToString();
+        } 
+
         public static string String(this List<Card> list)
         {
             StringBuilder sb = new StringBuilder();

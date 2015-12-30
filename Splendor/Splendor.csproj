@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\..\..\..\Desktop\SelfishGenePlots\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -102,11 +102,6 @@
   <ItemGroup>
     <Compile Include="BlindBuyer.cs" />
     <Compile Include="Board.cs" />
-    <Compile Include="BuyOrder\Chromosome.cs" />
-    <Compile Include="BuyOrder\Crossover.cs" />
-    <Compile Include="BuyOrder\Fitness.cs" />
-    <Compile Include="BuyOrder\Mutate.cs" />
-    <Compile Include="BuyOrder\SelfishGene.cs" />
     <Compile Include="Card.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="Extensions.cs" />
@@ -117,9 +112,8 @@
     <Compile Include="GSharp\GSharpMutate.cs" />
     <Compile Include="BuySeeker.cs" />
     <Compile Include="Human.cs" />
-    <Compile Include="OldBuyOrder\BuyFit.cs" />
-    <Compile Include="OldBuyOrder\Chromosome.cs" />
-    <Compile Include="OldBuyOrder\SelfishGene.cs" />
+    <Compile Include="BuyOrder\BuyFit.cs" />
+    <Compile Include="BuyOrder\SelfishGene.cs" />
     <Compile Include="PlayerFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="GSharp\IndexFit.cs" />

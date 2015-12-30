@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 namespace Splendor
 {
     class Program
@@ -56,6 +57,10 @@ namespace Splendor
                 case "runseed":
                     Splendor.Start(PLAYERS[0], PLAYERS[1], 100);
                     return null;
+                case "description":
+                    RecordHistory.plot(new List<string>(commands).String() + Environment.NewLine);
+                    commands.Clear();
+                    return null;
                 default:
                     return null;
             }
@@ -102,15 +107,16 @@ namespace Splendor
                 Console.CursorLeft = 0;
                 Debug.Assert(winArray[i] == g3.wins, "Games diverged at i= " + i);
             }
-
-
         }
+
 
         static void Main(string[] args)
         {
             List<Player> players = new List<Player>();
             PlayerFactory.Load();
+            ScoringMethods.register();
             Console.WriteLine("Available players: " + PlayerFactory.listAll);
+            Console.WriteLine("Scoring functions: " + ScoringMethods.listAll);
             while (true)
             {
                 string[] s = Console.ReadLine().Replace('(', ' ').Replace(')', ' ').Replace(',', ' ').Split();

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
+using System.Diagnostics;
+using System.Text;
 
 namespace Splendor
 {
@@ -14,15 +15,23 @@ namespace Splendor
 
         public static Dictionary<string,Func<Board,int>> dictionary = new Dictionary<string, Func<Board,int>>();
 
-        private static bool register { get
-            {
+        public static void register()
+        { 
                 dictionary.Add("deltapoints", DeltaPoints);
                 dictionary.Add("points", Points);
                 dictionary.Add("winloss", WinLoss);
                 dictionary.Add("prestige", Prestige);
                 dictionary.Add("legalmoves", LegalMoves);
                 dictionary.Add("all", All);
-                return true;
+        }
+
+        public static string listAll
+        {
+            get
+            {
+                StringBuilder s = new StringBuilder();
+                foreach (string k in dictionary.Keys) s.Append(k + ", ");
+                return s.ToString();
             }
         }
 
@@ -113,7 +122,36 @@ namespace Splendor
             };
         }
 
-        private static bool reg1 = register;
+        private static Func<Board,int> multiply(int i, Func<Board,int> f)
+        {
+            return (Board x) => i * f(x);
+        }
+
+        public static Func<Board, int> parseScoringFunction(string[] args, int skip)
+        {
+            Func<Board, int> scoringFunction = WinLoss;
+            Func<Board, int> nextFunc;
+            for (int j = skip; j < args.Length; j++)
+            {
+                int i;
+                if (args[j].Equals("delta"))
+                {
+                    j++;
+                    nextFunc = ScoringMethods.deltafy(dictionary[args[j]]);
+                }
+                else if (int.TryParse(args[j], out i))
+                {
+                    j++;
+                    nextFunc = multiply(i, dictionary[args[j]]);
+                }
+                else
+                {
+                    nextFunc = dictionary[args[j]];
+                }
+                scoringFunction = combine(scoringFunction, nextFunc);
+            }
+            return scoringFunction;
+        }
 
     }
 }

@@ -1,27 +1,50 @@
-﻿using GeneticSharp.Domain;
-using GeneticSharp.Domain.Populations;
-using System;
+﻿using System;
+using System.Text;
+using AForge.Genetic;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Splendor.BuyOrder
 {
     public class SelfishGene : Player
     {
-        private const int popSize = 200;
-        private const int generations = 20;
+        private BuyFit fitness;
+        private int popSize;
+        private int generations;
+
+        public SelfishGene(Func<Board, int> scoringFunction) : this(scoringFunction, 200, 20) { }
+
+        public SelfishGene(Func<Board, int> scoringFunction, int popsize, int gens)
+        {
+            fitness = new BuyFit(scoringFunction);
+            name = "SelfishGene";
+            popSize = popsize;
+            generations = gens;
+            RecordHistory.clearPlot();
+            RecordHistory.plot("Population: " + popsize + " ; Generations: " + gens + Environment.NewLine);
+        }
 
 
         public override void takeTurn()
         {
-            Population p = new Population(popSize, 2 * popSize, new Chromosome(6));
-            p.CreateInitialGeneration();
-            var ga = new GeneticAlgorithm(p, new Fitness(), new GeneticSharp.Domain.Selections.RouletteWheelSelection(), new Crossover(2,2), new Mutate());
-            ga.MutationProbability = 0;
-            ga.CrossoverProbability = 0;
-            ga.Termination = new GeneticSharp.Domain.Terminations.GenerationNumberTermination(generations);
-            ga.Start();
-            Debug.Assert(false, "" + ga.State);
-            
+            fitness.cards = Board.current.viewableCards.FindAll(x => true);
+  //          Console.WriteLine("Loaded cards.");
+            var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RouletteWheelSelection());
+            ga.MutationRate = 0.2;
+
+  //          Console.WriteLine("Loaded GA.");
+            for (int i = 0; i < generations; i++)
+            {
+                ga.RunEpoch();
+                CONSOLE.Overwrite("Generations " + i + " out of " + generations);
+
+                if (Splendor.turn < 200)
+                {
+                    RecordHistory.plot(i + "," + ga.FitnessMax + Environment.NewLine);
+                }
+
+            }
         }
+
     }
 }

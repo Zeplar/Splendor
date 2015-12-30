@@ -31,9 +31,19 @@ namespace Splendor
 
             if (targetMove.isLegal(state.generate(state.legalMoves[0])) && new Move.RESERVE(toBuy).isLegal(state)) return new Move.RESERVE(toBuy); //Reserve if opponent can buy next turn
             targetMove = null;
-            List<Move> takes = state.legalMoves.FindAll(x => x.moveType == 0 || x.moveType == 1);
-            foreach (Move m in takes)
+            foreach (Move m in Move.TAKE3.allTAKE3)
             {
+                if (!m.isLegal(state)) continue;
+                int x = neededGems(state.generate(m)).magnitude;
+                if (x < value)
+                {
+                    value = x;
+                    targetMove = m;
+                }
+            }
+            foreach (Move m in Move.TAKE2.AllTAKE2)
+            {
+                if (!m.isLegal(state)) continue;
                 int x = neededGems(state.generate(m)).magnitude;
                 if (x < value)
                 {
@@ -42,6 +52,7 @@ namespace Splendor
                 }
             }
             if (targetMove != null) return targetMove;
+
             if (new Move.RESERVE(toBuy).isLegal(state)) return new Move.RESERVE(toBuy);
             return state.legalMoves[0];
         }
