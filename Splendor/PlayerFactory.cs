@@ -56,7 +56,7 @@ namespace Splendor
             {
                 return x.Length > 2 ? new BuyOrder.SelfishGene(ScoringMethods.parseScoringFunction(x, 2), int.Parse(x[0]), int.Parse(x[1])) : new BuyOrder.SelfishGene(ScoringMethods.parseScoringFunction(x, 0));
             });
-            Register("blindbuyer", x => new BlindBuyer());
+            Register("greedybuyer", x => new GreedyBuyer());
 
         }
     }

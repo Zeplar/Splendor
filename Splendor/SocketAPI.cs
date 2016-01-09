@@ -47,9 +47,6 @@ public class SynchronousSocketListener {
                     }
                 }
 
-                // Show the data on the console.
-                Console.WriteLine( "Text received : {0}", data);
-
                 // Echo the data back to the client.
                 byte[] msg = Encoding.ASCII.GetBytes(data);
 
@@ -66,6 +63,8 @@ public class SynchronousSocketListener {
         Console.Read();
 
     }
+
+    
 
     public static int Main(String[] args) {
         StartListening();

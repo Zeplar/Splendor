@@ -133,7 +133,7 @@ namespace Splendor.Exact
         public override void Mutate()
         {
             //bool large = Splendor.random.NextDouble() < largeMutationRate;
-            moves[Splendor.random.Next(moves.Count)] = null;
+            moves[GameController.random.Next(moves.Count)] = null;
         }
 
         public override int GetHashCode()

@@ -10,7 +10,7 @@ namespace Splendor
             int i = 0;
             for (; i < list.Count; i++)
             {
-                int j = Splendor.random.Next(i, list.Count);
+                int j = GameController.random.Next(i, list.Count);
                 T temp = list[i];
                 list[i] = list[j];
                 list[j] = temp;

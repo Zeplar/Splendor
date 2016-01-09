@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 
 namespace Splendor
@@ -12,9 +13,11 @@ namespace Splendor
         /// <summary>
         /// TAKE2, TAKE3, BUY, RESERVE
         /// </summary>
-        public int moveType;
+        public Type moveType;
         private static Dictionary<int, Move> dictIntMove;
         private static Dictionary<Move, int> dictMoveInt;
+
+        public enum Type { TAKE2, TAKE3, BUY, RESERVE };
 
         public static string ListToString(List<Move> m)
         {
@@ -81,7 +84,34 @@ namespace Splendor
             }
         }
 
-        
+
+
+        /// <summary>
+        /// Decodes a 2-7 byte array, returning a move. The first byte signals the move type.
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static Move Decode(byte[] array)
+        {
+            IEnumerable<byte> temp = array.AsEnumerable().TakeWhile(x => x != 255);
+            int moveType = temp.First();
+            temp = temp.Skip(1);
+            switch (moveType)
+            {
+                case 0:
+                    return new TAKE2(new Gem(temp));
+                case 1:
+                    return new TAKE3(new Gem(temp));
+                case 2:
+                    return new BUY(Card.allCardsByID[temp.First()]);
+                case 3:
+                    return new BUY(Card.allCardsByID[temp.First()]);
+                default:
+                    throw new KeyNotFoundException("Bad decode data");
+            }
+        }
+
+
         /// <summary>
         /// Gets all legal moves sorted BUY-TAKE3-TAKE2-RESERVE
         /// </summary>
@@ -116,7 +146,7 @@ namespace Splendor
         public static Move getRandomMove(Board bd)
         {
             List<Move> m = getAllLegalMoves(bd);
-            return (m.Count > 0) ? m[Splendor.random.Next(m.Count)] : null;
+            return (m.Count > 0) ? m[GameController.random.Next(m.Count)] : null;
         }
 
         public class TAKE2 : Move
@@ -131,7 +161,7 @@ namespace Splendor
                 color = new Gem();
                 color[i] = 2;
                 index = i;
-                moveType = 0;
+                moveType = Type.TAKE2;
             }
             public TAKE2(Gem g)
             {
@@ -144,7 +174,7 @@ namespace Splendor
                         break;
                     }
                 }
-                moveType = 0;
+                moveType = Type.TAKE2;
             }
 
 
@@ -178,7 +208,7 @@ namespace Splendor
      //           Console.WriteLine(Splendor.currentPlayer + " chose move " + this.ToString());
                 if (isLegal())
                 {
-                    Splendor.currentPlayer.gems += color;
+                    GameController.currentPlayer.gems += color;
                     Gem.board -= color;
                 }
                 else
@@ -249,10 +279,10 @@ namespace Splendor
             public Gem colors;
             private static List<TAKE3> all;
 
-            private TAKE3(Gem x)
+            public TAKE3(Gem x)
             {
 
-                moveType = 1;
+                moveType = Type.TAKE3;
                 colors = x;
             }
 
@@ -316,7 +346,7 @@ namespace Splendor
          //       Console.WriteLine(Splendor.currentPlayer + " chose move " + this.ToString());
                 if (isLegal())
                 {
-                    Splendor.currentPlayer.takeGems(colors);
+                    GameController.currentPlayer.takeGems(colors);
                 }
                 else
                 {
@@ -346,7 +376,7 @@ namespace Splendor
             public BUY(Card c)
             {
                 this.card = c;
-                moveType = 2;
+                moveType = Type.BUY;
             }
 
             public override string ToString()
@@ -399,7 +429,7 @@ namespace Splendor
             public override bool isLegal(Board b)
             {
                 bool exists = b.boardCards.Contains(card) || b.currentPlayer.reserve.Contains(card);
-                exists &= (card.deck != Splendor.nobles);
+                exists &= (card.deck != GameController.nobles);
                 bool affordable = (b.currentPlayer.gems + b.currentPlayer.discount - card.cost).deficit <= b.currentPlayer.gems[5];
                 return exists && affordable;
             }
@@ -411,11 +441,11 @@ namespace Splendor
 
             public override void takeAction()
             {
-                Debug.Assert(Board.current.currentPlayer == Splendor.currentPlayer, "Board is misrepresenting players: " + Board.current.currentPlayer.detailedInfo + " != " + Splendor.currentPlayer.detailedInfo);
+                Debug.Assert(Board.current.currentPlayer == GameController.currentPlayer, "Board is misrepresenting players: " + Board.current.currentPlayer.detailedInfo + " != " + GameController.currentPlayer.detailedInfo);
 
                 if (isLegal())
                 {
-                    Splendor.currentPlayer.Buy(card);
+                    GameController.currentPlayer.Buy(card);
                 }
                 else
                 {
@@ -444,7 +474,7 @@ namespace Splendor
             public RESERVE(Card c)
             {
                 this.card = c;
-                moveType = 3;
+                moveType = Type.RESERVE;
             }
 
             public override string ToString()
@@ -464,7 +494,7 @@ namespace Splendor
 
                 foreach (Card c in b.boardCards)
                 {
-                    if (c.id >= 0)
+                    if (c.id < 90)
                     {
                         l.Add(new RESERVE(c));
                     }
@@ -498,7 +528,7 @@ namespace Splendor
                 {
                     return false;
                 }
-                bool isAvail = b.boardCards.Contains(card) && card.deck != Splendor.nobles;
+                bool isAvail = b.boardCards.Contains(card) && card.deck != GameController.nobles;
                 return isAvail;
             }
 
@@ -511,7 +541,7 @@ namespace Splendor
             {
                 if (isLegal())
                 {
-                    Splendor.currentPlayer.Reserve(card);
+                    GameController.currentPlayer.Reserve(card);
                 }
                 else
                 {

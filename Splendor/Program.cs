@@ -15,10 +15,10 @@ namespace Splendor
         static void getStats()
         {
             bool tied, stalemated;
-            Player winner = Splendor.getMaxPlayer(out tied, out stalemated);
+            Player winner = GameController.getMaxPlayer(out tied, out stalemated);
             if (stalemated) stalemates++;
             else if (tied) ties++;
-            else if (winner == Splendor.players[0]) p1Wins++;
+            else if (winner == GameController.players[0]) p1Wins++;
             recordScore();
         }
 
@@ -35,13 +35,16 @@ namespace Splendor
                     {
                         Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
                         Console.Write("Repeat " + i);
-                        Splendor.replayGame();
+                        GameController.replayGame();
                         getStats();
                        
                     }
                     watch.Stop();
                     Console.WriteLine("" + watch.Elapsed);
                     Console.WriteLine("P1 wins : " + p1Wins + "     Ties: " + ties + "      Stalemates: " + stalemates);
+                    return null;
+                case "score":
+                    recordScore();
                     return null;
                 case "debug":
                     debugGame();
@@ -52,10 +55,10 @@ namespace Splendor
                     Console.Clear();
                     return null;
                 case "record":
-                    Splendor.recording = !Splendor.recording;
+                    GameController.recording = !GameController.recording;
                     return null;
                 case "runseed":
-                    Splendor.Start(PLAYERS[0], PLAYERS[1], 100);
+                    GameController.Start(PLAYERS[0], PLAYERS[1], 100);
                     return null;
                 case "description":
                     RecordHistory.plot(new List<string>(commands).String() + Environment.NewLine);
@@ -79,7 +82,7 @@ namespace Splendor
         static void debugGame()
         {
             Console.WriteLine("Go");
-            Splendor.replayGame();
+            GameController.replayGame();
 
         }
 
@@ -91,18 +94,18 @@ namespace Splendor
             Minimax m = new Minimax(1, ScoringMethods.combine(ScoringMethods.DeltaPoints, ScoringMethods.WinLoss));
             int[] winArray = new int[tries];
 
-           Splendor.Start(g1, g2, 100);
+           GameController.Start(g1, g2, 100);
             for (int i = 0; i < tries; i++)
             {
-                Splendor.replayGame();
+                GameController.replayGame();
                 Console.Write("" + i);
                 Console.CursorLeft = 0;
                 winArray[i] = g1.wins;
             }
-            Splendor.Start(g3, m, 100);
+            GameController.Start(g3, m, 100);
             for (int i = 0; i < tries; i++)
             {
-                Splendor.replayGame();
+                GameController.replayGame();
                 Console.Write("" + i);
                 Console.CursorLeft = 0;
                 Debug.Assert(winArray[i] == g3.wins, "Games diverged at i= " + i);
@@ -127,7 +130,7 @@ namespace Splendor
                     players.Add(PlayerFactory.CreateNew(s[0], parameters));
                     if (players.Count == 2)
                     {
-                        Splendor.Start(players[0], players[1]);
+                        GameController.Start(players[0], players[1]);
                         PLAYERS = players.GetRange(0, 2);
                         players.Clear();
                     }

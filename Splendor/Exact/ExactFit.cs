@@ -28,7 +28,7 @@ namespace Splendor.Exact
             {
                 return null;
             }
-            return moves[Splendor.random.Next(moves.Count)];
+            return moves[GameController.random.Next(moves.Count)];
         }
        
 
@@ -63,6 +63,7 @@ namespace Splendor.Exact
             Board current = Board.current;
             Board next;
             Move nextMove;
+            int score = 0;
             while (!current.gameOver && current.turn < max.length)
             {
                 next = generate(max, current);
@@ -70,6 +71,7 @@ namespace Splendor.Exact
                 {
                     break;
                 }
+                score += scoringFunction(next);
                 current = next;
                 //Do the "Generate-next-move" loop for greedy
                 nextMove = Greedy.getGreedyMove(current, ScoringMethods.DeltaPoints);
@@ -79,10 +81,10 @@ namespace Splendor.Exact
                 }
                 else
                 {
-                    return scoringFunction(current);
+                    return score;
                 }
             }
-            return scoringFunction(current);
+            return score;
         }
 
         private uint hash(Board b)
@@ -95,7 +97,7 @@ namespace Splendor.Exact
             }
 
             Byte[] fieldState = new Byte[2];
-            List<Card> startingCards = Splendor.boardCards;
+            List<Card> startingCards = GameController.boardCards;
             for (int i=0; i < 8 && i < startingCards.Count; i++)
             {
                 if (b.boardCards.Contains(startingCards[i]))

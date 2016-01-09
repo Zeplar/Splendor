@@ -15,7 +15,7 @@ namespace Splendor
 
         public static void initialize()
         {
-            if (!Splendor.recording)
+            if (!GameController.recording)
             {
                 return;
             }
@@ -31,7 +31,7 @@ namespace Splendor
             file = new StreamWriter(directory + name + i + suffix);
             file.AutoFlush = true;
             //Record the starting deck orders
-            foreach (Deck d in Splendor.decks)
+            foreach (Deck d in GameController.decks)
             {
                 foreach (Card c in d.getAllCards())
                 {
@@ -47,24 +47,24 @@ namespace Splendor
         /// </summary>
         public static void record()
         {
-            if (!Splendor.recording)
+            if (!GameController.recording)
             {
                 return;
             }
             file.Write("Board State: ");
-            foreach (Card c in Splendor.boardCards)
+            foreach (Card c in GameController.boardCards)
             {
                 file.Write(c + ", ");
             }
             file.WriteLine(" Gems: " + Gem.board);
-            file.WriteLine(Splendor.currentPlayer + " gems: " + Splendor.currentPlayer.gems);
-            file.Write(Splendor.currentPlayer + " has colors " + Splendor.currentPlayer.discount);
+            file.WriteLine(GameController.currentPlayer + " gems: " + GameController.currentPlayer.gems);
+            file.Write(GameController.currentPlayer + " has colors " + GameController.currentPlayer.discount);
             file.WriteLine();
         }
 
         public static void record(string s)
         {
-            if (!Splendor.recording) {
+            if (!GameController.recording) {
                 return;
             }
 
@@ -74,7 +74,7 @@ namespace Splendor
 
         public static void record(actions a, Card c)
         {
-            if (!Splendor.recording)
+            if (!GameController.recording)
             {
                 return;
             }
@@ -84,7 +84,7 @@ namespace Splendor
 
         public static void record(actions a, Gem g)
         {
-            if (!Splendor.recording)
+            if (!GameController.recording)
             {
                 return;
             }
@@ -94,7 +94,7 @@ namespace Splendor
 
         public static void close()
         {
-            if (!Splendor.recording)
+            if (!GameController.recording)
             {
                 return;
             }
@@ -107,7 +107,7 @@ namespace Splendor
         {
             if (plottingDirectory == null)
             {
-                string folder = @"C:\Users\JHep\Desktop\SelfishGenePlots\" + DateTime.Today.ToShortDateString();
+                string folder = @"C:\Users\JHep\Desktop\SelfishGenePlots\" + DateTime.Today.ToLongDateString();
                 if (!Directory.Exists(folder))
                 {
                     Directory.CreateDirectory(folder);

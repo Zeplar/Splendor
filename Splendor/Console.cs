@@ -12,10 +12,12 @@
         }
         public static void Overwrite(string s)
         {
+            int top = System.Console.CursorTop;
             System.Console.CursorLeft = 0;
             System.Console.Write("                                 ");
             System.Console.CursorLeft = 0;
             System.Console.Write(s);
+            System.Console.CursorTop = top;
         }
         public static void Overwrite(int lineNumber, string s)
         {

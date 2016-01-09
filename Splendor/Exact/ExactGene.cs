@@ -27,15 +27,19 @@ namespace Splendor.Exact
 
         private ExactFit fit;
 
+        private double totalTime = 0;
+
         public ExactGene(int popsize, int depth, int generations, Func<Board,int> scoringFunction)
         {
             this.popSize = popsize;
             this.depth = depth;
             this.generations = generations;
             fit = new ExactFit(scoringFunction);
+            RecordHistory.clearPlot();
+            RecordHistory.plot("EXACT GENE|||Population: " + popsize + " ; Generations: " + generations + Environment.NewLine);
         }
 
-        public ExactGene(Func<Board,int> fn) : this(1000, 10, 50, fn) { }
+        public ExactGene(Func<Board,int> fn) : this(500, 10, 20, fn) { }
 
         public override string ToString()
         {
@@ -45,7 +49,7 @@ namespace Splendor.Exact
         public override void takeTurn()
         {
             RecordHistory.record();
-
+            DateTime start = DateTime.Now;
             AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RankSelection());
             for (int i=0; i < generations; i++)
             {
@@ -53,23 +57,20 @@ namespace Splendor.Exact
                 pop.Selection();
                 pop.Crossover();
                 pop.Mutate();
-                //Console.WriteLine("Best fitness in gen " + i + ": " + pop.BestChromosome.Fitness);
-                RecordHistory.plot(i + "," + pop.FitnessMax + System.Environment.NewLine);
+                RecordHistory.plot(i + "," + pop.FitnessMax + Environment.NewLine);
             }
+            double thisTurn = (DateTime.Now - start).TotalSeconds;
+            totalTime += thisTurn;
+            CONSOLE.Overwrite("Average turn time: " + 2*totalTime / (1+GameController.turn) + Environment.NewLine + "Turn: " + GameController.turn);
             ExactChromosome g = (ExactChromosome)pop.BestChromosome;
             Move m = g.moves[0];
             if (m == null)
             {
-                Console.WriteLine();
-                Console.Write("Gene took a random turn.");
                 m = Move.getRandomMove();
                 Debug.Assert(m != null, "ExactGene couldn't even find a random move.");
             }
             m.takeAction();
             Board b = Board.current;
-            //Console.WriteLine();
-            //Console.Write("    Dead moves:" + g.score);
-            //Console.Write("   " + b.notCurrentPlayer + " " + b.notCurrentPlayer.points + " - " + b.currentPlayer + " " + b.currentPlayer.points + "   Fitness: " + pop.BestChromosome.Fitness + "  " + m);
         }
 
 

@@ -33,13 +33,26 @@ namespace Splendor
 
         public Gem(int[] gemArray)
         {
-            Debug.Assert(gemArray.Length == 5);
+            Debug.Assert(gemArray.Length < 7);
             a = gemArray[0];
             b = gemArray[1];
             c = gemArray[2];
             d = gemArray[3];
             e = gemArray[4];
-            gold = 0;
+            gold = gemArray.Length == 6 ? gemArray[5] : 0;
+        }
+
+        public Gem(IEnumerable<byte> genumerable)
+        {
+
+            List<byte> gemArray = new List<byte>(genumerable);
+            Debug.Assert(gemArray.Count < 7);
+            a = gemArray[0];
+            b = gemArray[1];
+            c = gemArray[2];
+            d = gemArray[3];
+            e = gemArray[4];
+            gold = gemArray.Count == 6 ? gemArray[5] : 0;
         }
 
         private static List<Gem> generateFrom(params int[] generator)
@@ -116,7 +129,7 @@ namespace Splendor
                     case 5:
                         return gold;
                     default:
-                        Trace.TraceError("Color index out of range");
+                        Debug.Fail("Color index out of range");
                         return 0;
                 }
             }

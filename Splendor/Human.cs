@@ -41,9 +41,9 @@ namespace Splendor
         private bool takeGems(string g)
         {
             Gem gems = parseGems(g);
-            if (Move.getAllLegalMoves().Exists(x => (x.moveType == 0 && ((Move.TAKE2)x).color == gems) || (x.moveType == 1 && ((Move.TAKE3)x).colors == gems)))
+            if (Move.getAllLegalMoves().Exists(x => (x.moveType == Move.Type.TAKE2 && ((Move.TAKE2)x).color == gems) || (x.moveType == Move.Type.TAKE3 && ((Move.TAKE3)x).colors == gems)))
             {
-                Move.getAllLegalMoves().Find(x => (x.moveType == 0 && ((Move.TAKE2)x).color == gems) || (x.moveType == 1 && ((Move.TAKE3)x).colors == gems)).takeAction();
+                Move.getAllLegalMoves().Find(x => (x.moveType == Move.Type.TAKE2 && ((Move.TAKE2)x).color == gems) || (x.moveType == Move.Type.TAKE3 && ((Move.TAKE3)x).colors == gems)).takeAction();
                 return true;
             }
             return false;

@@ -44,15 +44,80 @@ public class Board
 
         private Board()
         {
-            this.players = Splendor.players.ToList();
-            if (this.players[0] != Splendor.currentPlayer)
+            this.players = GameController.players.ToList();
+            if (this.players[0] != GameController.currentPlayer)
             {
                 this.players.Reverse();
             }
             this.gems = Gem.board;
             this.turn = 0;
-            this.boardCards = Splendor.boardCards;
+            this.boardCards = GameController.boardCards;
             
+        }
+
+        private int EncodeHelper(byte[] array, int index, List<Card> list)
+        {
+            int j = index;
+            for (int i=0; i < list.Count; i++)
+            {
+                array[j] = (byte)list[i].id;
+                j++;
+            }
+            array[j] = 255;
+            j++;
+            return j;
+        }
+
+        public byte[] Encode()
+        {
+            byte[] ret = new byte[1024];
+            for (int i = 0; i < 6; i++) ret[i] = (byte)currentPlayer.gems[i];
+            for (int i = 6; i < 12; i++) ret[i] = (byte)notCurrentPlayer.gems[i - 6];
+            for (int i = 12; i < 18; i++) ret[i] = (byte)gems[i - 12];
+            ret[18] = 255;
+            int j = EncodeHelper(ret, 19, boardCards);
+            j = EncodeHelper(ret, j, currentPlayer.field);
+            j = EncodeHelper(ret, j, currentPlayer.reserve);
+            j = EncodeHelper(ret, j, notCurrentPlayer.field);
+            j = EncodeHelper(ret, j, notCurrentPlayer.reserve);
+            return ret;
+        }
+        
+        private static List<Card> DecodeSection(byte[] array, int section)
+        {
+            IEnumerable<byte> temp = array.AsEnumerable();
+            for (int i=0; i < section; i++)
+            {
+                temp = temp.SkipWhile(x => x != 255);
+                temp = temp.Skip(1);
+            }
+            temp = temp.TakeWhile(x => x != 255);
+            return new List<Card>(temp.Select(x => Card.allCardsByID[x]));
+        }
+
+        public static Board Decode(byte[] array)
+        {
+            List<byte> data = new List<byte>(array);
+            Gem cGem = new Gem(data.GetRange(0, 6));
+            Gem nGem = new Gem(data.GetRange(6, 6));
+            Gem bGem = new Gem(data.GetRange(12, 6));
+            List<Card> boardCards = DecodeSection(array, 1);
+            List<Card> cCards = DecodeSection(array, 2);
+            List<Card> cReserve = DecodeSection(array, 3);
+            List<Card> nCards = DecodeSection(array, 4);
+            List<Card> nReserve = DecodeSection(array, 5);
+
+            Board b = new Board();
+            b.boardCards = boardCards;
+            b.gems = bGem;
+            b.currentPlayer.gems = cGem;
+            b.notCurrentPlayer.gems = nGem;
+            b.currentPlayer.field = cCards;
+            b.currentPlayer.reserve = cReserve;
+            b.notCurrentPlayer.field = nCards;
+            b.notCurrentPlayer.reserve = nReserve;
+
+            return b;
         }
 
 
@@ -140,17 +205,17 @@ public class Board
 
             switch (m.moveType)
             {
-                case 0:
+                case Move.Type.TAKE2:
                     Move.TAKE2 x = (Move.TAKE2)m;
                     b.gems -= x.color;
                     p.gems += x.color;
                     break;
-                case 1:
+                case Move.Type.TAKE3:
                     Move.TAKE3 y = (Move.TAKE3)m;
                     b.gems -= y.colors;
                     p.gems += y.colors;
                     break;
-                case 2:
+                case Move.Type.BUY:
                     Move.BUY z = (Move.BUY)m;
                     Gem temp = p.gems.takeaway((z.card.cost - p.discount));
                     b.gems += (p.gems - temp);
@@ -165,7 +230,7 @@ public class Board
                         b.boardCards.Remove(noble);
                     }
                     break;
-                case 3:
+                case Move.Type.RESERVE:
                     Move.RESERVE w = (Move.RESERVE)m;
                     p.gems[5] += 1;
                     b.boardCards.Remove(w.card);

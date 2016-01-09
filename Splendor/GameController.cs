@@ -6,7 +6,7 @@ using System;
 namespace Splendor
 {
 
-    public static class Splendor
+    public static class GameController
     {
 
         public static Deck[] decks;
@@ -146,7 +146,7 @@ namespace Splendor
         //Load the cards from the .csv file
         static void getCards()
         {
-            StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\splendor_cards.csv"));
+            StreamReader file = new StreamReader(File.OpenRead("splendor_cards.csv"));
             file.ReadLine();
             int id = 0;
             while (!file.EndOfStream)
@@ -200,37 +200,16 @@ namespace Splendor
                         c.deck = decks[2];
                         decks[2].getAllCards().Add(c);
                         break;
+                    case 4:
+                        c.deck = nobles;
+                        nobles.getAllCards().Add(c);
+                        break;
                 }
             }
             file.Close();
             decks[0].shuffle();
             decks[1].shuffle();
             decks[2].shuffle();
-            populate(nobles);
-
-        }
-
-        static void populate(Deck nobles)
-        {
-            StreamReader file = new StreamReader(File.OpenRead(@"..\..\..\splendor_nobles.csv"));
-            file.ReadLine();
-            int i = -1;
-            while (!file.EndOfStream)
-            {
-                string[] vals = file.ReadLine().Split(',');
-                int w, u, b, r, g;
-                w = string.IsNullOrEmpty(vals[0]) ? 0 : int.Parse((vals[0]));
-                u = string.IsNullOrEmpty(vals[1]) ? 0 : int.Parse((vals[1]));
-                g = string.IsNullOrEmpty(vals[2]) ? 0 : int.Parse((vals[2]));
-                r = string.IsNullOrEmpty(vals[3]) ? 0 : int.Parse((vals[3]));
-                b = string.IsNullOrEmpty(vals[4]) ? 0 : int.Parse((vals[4]));
-                Card c = new Card(i);
-                c.cost = new Gem(w, u, b, r, g, 0);
-                c.points = 3;
-                c.deck = nobles;
-                nobles.getAllCards().Add(c);
-                i--;
-            }
             nobles.shuffle();
             nobles.getAllCards().RemoveRange(4, 6);
         }

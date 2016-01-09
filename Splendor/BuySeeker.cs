@@ -29,7 +29,13 @@ namespace Splendor
             int value = 100;
             if (targetMove.isLegal(state)) return targetMove; //Buy if possible
 
-            if (targetMove.isLegal(state.generate(state.legalMoves[0])) && new Move.RESERVE(toBuy).isLegal(state)) return new Move.RESERVE(toBuy); //Reserve if opponent can buy next turn
+            if (new Move.RESERVE(toBuy).isLegal(state))
+            {
+                state.turn += 1;
+                if (targetMove.isLegal(state))     return new Move.RESERVE(toBuy); //Reserve if opponent can buy next turn
+                state.turn -= 1;
+            }
+
             targetMove = null;
             foreach (Move m in Move.TAKE3.allTAKE3)
             {

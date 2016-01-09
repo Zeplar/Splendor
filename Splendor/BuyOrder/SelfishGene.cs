@@ -30,20 +30,22 @@ namespace Splendor.BuyOrder
             fitness.cards = Board.current.viewableCards.FindAll(x => true);
   //          Console.WriteLine("Loaded cards.");
             var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RouletteWheelSelection());
-            ga.MutationRate = 0.2;
+            ga.MutationRate = 0.5;
 
   //          Console.WriteLine("Loaded GA.");
             for (int i = 0; i < generations; i++)
             {
                 ga.RunEpoch();
-                CONSOLE.Overwrite("Generations " + i + " out of " + generations);
-
-                if (Splendor.turn < 200)
-                {
-                    RecordHistory.plot(i + "," + ga.FitnessMax + Environment.NewLine);
-                }
+                CONSOLE.Overwrite(6, "Generations " + i + " out of " + generations);
+                CONSOLE.WriteLine("Best chromosome this generation: " + write((PermutationChromosome)ga.BestChromosome) + " | " + ga.BestChromosome.Fitness);
+                RecordHistory.plot(i + "," + ga.FitnessMax + Environment.NewLine);
 
             }
+        }
+
+        private string write(PermutationChromosome p)
+        {
+            return p.Value.String();
         }
 
     }

@@ -8,7 +8,7 @@ namespace Splendor
     {
 
 
-
+        [Conditional("DEBUG")]
         public static void testGems()
         {
             Gem test = new Gem(1, 1, 1, 1, 1, 0);
@@ -34,11 +34,12 @@ namespace Splendor
             }
         }
 
+        [Conditional("DEBUG")]
         public static void testBoard()
         {
             Board b = Board.current;
             testBoard(b);
-            Debug.Assert(b.currentPlayer == Splendor.currentPlayer, "Board is misrepresenting players: " + b.currentPlayer.detailedInfo + " != " + Splendor.currentPlayer.detailedInfo);
+            Debug.Assert(b.currentPlayer == GameController.currentPlayer, "Board is misrepresenting players: " + b.currentPlayer.detailedInfo + " != " + GameController.currentPlayer.detailedInfo);
         }
 
         public static void testBoard(Board b)
@@ -49,6 +50,15 @@ namespace Splendor
                 g += p.gems;
             }
             Debug.Assert(g == new Gem(4, 4, 4, 4, 4, 8), "Gems didn't add up.");
+        }
+
+        [Conditional("DEBUG")]
+        public static void testEncoder()
+        {
+            Board current = Board.current;
+            byte[] encoded = current.Encode();
+            Board decoded = Board.Decode(encoded);
+            Debug.Assert(decoded.Equals(Board.current), "Board did not encode correctly.");
         }
 
     }

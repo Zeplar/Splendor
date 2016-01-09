@@ -26,7 +26,7 @@ namespace Splendor
         //Marks the selected card so the human player can decide whether to buy or reserve it.
         void selectCard(Card c)
         {
-            Splendor.selected = c;
+            GameController.selected = c;
         }
 
         //Returns the first (up to 4) visible cards.

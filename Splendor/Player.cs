@@ -16,7 +16,7 @@ namespace Splendor
         public int wins;
         public string name;
 
-        protected Random random { get { return Splendor.random; } }
+        protected Random random { get { return GameController.random; } }
 
         public virtual void takeTurn() { }
 
@@ -29,10 +29,10 @@ namespace Splendor
         {
             Console.Clear();
             Console.WriteLine("Board:");
-            Console.WriteLine(Gem.board + "    Nobles: " + Splendor.nobles.viewableCards.String());
-            Console.WriteLine("Tier1: " + Splendor.decks[2].viewableCards.String());
-            Console.WriteLine("Tier2: " + Splendor.decks[1].viewableCards.String());
-            Console.WriteLine("Tier3: " + Splendor.decks[0].viewableCards.String());
+            Console.WriteLine(Gem.board + "    Nobles: " + GameController.nobles.viewableCards.String());
+            Console.WriteLine("Tier1: " + GameController.decks[2].viewableCards.String());
+            Console.WriteLine("Tier2: " + GameController.decks[1].viewableCards.String());
+            Console.WriteLine("Tier3: " + GameController.decks[0].viewableCards.String());
             Console.WriteLine();
             Console.WriteLine("Opponent: " + opponent.gems + "|Field: " + opponent.field.String());
             Console.WriteLine();
@@ -65,7 +65,7 @@ namespace Splendor
 
         protected Player opponent { get
             {
-                foreach (Player p in Splendor.players)
+                foreach (Player p in GameController.players)
                 {
                     if (p != this) return p;
                 }
@@ -92,7 +92,7 @@ namespace Splendor
                 Gem d = new Gem();
                 foreach (Card c in field)
                 {
-                    if (c.deck != Splendor.nobles)
+                    if (c.deck != GameController.nobles)
                     {
                         d[c.color] += 1;
                     }
@@ -104,7 +104,7 @@ namespace Splendor
 
         public bool canGetNoble(out Card noble)
         {
-            foreach (Card c in Splendor.nobles.getAllCards())
+            foreach (Card c in GameController.nobles.getAllCards())
             {
                 if (discount >= c.cost)
                 {

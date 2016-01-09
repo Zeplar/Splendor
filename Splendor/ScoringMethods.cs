@@ -17,12 +17,23 @@ namespace Splendor
 
         public static void register()
         { 
-                dictionary.Add("deltapoints", DeltaPoints);
-                dictionary.Add("points", Points);
-                dictionary.Add("winloss", WinLoss);
-                dictionary.Add("prestige", Prestige);
-                dictionary.Add("legalmoves", LegalMoves);
-                dictionary.Add("all", All);
+            dictionary.Add("deltapoints", DeltaPoints);
+            dictionary.Add("points", Points);
+            dictionary.Add("winloss", WinLoss);
+            dictionary.Add("prestige", Prestige);
+            dictionary.Add("legalmoves", LegalMoves);
+            dictionary.Add("all", All);
+            dictionary.Add("turn", turn);
+            dictionary.Add("turnsquared", turnsquared);
+        }
+
+        public static int turn(Board b)
+        {
+            return b.turn;
+        }
+        public static int turnsquared(Board b)
+        {
+            return b.turn * b.turn;
         }
 
         public static string listAll
@@ -89,7 +100,7 @@ namespace Splendor
         /// </summary>
         public static int LegalMoves(Board b)
         {
-            return b.legalMoves.Count(x => x.moveType == 2 || x.moveType == 3);
+            return b.legalMoves.Count(x => x.moveType == Move.Type.BUY || x.moveType == Move.Type.RESERVE);
         }
 
         public static int All(Board b)
