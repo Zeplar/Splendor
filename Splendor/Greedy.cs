@@ -7,7 +7,7 @@ namespace Splendor
 
     public class Greedy : Player
     {
-        private Func<Board, int> scoringFunction;
+        private Func<Board, double> scoringFunction;
 
 
         public Greedy()
@@ -15,7 +15,7 @@ namespace Splendor
             scoringFunction = ScoringMethods.combine(ScoringMethods.DeltaPoints, ScoringMethods.WinLoss);
             name = "Greedy Delta";
         }
-        public Greedy(Func<Board,int> scoringFunction)
+        public Greedy(Func<Board, double> scoringFunction)
         {
             this.scoringFunction = scoringFunction;
             this.name = "Greedy Custom";
@@ -27,14 +27,14 @@ namespace Splendor
         }
 
 
-        public static Move getGreedyMove(Board b, Func<Board,int> scoringFunction)
+        public static Move getGreedyMove(Board b, Func<Board, double> scoringFunction)
         {
             Move bestMove = null;
-            int bestScore = int.MinValue;
+            double bestScore = int.MinValue;
 
             foreach (Move m in b.legalMoves)
             {
-                int temp = scoringFunction(b.generate(m));
+                double temp = scoringFunction(b.generate(m));
                 if (temp > bestScore)
                 {
                     bestScore = temp;
@@ -54,7 +54,6 @@ namespace Splendor
                 RecordHistory.record(this + " took move " + m);
                 return;
             }
-            showState();
             Debug.Assert(m != null, "Greedy couldn't even find a random move.");
         }
     }

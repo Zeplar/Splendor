@@ -13,7 +13,7 @@ namespace Splendor
     public static class ScoringMethods
     {
 
-        public static Dictionary<string,Func<Board,int>> dictionary = new Dictionary<string, Func<Board,int>>();
+        public static Dictionary<string,Func<Board,double>> dictionary = new Dictionary<string, Func<Board, double>>();
 
         public static void register()
         { 
@@ -27,11 +27,11 @@ namespace Splendor
             dictionary.Add("turnsquared", turnsquared);
         }
 
-        public static int turn(Board b)
+        public static double turn(Board b)
         {
             return b.turn;
         }
-        public static int turnsquared(Board b)
+        public static double turnsquared(Board b)
         {
             return b.turn * b.turn;
         }
@@ -51,7 +51,7 @@ namespace Splendor
         /// <summary>
         /// Scores difference in points.
         /// </summary>
-        public static int DeltaPoints(Board b)
+        public static double DeltaPoints(Board b)
         {
             return b.maximizingPlayer.points - b.minimizingPlayer.points;
         }
@@ -59,7 +59,7 @@ namespace Splendor
         /// <summary>
         /// Scores maxPoints for a win, minPoints for a loss, else zero. Tiebreaks on prestige.
         /// </summary>
-        public static int WinLoss(Board b)
+        public static double WinLoss(Board b)
         {
             if (b.gameOver)
             {
@@ -81,7 +81,7 @@ namespace Splendor
         /// <summary>
         /// Scores only points.
         /// </summary>
-        public static int Points(Board b)
+        public static double Points(Board b)
         {
             return b.maximizingPlayer.points;
         }
@@ -89,7 +89,7 @@ namespace Splendor
         /// <summary>
         /// Scores only prestige.
         /// </summary>
-        public static int Prestige(Board b)
+        public static double Prestige(Board b)
         {
             return b.maximizingPlayer.field.Count;
         }
@@ -98,12 +98,12 @@ namespace Splendor
         /// Scores number of legal Buys and Reserves available.
         /// Takes may be bad since trades vastly outnumber pure takes.
         /// </summary>
-        public static int LegalMoves(Board b)
+        public static double LegalMoves(Board b)
         {
             return b.legalMoves.Count(x => x.moveType == Move.Type.BUY || x.moveType == Move.Type.RESERVE);
         }
 
-        public static int All(Board b)
+        public static double All(Board b)
         {
             return 3 * (b.maximizingPlayer.points - b.minimizingPlayer.points) + 2 * (b.maximizingPlayer.field.Count - b.minimizingPlayer.field.Count) + (b.maximizingPlayer.gems.magnitude);
         }
@@ -113,19 +113,19 @@ namespace Splendor
         /// Converts a "self-only" function into a delta function
         /// </summary>
         /// <returns></returns>
-        public static Func<Board,int> deltafy(Func<Board, int> scoringFunction)
+        public static Func<Board, double> deltafy(Func<Board, double> scoringFunction)
         {
             return (b) =>
             {
-                int self = scoringFunction(b);
+                double self = scoringFunction(b);
                 b.players.Reverse();
-                int other = scoringFunction(b);
+                double other = scoringFunction(b);
                 b.players.Reverse();
                 return self - other;
             };
         }
 
-        public static Func<Board,int> combine(Func<Board,int> f1, Func<Board,int> f2)
+        public static Func<Board, double> combine(Func<Board, double> f1, Func<Board, double> f2)
         {
             return (b) =>
             {
@@ -133,15 +133,15 @@ namespace Splendor
             };
         }
 
-        private static Func<Board,int> multiply(int i, Func<Board,int> f)
+        private static Func<Board, double> multiply(double i, Func<Board, double> f)
         {
             return (Board x) => i * f(x);
         }
 
-        public static Func<Board, int> parseScoringFunction(string[] args, int skip)
+        public static Func<Board, double> parseScoringFunction(string[] args, int skip)
         {
-            Func<Board, int> scoringFunction = WinLoss;
-            Func<Board, int> nextFunc;
+            Func<Board, double> scoringFunction = WinLoss;
+            Func<Board, double> nextFunc;
             for (int j = skip; j < args.Length; j++)
             {
                 int i;

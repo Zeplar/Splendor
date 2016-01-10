@@ -8,9 +8,9 @@ namespace Splendor.Exact
 {
     public class ExactFit : IFitnessFunction
     {
-        private Func<Board, int> scoringFunction;
+        private Func<Board, double> scoringFunction;
 
-        public ExactFit(Func<Board,int> scoringFunction)
+        public ExactFit(Func<Board, double> scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }
@@ -58,12 +58,12 @@ namespace Splendor.Exact
         /// <summary>
         /// Evaluates a chromosome against Greedy
         /// </summary>
-        private int score(ExactChromosome max)
+        private double score(ExactChromosome max)
         {
             Board current = Board.current;
             Board next;
             Move nextMove;
-            int score = 0;
+            double score = 0;
             while (!current.gameOver && current.turn < max.length)
             {
                 next = generate(max, current);

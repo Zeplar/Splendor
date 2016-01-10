@@ -40,7 +40,7 @@ namespace Splendor
                        
                     }
                     watch.Stop();
-                    Console.WriteLine("" + watch.Elapsed);
+                    Console.WriteLine("Previous Game Duration: " + watch.Elapsed);
                     Console.WriteLine("P1 wins : " + p1Wins + "     Ties: " + ties + "      Stalemates: " + stalemates);
                     return null;
                 case "score":

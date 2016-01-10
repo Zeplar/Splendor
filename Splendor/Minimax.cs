@@ -10,7 +10,7 @@ namespace Splendor
     public class Minimax : Player
     {
         public int treeDepth;
-        public Minimax(int i, Func<Board,int> f)
+        public Minimax(int i, Func<Board, double> f)
         {
             gems = Gem.zero;
             reserve = new List<Card>();
@@ -20,15 +20,15 @@ namespace Splendor
             name = "Minimax " + treeDepth;
         }
 
-        private Func<Board, int> scoringFunction;
+        private Func<Board, double> scoringFunction;
 
-        public static Move minimax(Board startingPoint, int depth, Func<Board,int> scoringFunction, out int score)
+        public static Move minimax(Board startingPoint, int depth, Func<Board, double> scoringFunction, out double score)
         {
             Move bestMove = null;
             List<Move> legalMoves = startingPoint.legalMoves;
-            int[] bestScore = new int[legalMoves.Count];
+            double[] bestScore = new double[legalMoves.Count];
             //int val;
-            Func<int, int, bool> comp = (x,y) => (x > y);
+            Func<double, double, bool> comp = (x,y) => (x > y);
 
             if (depth == 0 || legalMoves.Count == 0 || startingPoint.gameOver)
             {
@@ -71,7 +71,7 @@ namespace Splendor
         public override void takeTurn()
         {
             Board b = Board.current;
-            int x;
+            double x;
             Move k = minimax(b, treeDepth, scoringFunction, out x);
             RecordHistory.record(this + " made move " + k?.ToString());
             k.takeAction();

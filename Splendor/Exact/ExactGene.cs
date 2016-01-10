@@ -29,7 +29,7 @@ namespace Splendor.Exact
 
         private double totalTime = 0;
 
-        public ExactGene(int popsize, int depth, int generations, Func<Board,int> scoringFunction)
+        public ExactGene(int popsize, int depth, int generations, Func<Board, double> scoringFunction)
         {
             this.popSize = popsize;
             this.depth = depth;
@@ -39,7 +39,7 @@ namespace Splendor.Exact
             RecordHistory.plot("EXACT GENE|||Population: " + popsize + " ; Generations: " + generations + Environment.NewLine);
         }
 
-        public ExactGene(Func<Board,int> fn) : this(500, 10, 20, fn) { }
+        public ExactGene(Func<Board, double> fn) : this(500, 10, 20, fn) { }
 
         public override string ToString()
         {

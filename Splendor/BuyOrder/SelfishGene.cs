@@ -12,9 +12,9 @@ namespace Splendor.BuyOrder
         private int popSize;
         private int generations;
 
-        public SelfishGene(Func<Board, int> scoringFunction) : this(scoringFunction, 200, 20) { }
+        public SelfishGene(Func<Board, double> scoringFunction) : this(scoringFunction, 200, 20) { }
 
-        public SelfishGene(Func<Board, int> scoringFunction, int popsize, int gens)
+        public SelfishGene(Func<Board, double> scoringFunction, int popsize, int gens)
         {
             fitness = new BuyFit(scoringFunction);
             name = "SelfishGene";

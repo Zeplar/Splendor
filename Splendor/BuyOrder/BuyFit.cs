@@ -9,9 +9,9 @@ namespace Splendor.BuyOrder
     public class BuyFit : IFitnessFunction
     {
         public List<Card> cards;
-        private Func<Board, int> scoringFunction;
+        private Func<Board, double> scoringFunction;
 
-        public BuyFit(Func<Board,int> scoringFunction)
+        public BuyFit(Func<Board, double> scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }

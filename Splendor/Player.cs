@@ -25,6 +25,15 @@ namespace Splendor
             return name;
         }
 
+        public bool canBuyNextTurn(Board b, Card c)
+        {
+            int turn = b.turn;
+            while (b.currentPlayer != this) b.turn++;
+            bool result = new Move.BUY(c).isLegal(b);
+            b.turn = turn;
+            return result;
+        }
+
         protected void showState()
         {
             Console.Clear();

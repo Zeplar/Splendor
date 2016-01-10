@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Splendor
 {
@@ -13,7 +12,7 @@ namespace Splendor
         public override void takeTurn()
         {
             buyOrder = Board.current.viewableCards.FindAll(x => x.deck != GameController.nobles);
-            buyOrder.OrderByDescending(x => x.points);
+            buyOrder.OrderBy(x => random.Next());
             foreach (Card c in buyOrder)
             {
                 if (new Move.BUY(c).isLegal())

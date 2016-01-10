@@ -49,41 +49,6 @@ namespace Splendor
             return dictMoveInt[m];
         }
 
-        public static void initialize()
-        {
-            TAKE2.generate();
-            TAKE3.generate();
-            BUY.generate();
-            RESERVE.generate();
-            int i = 0;
-            dictIntMove = new Dictionary<int, Move>();
-            dictMoveInt = new Dictionary<Move, int>();
-            foreach (Move m in TAKE2.AllTAKE2)
-            {
-                dictIntMove[i] = m;
-                dictMoveInt[m] = i;
-                i++;
-            }
-            foreach (Move m in TAKE3.allTAKE3)
-            {
-                dictIntMove[i] = m;
-                dictMoveInt[m] = i;
-                i++;
-            }
-            foreach (Move m in BUY.allBUY)
-            {
-                dictIntMove[i] = m;
-                dictMoveInt[m] = i;
-                i++;
-            }
-            foreach (Move m in RESERVE.allRESERVE)
-            {
-                dictIntMove[i] = m;
-                dictMoveInt[m] = i;
-                i++;
-            }
-        }
-
 
 
         /// <summary>
@@ -154,7 +119,15 @@ namespace Splendor
 
             public Gem color;
             public int index;
-            private static List<TAKE2> all;
+
+            /// <summary>
+            /// TAKE2s that are normally available
+            /// </summary>
+            private static List<TAKE2> allReg;
+            /// <summary>
+            /// TAKE2s that become available at 9 or 10 gems
+            /// </summary>
+            private static List<TAKE2> allCap;
 
             public TAKE2(int i)
             {
@@ -223,42 +196,41 @@ namespace Splendor
             }
 
 
-            public static List<TAKE2> AllTAKE2
+            public static List<TAKE2> reg
             {
                 get
                 {
-                    if (all == null) generate();
-                    return all;
+                    if (allReg == null) generate();
+                    return allReg;
+                }
+            }
+            public static List<TAKE2> cap
+            {
+                get
+                {
+                    if (allCap == null) generate();
+                    return allCap;
                 }
             }
 
             public static void generate()
             {
-                List<TAKE2> l = new List<TAKE2>();
-                TAKE2 temp;
+                allReg = new List<TAKE2>();
                 for (int i = 0; i < 5; i++)
                 {
-                    temp = new TAKE2(i);
-                    l.Add(temp);
+                    allReg.Add(new TAKE2(i));
                 }
-
+                allCap = new List<TAKE2>();
                 foreach (Gem g in Gem.ExchangeTwo)
                 {
-                    temp = new TAKE2(g);
-                    l.Add(temp);
+                    allCap.Add(new TAKE2(g));
                 }
-                all = l;
             }
 
             
             public static List<TAKE2> getLegalMoves(Board b)
             {
-                List<TAKE2> l = new List<TAKE2>();
-                foreach (TAKE2 t in AllTAKE2)
-                {
-                    if (t.isLegal(b)) l.Add(t);
-                }
-                return l;
+                return (b.currentPlayer.gems.magnitude < 9) ? reg.FindAll(x => x.isLegal(b)) : cap.FindAll(x => x.isLegal(b));
             }
 
             public override bool Equals(object obj)
@@ -277,7 +249,8 @@ namespace Splendor
         {
 
             public Gem colors;
-            private static List<TAKE3> all;
+            private static List<TAKE3> allCap;
+            private static List<TAKE3> allReg;
 
             public TAKE3(Gem x)
             {
@@ -298,41 +271,41 @@ namespace Splendor
 
             public static void generate()
             {
-                List<TAKE3> l = new List<TAKE3>();
-
-                foreach (Gem g in Gem.ExchangeThree)
-                {
-                    l.Add(new TAKE3(g));
-                }
-
+               allReg = new List<TAKE3>();
                 foreach (Gem g in Gem.ThreeNetThree)
                 {
-                    l.Add(new TAKE3(g));
+                    allReg.Add(new TAKE3(g));
                 }
-                all = l;
+                allCap = new List<TAKE3>();
+                foreach (Gem g in Gem.ExchangeThree)
+                {
+                    allCap.Add(new TAKE3(g));
+                }
             }
 
-            public static List<TAKE3> allTAKE3
-            {
-                get { return all; }
+            public static List<TAKE3> reg { get
+                {
+                    if (allReg == null) generate();
+                    return allReg;
+                }
+            }
+            public static List<TAKE3> cap { get
+                {
+                    if (allCap == null) generate();
+                    return allCap;
+                }
             }
 
             public static List<TAKE3> getLegalMoves(Board b)
             {
-                List<TAKE3> l = new List<TAKE3>();
-                foreach (TAKE3 t in all)
-                {
-                    if (t.isLegal(b)) l.Add(t);
-                }
-                return l;
+                return (b.currentPlayer.gems.magnitude < 8) ? reg.FindAll(x => x.isLegal(b)) : cap.FindAll(x => x.isLegal(b));
             }
 
             public override bool isLegal(Board b)
             {
-                Gem after = b.currentPlayer.gems + this.colors;
+                Gem after = b.currentPlayer.gems + colors;
                 bool avail = b.gems > colors;
                 bool haveRoom = after.magnitude <= 10 && after.deficit == 0;
-                if (!haveRoom || !avail) return false;
                 return avail && haveRoom && (colors[5] == 0);
             }
 
@@ -343,7 +316,6 @@ namespace Splendor
 
             public override void takeAction()
             {
-         //       Console.WriteLine(Splendor.currentPlayer + " chose move " + this.ToString());
                 if (isLegal())
                 {
                     GameController.currentPlayer.takeGems(colors);
