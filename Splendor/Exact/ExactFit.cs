@@ -8,9 +8,9 @@ namespace Splendor.Exact
 {
     public class ExactFit : IFitnessFunction
     {
-        private Func<Board, double> scoringFunction;
+        private ScoringMethods.Function scoringFunction;
 
-        public ExactFit(Func<Board, double> scoringFunction)
+        public ExactFit(ScoringMethods.Function scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }
@@ -71,7 +71,7 @@ namespace Splendor.Exact
                 {
                     break;
                 }
-                score += scoringFunction(next);
+                score += scoringFunction.evaluate(next);
                 current = next;
                 //Do the "Generate-next-move" loop for greedy
                 nextMove = Greedy.getGreedyMove(current, ScoringMethods.DeltaPoints);

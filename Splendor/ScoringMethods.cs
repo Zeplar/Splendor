@@ -13,7 +13,7 @@ namespace Splendor
     public static class ScoringMethods
     {
 
-        public static Dictionary<string,Func<Board,double>> dictionary = new Dictionary<string, Func<Board, double>>();
+        public static Dictionary<string,Function> dictionary = new Dictionary<string, Function>();
 
         public static void register()
         { 
@@ -22,18 +22,13 @@ namespace Splendor
             dictionary.Add("winloss", WinLoss);
             dictionary.Add("prestige", Prestige);
             dictionary.Add("legalmoves", LegalMoves);
-            dictionary.Add("all", All);
             dictionary.Add("turn", turn);
-            dictionary.Add("turnsquared", turnsquared);
-        }
+            dictionary.Add("gems", Gems);
+            dictionary.Add("nobles", DistanceFromNobles);
 
-        public static double turn(Board b)
-        {
-            return b.turn;
-        }
-        public static double turnsquared(Board b)
-        {
-            return b.turn * b.turn;
+            //Check how many losers thought they were winners
+            //Check where losses occur-- is it always a card draw?
+            //
         }
 
         public static string listAll
@@ -46,123 +41,267 @@ namespace Splendor
             }
         }
 
+        public class Function
+        {
+            private Func<Board, double> fn;
+            private string description = "";
+            public double evaluate(Board b)
+            {
+                return fn(b);
+            }
+            public Function(Func<Board, double> fn, string description="")
+            {
+                this.fn = fn;
+                this.description = description;
+            }
+            public Function()
+            {
+                this.fn = bd => 0;
+                this.description = "";
+            }
+            public static Function operator +(Function a, Function b)
+            {
+                return new Function(bd => a.fn(bd) + b.fn(bd), "(" + a.description + " + " + b.description +")");
+            }
+            public static Function operator -(Function a, Function b)
+            {
+                return new Function(bd => a.fn(bd) - b.fn(bd), "(" + a.description + " - " + b.description + ")");
+            }
+            public static Function operator *(Function a, Function b)
+            {
+                return new Function(bd => a.fn(bd) * b.fn(bd), a.description + " * " + b.description);
+            }
+            public static Function operator /(Function a, Function b)
+            {
+                return new Function(bd => a.fn(bd) / b.fn(bd), a.description + " / " + b.description);
+            }
+            public static Function operator *(double a, Function b)
+            {
+                return new Function(bd => a * b.fn(bd), a + "(" + b.description + ")");
+            }
+            public static Function operator /(double a, Function b)
+            {
+                return new Function(bd => a / b.fn(bd), a + "/(" + b.description + ")");
+            }
+            public static Function operator /(Function a, double b)
+            {
+                return new Function(bd => a.fn(bd) / b, "(" + a.description + ")/" + b);
+            }
+            public Function delta()
+            {
+                return new Function(bd =>
+                {
+                    double p = this.evaluate(bd);
+                    bd.players.Reverse();
+                    p -= this.evaluate(bd);
+                    bd.players.Reverse();
+                    return p;
+                }, "delta- " + description);
+            }
+            public override string ToString()
+            {
+                return description;
+            }
+            public Function operate(string op, Function rhs)
+            {
+                switch (op)
+                {
+                    case "+":
+                        return this + rhs;
+                    case "-":
+                        return this - rhs;
+                    case "*":
+                        return this * rhs;
+                    case "/":
+                        return this / rhs;
+                    case "delta":
+                        return this.delta();
+                    default:
+                        throw new KeyNotFoundException("Invalid operator");
+                }
+            }
+            public Function operate(string op, double rhs)
+            {
+                switch (op)
+                {
+                    case "*":
+                        return rhs * this;
+                    case "/":
+                        return this / rhs;
+                    default:
+                        throw new KeyNotFoundException("Invalid operator");
+                }
+            }
+            public Function(double i) : this(b => i, i.ToString()) { }
+        }
 
+        private static Function turn
+        {
+            get { return new Function(bd => bd.turn, "Turn"); }
+        }
 
         /// <summary>
         /// Scores difference in points.
         /// </summary>
-        public static double DeltaPoints(Board b)
+        public static Function DeltaPoints
         {
-            return b.maximizingPlayer.points - b.minimizingPlayer.points;
+            get { return new Function(bd => bd.maximizingPlayer.points - bd.minimizingPlayer.points, "DeltaPoints"); }
         }
 
         /// <summary>
-        /// Scores maxPoints for a win, minPoints for a loss, else zero. Tiebreaks on prestige.
+        /// Scores maxPoints for a win, minPoints )for a loss, else zero. Tiebreaks on prestige.
         /// </summary>
-        public static double WinLoss(Board b)
-        {
-            if (b.gameOver)
-            {
-                if (b.maximizingPlayer.points < 15 && b.minimizingPlayer.points < 15) return 0;
-                if (b.maximizingPlayer.points < b.minimizingPlayer.points)
+        public static Function WinLoss
+        { get {
+                return new Function(bd =>
                 {
-                    return int.MinValue / 2;
-                }
-                if (b.maximizingPlayer.points > b.minimizingPlayer.points)
-                {
-                    return int.MaxValue / 2;
-                }
-                return (b.maximizingPlayer.field.Count > b.minimizingPlayer.field.Count) ? int.MaxValue / 2 : int.MinValue / 2;
+                    if (bd.gameOver)
+                    {
+                        if (bd.maximizingPlayer.points < 15 && bd.minimizingPlayer.points < 15) return 0;
+                        if (bd.maximizingPlayer.points < bd.minimizingPlayer.points)
+                        {
+                            return -1;
+                        }
+                        if (bd.maximizingPlayer.points > bd.minimizingPlayer.points)
+                        {
+                            return 1;
+                        }
+                        return (bd.maximizingPlayer.field.Count < bd.minimizingPlayer.field.Count) ? 1 : -1;
 
-            }
-            return 0;
+                    }
+                    return 0;
+                }, "WinLoss");
+            } }
+
+        public static Function Gems
+        {
+            get { return new Function(bd => bd.maximizingPlayer.gems.magnitude); }
         }
 
         /// <summary>
         /// Scores only points.
         /// </summary>
-        public static double Points(Board b)
-        {
-            return b.maximizingPlayer.points;
-        }
+        public static Function Points
+        { get { return new Function(bd => bd.maximizingPlayer.points, "Points"); } }
 
         /// <summary>
         /// Scores only prestige.
         /// </summary>
-        public static double Prestige(Board b)
+        public static Function Prestige
+        { get { return new Function(bd => bd.maximizingPlayer.field.Count, "Prestige"); } }
+
+        public static Function DistanceFromNobles
         {
-            return b.maximizingPlayer.field.Count;
+            get { return new Function(_DistanceFromNobles); }
+        }
+
+        private static double _DistanceFromNobles(Board b)
+        {
+            double i = 0;
+            foreach (Card c in b.viewableCards.FindAll(x => x.deck == GameController.nobles))
+            {
+                i += (c.cost - b.maximizingPlayer.gems).positive.magnitude;
+            }
+            return i;
         }
 
         /// <summary>
         /// Scores number of legal Buys and Reserves available.
         /// Takes may be bad since trades vastly outnumber pure takes.
         /// </summary>
-        public static double LegalMoves(Board b)
-        {
-            return b.legalMoves.Count(x => x.moveType == Move.Type.BUY || x.moveType == Move.Type.RESERVE);
-        }
+        public static Function LegalMoves { get { return new Function(bd => bd.legalMoves.Count(x => x.moveType == Move.Type.BUY || x.moveType == Move.Type.RESERVE)); } }
 
-        public static double All(Board b)
+        private static int precedence(string op)
         {
-            return 3 * (b.maximizingPlayer.points - b.minimizingPlayer.points) + 2 * (b.maximizingPlayer.field.Count - b.minimizingPlayer.field.Count) + (b.maximizingPlayer.gems.magnitude);
-        }
-        
-
-        /// <summary>
-        /// Converts a "self-only" function into a delta function
-        /// </summary>
-        /// <returns></returns>
-        public static Func<Board, double> deltafy(Func<Board, double> scoringFunction)
-        {
-            return (b) =>
+            switch (op)
             {
-                double self = scoringFunction(b);
-                b.players.Reverse();
-                double other = scoringFunction(b);
-                b.players.Reverse();
-                return self - other;
-            };
+                case "*":
+                    return 2;
+                case "/":
+                    return 2;
+                case "+":
+                    return 1;
+                case "-":
+                    return 1;
+                default:
+                    return -1;
+            }
         }
 
-        public static Func<Board, double> combine(Func<Board, double> f1, Func<Board, double> f2)
+        public static Function parse(List<string> exp)
         {
-            return (b) =>
+            return eval_postfix(convertToPostfix(exp));
+        }
+        public static Function parse(IEnumerable<string> exp, int skip)
+        {
+            return eval_postfix(convertToPostfix(exp.Skip(skip)));
+        }
+
+        private static Function eval_postfix(Queue<string> exp)
+        {
+            Stack<Function> stack = new Stack<Function>();
+            foreach (string s in exp)
             {
-                return f1(b) + f2(b);
-            };
-        }
-
-        private static Func<Board, double> multiply(double i, Func<Board, double> f)
-        {
-            return (Board x) => i * f(x);
-        }
-
-        public static Func<Board, double> parseScoringFunction(string[] args, int skip)
-        {
-            Func<Board, double> scoringFunction = WinLoss;
-            Func<Board, double> nextFunc;
-            for (int j = skip; j < args.Length; j++)
-            {
-                int i;
-                if (args[j].Equals("delta"))
+                if (precedence(s) > 0)
                 {
-                    j++;
-                    nextFunc = ScoringMethods.deltafy(dictionary[args[j]]);
-                }
-                else if (int.TryParse(args[j], out i))
-                {
-                    j++;
-                    nextFunc = multiply(i, dictionary[args[j]]);
+                    Function temp = stack.Pop();
+                    Function ret = stack.Pop().operate(s, temp);
+                    stack.Push(ret);
                 }
                 else
                 {
-                    nextFunc = dictionary[args[j]];
+                    double i;
+                    if (double.TryParse(s, out i)) stack.Push(new Function(i));
+                    else
+                    {
+                        Debug.Assert(dictionary.ContainsKey(s), s + " is not in the function dictionary");
+                        stack.Push(dictionary[s]);
+                    }
                 }
-                scoringFunction = combine(scoringFunction, nextFunc);
             }
-            return scoringFunction;
+            Debug.Assert(stack.Count == 1, "Too many functions on the stack: " + stack.ToList().String());
+            return stack.Pop();
         }
 
+        private static Queue<string> convertToPostfix(IEnumerable<string> exp)
+        {
+            Queue<string> output = new Queue<string>();
+            Stack<string> stack = new Stack<string>();
+            foreach (string s in exp)
+            {
+                if (s == "(") stack.Push(s);
+                else if (s == ")")
+                {
+                    while (stack.Peek() != "(") output.Enqueue(stack.Pop());
+                    stack.Pop();
+                }
+                else if (precedence(s) > 0)
+                {
+                    while (stack.Count > 0 && precedence(s) <= precedence(stack.Peek()))
+                    {
+                        output.Enqueue(stack.Pop());
+                    }
+                    stack.Push(s);
+                }
+                else output.Enqueue(s);
+            }
+            foreach (string s in stack)
+            {
+                if (s == ")" || s == "(") Debug.Fail("Mismatched parenthesis");
+                output.Enqueue(s);
+            }
+            return output;
+        }
+
+        public static void testScoringMethods(Board bd)
+        {
+            Function a = parse(new List<string>("1 + 2 / 3".Split()));
+            Function b = parse(new List<string>("( 1 + 2 ) / 3".Split()));
+            Function c = parse(new List<string>("1 + ( 2 / 3 )".Split()));
+
+            Debug.Assert(a.evaluate(bd) == c.evaluate(bd));
+            Debug.Assert(a.evaluate(bd) != b.evaluate(bd));
+        }
     }
+
 }

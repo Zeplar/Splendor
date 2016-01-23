@@ -91,6 +91,10 @@
       <HintPath>..\packages\GeneticSharp.1.0.94\lib\net35\HelperSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MathParser, Version=1.0.10.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathosParser.1.0.10.1\lib\MathParser.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
       <HintPath>..\packages\GeneticSharp.1.0.94\lib\net35\NCalc.dll</HintPath>
       <Private>True</Private>
@@ -116,8 +120,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GreedyBuyer.cs" />
-    <Compile Include="Board.cs" />
-    <Compile Include="Card.cs" />
+    <Compile Include="GameComponents\Board.cs" />
+    <Compile Include="GameComponents\Card.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="BuySeeker.cs" />
@@ -131,14 +135,14 @@
     <Compile Include="Exact\ExactChromosome.cs" />
     <Compile Include="Greedy.cs" />
     <Compile Include="Minimax.cs" />
-    <Compile Include="Move.cs" />
+    <Compile Include="GameComponents\Move.cs" />
     <Compile Include="RandomPlayer.cs" />
     <Compile Include="RecordHistory.cs" />
     <Compile Include="ScoringMethods.cs" />
     <Compile Include="SocketAPI.cs" />
-    <Compile Include="GameController.cs" />
-    <Compile Include="Deck.cs" />
-    <Compile Include="Gem.cs" />
+    <Compile Include="GameComponents\GameController.cs" />
+    <Compile Include="GameComponents\Deck.cs" />
+    <Compile Include="GameComponents\Gem.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTests.cs" />
@@ -146,7 +150,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="splendor_cards.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

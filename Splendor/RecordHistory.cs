@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Diagnostics;
 using System;
+using System.Collections.Generic;
 namespace Splendor
 {
     public static class RecordHistory
@@ -121,6 +122,16 @@ namespace Splendor
                 }
             }
             File.AppendAllText(plottingDirectory, info);
+        }
+
+        public static void plot<T>(IEnumerable<T> list)
+        {
+            int i = 0;
+            foreach (T x in list)
+            {
+                plot(i + "," + x.ToString() + Environment.NewLine);
+                i++;
+            }
         }
 
         public static void clearPlot()

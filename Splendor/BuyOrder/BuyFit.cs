@@ -9,9 +9,9 @@ namespace Splendor.BuyOrder
     public class BuyFit : IFitnessFunction
     {
         public List<Card> cards;
-        private Func<Board, double> scoringFunction;
+        private ScoringMethods.Function scoringFunction;
 
-        public BuyFit(Func<Board, double> scoringFunction)
+        public BuyFit(ScoringMethods.Function scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }
@@ -22,16 +22,18 @@ namespace Splendor.BuyOrder
             PermutationChromosome c = (PermutationChromosome)chromosome;
             Board current = Board.current;
             int i = 0;
+            double score = 0;
             while (i < 10)
             {
                 if (current.gameOver) break;
                 current = simulateMyTurn(c, current);
+                score += scoringFunction.evaluate(current);
                 if (current.gameOver) break;
                 current = simulateGreedyTurn(current);
                 i++;
             }
             Debug.Assert(current.gameOver ? true : (current != Board.current), "Boardstate did not evolve.");
-            return scoringFunction(current);
+            return score;
 
 
         }

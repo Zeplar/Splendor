@@ -12,16 +12,16 @@ namespace Splendor.BuyOrder
         private int popSize;
         private int generations;
 
-        public SelfishGene(Func<Board, double> scoringFunction) : this(scoringFunction, 200, 20) { }
+        public SelfishGene(ScoringMethods.Function scoringFunction) : this(scoringFunction, 200, 20) { }
 
-        public SelfishGene(Func<Board, double> scoringFunction, int popsize, int gens)
+        public SelfishGene(ScoringMethods.Function scoringFunction, int popsize, int gens)
         {
             fitness = new BuyFit(scoringFunction);
             name = "SelfishGene";
             popSize = popsize;
             generations = gens;
             RecordHistory.clearPlot();
-            RecordHistory.plot("Population: " + popsize + " ; Generations: " + gens + Environment.NewLine);
+            RecordHistory.plot(popsize + "," + gens + Environment.NewLine);
         }
 
 
@@ -29,8 +29,8 @@ namespace Splendor.BuyOrder
         {
             fitness.cards = Board.current.viewableCards.FindAll(x => true);
   //          Console.WriteLine("Loaded cards.");
-            var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RouletteWheelSelection());
-            ga.MutationRate = 0.5;
+            var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RankSelection());
+            ga.MutationRate = 0.1;
 
   //          Console.WriteLine("Loaded GA.");
             for (int i = 0; i < generations; i++)
@@ -39,7 +39,7 @@ namespace Splendor.BuyOrder
                 CONSOLE.Overwrite(6, "Generations " + i + " out of " + generations);
                 CONSOLE.WriteLine("Best chromosome this generation: " + write((PermutationChromosome)ga.BestChromosome) + " | " + ga.BestChromosome.Fitness);
                 RecordHistory.plot(i + "," + ga.FitnessMax + Environment.NewLine);
-
+                //if ((GameController.turn % 10 == 0) && (i == 0 || i == generations / 2 || i == generations-1)) RecordHistory.plot(ga.getFitnesses());
             }
         }
 

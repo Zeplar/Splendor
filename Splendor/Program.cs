@@ -91,7 +91,7 @@ namespace Splendor
             Greedy g1 = new Greedy();
             Greedy g2 = new Greedy();
             Greedy g3 = new Greedy();
-            Minimax m = new Minimax(1, ScoringMethods.combine(ScoringMethods.DeltaPoints, ScoringMethods.WinLoss));
+            Minimax m = new Minimax(1, ScoringMethods.DeltaPoints + ScoringMethods.WinLoss);
             int[] winArray = new int[tries];
 
            GameController.Start(g1, g2, 100);
@@ -122,7 +122,7 @@ namespace Splendor
             Console.WriteLine("Scoring functions: " + ScoringMethods.listAll);
             while (true)
             {
-                string[] s = Console.ReadLine().Replace('(', ' ').Replace(')', ' ').Replace(',', ' ').Split();
+                string[] s = Console.ReadLine().Replace("(", "( ").Replace(")", " )").Split();
                 if (PlayerFactory.Exists(s[0]))
                 {
                     var parameters = new List<string>(s);

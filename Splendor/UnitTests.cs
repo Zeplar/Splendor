@@ -50,6 +50,7 @@ namespace Splendor
                 g += p.gems;
             }
             Debug.Assert(g == new Gem(4, 4, 4, 4, 4, 8), "Gems didn't add up.");
+            ScoringMethods.testScoringMethods(b);
         }
 
         [Conditional("DEBUG")]

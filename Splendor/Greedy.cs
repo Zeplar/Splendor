@@ -7,15 +7,15 @@ namespace Splendor
 
     public class Greedy : Player
     {
-        private Func<Board, double> scoringFunction;
+        private ScoringMethods.Function scoringFunction;
 
 
         public Greedy()
         {
-            scoringFunction = ScoringMethods.combine(ScoringMethods.DeltaPoints, ScoringMethods.WinLoss);
+            scoringFunction = ScoringMethods.DeltaPoints + ScoringMethods.WinLoss;
             name = "Greedy Delta";
         }
-        public Greedy(Func<Board, double> scoringFunction)
+        public Greedy(ScoringMethods.Function scoringFunction)
         {
             this.scoringFunction = scoringFunction;
             this.name = "Greedy Custom";
@@ -27,14 +27,14 @@ namespace Splendor
         }
 
 
-        public static Move getGreedyMove(Board b, Func<Board, double> scoringFunction)
+        public static Move getGreedyMove(Board b, ScoringMethods.Function scoringFunction)
         {
             Move bestMove = null;
             double bestScore = int.MinValue;
 
             foreach (Move m in b.legalMoves)
             {
-                double temp = scoringFunction(b.generate(m));
+                double temp = scoringFunction.evaluate(b.generate(m));
                 if (temp > bestScore)
                 {
                     bestScore = temp;

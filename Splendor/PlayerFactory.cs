@@ -42,19 +42,19 @@ namespace Splendor
             Register("human", (x) => new Human());
             Register("greedy", x =>
             {
-                return x.Length == 0 ? new Greedy() : new Greedy(ScoringMethods.parseScoringFunction(x, 0));
+                return x.Length == 0 ? new Greedy() : new Greedy(ScoringMethods.parse(x, 0));
             });
             Register("player", (x) => new Player());
             Register("minimax", x =>
             {
                 int i = int.Parse(x[0]);
 
-                return new Minimax(i, ScoringMethods.parseScoringFunction(x, 1));
+                return new Minimax(i, ScoringMethods.parse(x, 1));
             });
-            Register("exact", x => new Exact.ExactGene(ScoringMethods.parseScoringFunction(x,0)));
+            Register("exact", x => new Exact.ExactGene(ScoringMethods.parse(x,0)));
             Register("selfish", x =>
             {
-                return x.Length > 2 ? new BuyOrder.SelfishGene(ScoringMethods.parseScoringFunction(x, 2), int.Parse(x[0]), int.Parse(x[1])) : new BuyOrder.SelfishGene(ScoringMethods.parseScoringFunction(x, 0));
+                return x.Length > 2 ? new BuyOrder.SelfishGene(ScoringMethods.parse(x, 2), int.Parse(x[0]), int.Parse(x[1])) : new BuyOrder.SelfishGene(ScoringMethods.parse(x, 0));
             });
             Register("greedybuyer", x => new GreedyBuyer());
 
