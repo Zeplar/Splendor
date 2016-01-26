@@ -40,7 +40,7 @@ namespace Splendor.BuyOrder
 
         private Board simulateGreedyTurn(Board current)
         {
-            Move m = Greedy.getGreedyMove(current, ScoringMethods.DeltaPoints);
+            Move m = Greedy.getGreedyMove(current, ScoringMethods.Lead);
             return current.generate(m);
         }
 

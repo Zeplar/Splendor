@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Splendor
 {
@@ -10,16 +9,15 @@ namespace Splendor
     {
 
         private static Dictionary<string, Func<string[], Player>> dict = new Dictionary<string, Func<string[], Player>>();
-        public static Player CreateNew(string name, List<string> args)
+        public static Player CreateNew(string[] args)
         {
-            string[] x = args.ToArray();
-            return dict[name](x);
+            return dict[args[0]](args.Skip(1).ToArray());
         }
         public static bool Exists(string name)
         {
             return dict.ContainsKey(name);
         }
-        private static void Register(string name, Func<string[], Player> f)
+        private static void Register(string name, Func<string[], Player> f, params string[] requiredArgs)
         {
             dict.Add(name, f);
         }
@@ -40,22 +38,16 @@ namespace Splendor
         public static void Load()
         {
             Register("human", (x) => new Human());
-            Register("greedy", x =>
-            {
-                return x.Length == 0 ? new Greedy() : new Greedy(ScoringMethods.parse(x, 0));
-            });
+            Register("greedy", Greedy.Create);
             Register("player", (x) => new Player());
             Register("minimax", x =>
             {
                 int i = int.Parse(x[0]);
 
                 return new Minimax(i, ScoringMethods.parse(x, 1));
-            });
-            Register("exact", x => new Exact.ExactGene(ScoringMethods.parse(x,0)));
-            Register("selfish", x =>
-            {
-                return x.Length > 2 ? new BuyOrder.SelfishGene(ScoringMethods.parse(x, 2), int.Parse(x[0]), int.Parse(x[1])) : new BuyOrder.SelfishGene(ScoringMethods.parse(x, 0));
-            });
+            }, "Depth");
+            Register("exact", Exact.ExactGene.Create);
+            Register("selfish", BuyOrder.SelfishGene.Create);
             Register("greedybuyer", x => new GreedyBuyer());
 
         }

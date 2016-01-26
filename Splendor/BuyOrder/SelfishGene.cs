@@ -20,32 +20,59 @@ namespace Splendor.BuyOrder
             name = "SelfishGene";
             popSize = popsize;
             generations = gens;
-            RecordHistory.clearPlot();
-            RecordHistory.plot(popsize + "," + gens + Environment.NewLine);
+            fn = scoringFunction;
+        }
+
+        /// <summary>
+        /// Used for registration in the player factory.
+        /// </summary>
+        public static SelfishGene Create(string[] args)
+        {
+            ScoringMethods.Function f;
+            if (args.Length < 4)
+            {
+                Console.WriteLine("Usage: selfish <popSize> <generations> <...scoring function...>");
+                return null;
+            }
+            List<string> scoring = new List<string>(args);
+            List<int> parameters;
+            scoring.RemoveRange(0, 2);
+            try
+            {
+                f = ScoringMethods.parse(scoring);
+                parameters = new List<string>(args).GetRange(0, 2).ConvertAll<int>(x => int.Parse(x));
+            } catch (FormatException)
+            {
+                throw new FormatException("Usage: selfish <popSize> <generations> <...scoring function...>");
+            }
+            return new SelfishGene(f, parameters[0], parameters[1]);
         }
 
 
         public override void takeTurn()
         {
             fitness.cards = Board.current.viewableCards.FindAll(x => true);
-  //          Console.WriteLine("Loaded cards.");
-            var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RankSelection());
+            var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RouletteWheelSelection());
             ga.MutationRate = 0.1;
 
-  //          Console.WriteLine("Loaded GA.");
             for (int i = 0; i < generations; i++)
             {
                 ga.RunEpoch();
                 CONSOLE.Overwrite(6, "Generations " + i + " out of " + generations);
-                CONSOLE.WriteLine("Best chromosome this generation: " + write((PermutationChromosome)ga.BestChromosome) + " | " + ga.BestChromosome.Fitness);
+                //CONSOLE.WriteLine("Best chromosome this generation: " + write((PermutationChromosome)ga.BestChromosome) + " | " + ga.BestChromosome.Fitness);
                 RecordHistory.plot(i + "," + ga.FitnessMax + Environment.NewLine);
-                //if ((GameController.turn % 10 == 0) && (i == 0 || i == generations / 2 || i == generations-1)) RecordHistory.plot(ga.getFitnesses());
+                if ((GameController.turn % 10 == 0) && (i == 0 || i == generations / 2 || i == generations-1)) RecordHistory.snapshot(ga.getFitnesses());
             }
         }
 
         private string write(PermutationChromosome p)
         {
             return p.Value.String();
+        }
+
+        public override string ToString()
+        {
+            return "BuyOrder " + fn;
         }
 
     }

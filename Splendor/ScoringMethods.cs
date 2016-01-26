@@ -17,11 +17,11 @@ namespace Splendor
 
         public static void register()
         { 
-            dictionary.Add("deltapoints", DeltaPoints);
+            dictionary.Add("lead", Lead);
             dictionary.Add("points", Points);
             dictionary.Add("winloss", WinLoss);
             dictionary.Add("prestige", Prestige);
-            dictionary.Add("legalmoves", LegalMoves);
+            dictionary.Add("legalbuys", LegalBuys);
             dictionary.Add("turn", turn);
             dictionary.Add("gems", Gems);
             dictionary.Add("nobles", DistanceFromNobles);
@@ -89,14 +89,7 @@ namespace Splendor
             }
             public Function delta()
             {
-                return new Function(bd =>
-                {
-                    double p = this.evaluate(bd);
-                    bd.players.Reverse();
-                    p -= this.evaluate(bd);
-                    bd.players.Reverse();
-                    return p;
-                }, "delta- " + description);
+                return new Function(bd => fn(bd) - fn(bd.prevBoard), "delta- " + description);
             }
             public override string ToString()
             {
@@ -143,9 +136,9 @@ namespace Splendor
         /// <summary>
         /// Scores difference in points.
         /// </summary>
-        public static Function DeltaPoints
+        public static Function Lead
         {
-            get { return new Function(bd => bd.maximizingPlayer.points - bd.minimizingPlayer.points, "DeltaPoints"); }
+            get { return new Function(bd => bd.maximizingPlayer.points - bd.minimizingPlayer.points, "Lead"); }
         }
 
         /// <summary>
@@ -175,24 +168,30 @@ namespace Splendor
 
         public static Function Gems
         {
-            get { return new Function(bd => bd.maximizingPlayer.gems.magnitude); }
+            get
+            {
+                return new Function(bd => bd.prevMove?.moveType == Move.Type.BUY ? 0 : bd.maximizingPlayer.gems.magnitude - bd.prevBoard.maximizingPlayer.gems.magnitude, "Gems");
+            }
         }
 
         /// <summary>
         /// Scores only points.
         /// </summary>
         public static Function Points
-        { get { return new Function(bd => bd.maximizingPlayer.points, "Points"); } }
+        { get { return new Function(bd => bd.prevMove?.moveType == Move.Type.BUY ? bd.maximizingPlayer.points - bd.prevBoard.maximizingPlayer.points : 0, "Points"); } }
 
         /// <summary>
         /// Scores only prestige.
         /// </summary>
         public static Function Prestige
-        { get { return new Function(bd => bd.maximizingPlayer.field.Count, "Prestige"); } }
+        { get { return new Function(bd => bd.prevMove?.moveType == Move.Type.BUY ? 1 : 0, "Prestige"); } }
 
         public static Function DistanceFromNobles
         {
-            get { return new Function(_DistanceFromNobles); }
+            get
+            {
+                return new Function(bd => bd.prevMove?.moveType == Move.Type.BUY ? _DistanceFromNobles(bd) - _DistanceFromNobles(bd.prevBoard) : 0, "Nobles");
+            }
         }
 
         private static double _DistanceFromNobles(Board b)
@@ -209,7 +208,7 @@ namespace Splendor
         /// Scores number of legal Buys and Reserves available.
         /// Takes may be bad since trades vastly outnumber pure takes.
         /// </summary>
-        public static Function LegalMoves { get { return new Function(bd => bd.legalMoves.Count(x => x.moveType == Move.Type.BUY || x.moveType == Move.Type.RESERVE)); } }
+        public static Function LegalBuys { get { return new Function(bd => bd.legalMoves.Count(x => x.moveType == Move.Type.BUY),"LegalBuys"); } }
 
         private static int precedence(string op)
         {
@@ -228,7 +227,7 @@ namespace Splendor
             }
         }
 
-        public static Function parse(List<string> exp)
+        public static Function parse(IEnumerable<string> exp)
         {
             return eval_postfix(convertToPostfix(exp));
         }
@@ -259,7 +258,7 @@ namespace Splendor
                     }
                 }
             }
-            Debug.Assert(stack.Count == 1, "Too many functions on the stack: " + stack.ToList().String());
+            if (stack.Count != 1) throw new FormatException("Too many functions on the stack: " + stack.ToList().String());
             return stack.Pop();
         }
 

@@ -12,18 +12,36 @@ namespace Splendor
 
         public Greedy()
         {
-            scoringFunction = ScoringMethods.DeltaPoints + ScoringMethods.WinLoss;
+            scoringFunction = ScoringMethods.Lead + ScoringMethods.WinLoss;
+            fn = scoringFunction;
             name = "Greedy Delta";
         }
         public Greedy(ScoringMethods.Function scoringFunction)
         {
             this.scoringFunction = scoringFunction;
-            this.name = "Greedy Custom";
+            name = "Greedy Custom";
+            fn = scoringFunction;
         }
 
         public override string ToString()
         {
-            return this.name;
+            return "Greedy " + scoringFunction;
+        }
+
+        /// <summary>
+        /// Used for registration in the player factory.
+        /// </summary>
+        public static Greedy Create(string[] args)
+        {
+            ScoringMethods.Function f;
+            try
+            {
+                f = ScoringMethods.parse(args);
+            } catch (FormatException)
+            {
+                throw new FormatException("Improper arguments passed to scoring function parser.");
+            }
+            return new Greedy(f);
         }
 
 

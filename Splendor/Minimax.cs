@@ -18,6 +18,7 @@ namespace Splendor
             treeDepth = i;
             scoringFunction = f;
             name = "Minimax " + treeDepth;
+            fn = f;
         }
 
         private ScoringMethods.Function scoringFunction;

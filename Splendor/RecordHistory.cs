@@ -13,6 +13,8 @@ namespace Splendor
         static StreamWriter file;
         static bool init;
         static string plottingDirectory;
+        static string snapshotDirectory;
+        public static bool plotting;
 
         public static void initialize()
         {
@@ -104,8 +106,35 @@ namespace Splendor
             init = false;
         }
 
+        public static void snapshot<T>(IEnumerable<T> list)
+        {
+            if (!plotting) return;
+            if (snapshotDirectory == null)
+            {
+                string folder = @"C:\Users\JHep\Desktop\SelfishGenePlots\" + DateTime.Today.ToLongDateString();
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                int i = 0;
+                snapshotDirectory = folder + @"\snapshot_0.csv";
+                while (File.Exists(snapshotDirectory))
+                {
+                    i++;
+                    snapshotDirectory = folder + @"\snapshot_" + i + ".csv";
+                }
+            }
+            int j = 0;
+            foreach (T x in list)
+            {
+                File.AppendAllText(snapshotDirectory, j + "," + x.ToString() + Environment.NewLine);
+                j++;
+            }
+        }
+
         public static void plot(string info)
         {
+            if (!plotting) return;
             if (plottingDirectory == null)
             {
                 string folder = @"C:\Users\JHep\Desktop\SelfishGenePlots\" + DateTime.Today.ToLongDateString();
@@ -126,6 +155,7 @@ namespace Splendor
 
         public static void plot<T>(IEnumerable<T> list)
         {
+            if (!plotting) return;
             int i = 0;
             foreach (T x in list)
             {
@@ -137,6 +167,7 @@ namespace Splendor
         public static void clearPlot()
         {
             plottingDirectory = null;
+            snapshotDirectory = null;
         }
 
 

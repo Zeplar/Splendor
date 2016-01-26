@@ -15,6 +15,7 @@ namespace Splendor
         public List<Card> field;
         public int wins;
         public string name;
+        public ScoringMethods.Function fn;
 
         protected Random random { get { return GameController.random; } }
 
@@ -63,6 +64,7 @@ namespace Splendor
             reserve = new List<Card>();
             field = new List<Card>();
             name = "BasePlayer";
+            fn = new ScoringMethods.Function();
         }
         
 

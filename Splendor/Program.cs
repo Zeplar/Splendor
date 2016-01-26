@@ -31,16 +31,14 @@ namespace Splendor
                     Stopwatch watch = new Stopwatch();
                     watch.Start();
                     i = int.Parse(commands.Dequeue());
-                    for (; i > 0; i--)
+                    for (int j=0; j < i; j++)
                     {
-                        Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
-                        Console.Write("Repeat " + i);
+                        if (j > 0) CONSOLE.Overwrite(7, "Repeat " + j + "/" + i + ", ETA " + (i/j - 1) * watch.Elapsed.Minutes + " minutes");
                         GameController.replayGame();
                         getStats();
-                       
+                        setPlot();
                     }
                     watch.Stop();
-                    Console.WriteLine("Previous Game Duration: " + watch.Elapsed);
                     Console.WriteLine("P1 wins : " + p1Wins + "     Ties: " + ties + "      Stalemates: " + stalemates);
                     return null;
                 case "score":
@@ -57,6 +55,10 @@ namespace Splendor
                 case "record":
                     GameController.recording = !GameController.recording;
                     return null;
+                case "plot":
+                    RecordHistory.plotting = !RecordHistory.plotting;
+                    Console.WriteLine("Plotting = " + RecordHistory.plotting);
+                    return null;
                 case "runseed":
                     GameController.Start(PLAYERS[0], PLAYERS[1], 100);
                     return null;
@@ -69,14 +71,18 @@ namespace Splendor
             }
         }
 
+        static void setPlot()
+        {
+            RecordHistory.clearPlot();
+            RecordHistory.plot(PLAYERS[0] + "    " + PLAYERS[1] + Environment.NewLine);
+            RecordHistory.plot(Environment.NewLine);
+            RecordHistory.snapshot(new string[] { PLAYERS[0] + "    " + PLAYERS[1], " "});
+        }
+
         static void recordScore()
         {
-            int i = Console.CursorTop;
-            Console.SetCursorPosition(0, 8);
-            Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
-            Console.Write(PLAYERS[0] + ": " + PLAYERS[0].wins + " --- " + PLAYERS[1] + ": " + PLAYERS[1].wins);
-            Console.SetCursorPosition(0, i);
-
+            CONSOLE.Overwrite(8, new string(' ', Console.WindowWidth - 1));
+            CONSOLE.Overwrite(8, PLAYERS[0] + ": " + PLAYERS[0].wins + " --- " + PLAYERS[1] + ": " + PLAYERS[1].wins);
         }
 
         static void debugGame()
@@ -91,7 +97,7 @@ namespace Splendor
             Greedy g1 = new Greedy();
             Greedy g2 = new Greedy();
             Greedy g3 = new Greedy();
-            Minimax m = new Minimax(1, ScoringMethods.DeltaPoints + ScoringMethods.WinLoss);
+            Minimax m = new Minimax(1, ScoringMethods.Lead + ScoringMethods.WinLoss);
             int[] winArray = new int[tries];
 
            GameController.Start(g1, g2, 100);
@@ -122,17 +128,28 @@ namespace Splendor
             Console.WriteLine("Scoring functions: " + ScoringMethods.listAll);
             while (true)
             {
-                string[] s = Console.ReadLine().Replace("(", "( ").Replace(")", " )").Split();
+                string[] s = Console.ReadLine().Replace("(", "( ").Replace(")", " )").Replace("+", " + ").Replace("-"," - ").Replace("*"," * ").Replace("/"," / ").Split();
                 if (PlayerFactory.Exists(s[0]))
                 {
-                    var parameters = new List<string>(s);
-                    parameters.RemoveAt(0);
-                    players.Add(PlayerFactory.CreateNew(s[0], parameters));
+                    Player temp = null;
+                    try
+                    {
+                        temp = PlayerFactory.CreateNew(s);
+                    }
+                    catch (FormatException z)
+                    {
+                        Console.WriteLine(z.Message);
+                    }
+                    finally
+                    {
+                        if (temp != null) players.Add(temp);
+                    }
                     if (players.Count == 2)
                     {
                         GameController.Start(players[0], players[1]);
                         PLAYERS = players.GetRange(0, 2);
                         players.Clear();
+                        setPlot();
                     }
                 }
                 else

@@ -12,6 +12,14 @@ public class Board
         public Gem gems;
         public List<Card> boardCards;
         public int turn;
+        /// <summary>
+        /// The board that generated this board.
+        /// </summary>
+        public Board prevBoard;
+        /// <summary>
+        /// The move that generated this board.
+        /// </summary>
+        public Move prevMove;
 
         private List<Move> moves;
         private bool gameOverValue;
@@ -39,7 +47,8 @@ public class Board
             boardCards = cards.ToList();
             this.gems = gems;
             this.turn = turn;
-
+            this.prevBoard = null;
+            this.prevMove = null;
         }
 
         private Board()
@@ -52,7 +61,8 @@ public class Board
             this.gems = Gem.board;
             this.turn = 0;
             this.boardCards = GameController.boardCards;
-            
+            this.prevBoard = null;
+            this.prevMove = null;
         }
 
         private int EncodeHelper(byte[] array, int index, List<Card> list)
@@ -202,6 +212,8 @@ public class Board
             Board b = new Board(players, turn, boardCards, gems);
             b.gems = gems;
             Player p = b.currentPlayer;
+            b.prevMove = m;
+            b.prevBoard = this;
 
             switch (m.moveType)
             {
