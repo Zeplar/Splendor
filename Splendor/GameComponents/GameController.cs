@@ -52,10 +52,10 @@ namespace Splendor
         public static void nextTurn()
         {
             Gem.Reset();
-            RecordHistory.record(currentPlayer + " has " + currentPlayer.points + " points");
-            RecordHistory.record((currentPlayer + " has field: " + currentPlayer.field.String()));
+            RecordHistory.record((currentPlayer + " has points: " + currentPlayer.points + " and gems: " + currentPlayer.gems + " and field: " + currentPlayer.field.String()));
+            RecordHistory.record("Board: " + Board.current.boardCards.String());
             currentPlayer.takeTurn();
-            RecordHistory.record("Random: " + random.Next());
+            RecordHistory.record(Environment.NewLine);
             turn += 1;
             gameOver = Board.current.gameOver;
         }

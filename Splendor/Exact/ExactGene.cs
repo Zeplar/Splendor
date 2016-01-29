@@ -23,7 +23,7 @@ namespace Splendor.Exact
         private int popSize = 200;
         private int depth = 20;
         private int generations = 20;
-
+        private ExactChromosome lastBestChromosome = null;
         private ExactFit fit;
 
         public ExactGene(int popsize, int depth, int generations, ScoringMethods.Function scoringFunction)
@@ -57,9 +57,9 @@ namespace Splendor.Exact
                 f = ScoringMethods.parse(scoring);
                 parameters = new List<string>(args).GetRange(0, 3).ConvertAll<int>(x => int.Parse(x));
             }
-            catch (FormatException)
+            catch (FormatException z)
             {
-                throw new FormatException("Usage: exact <popSize> <depth> <generations> <...scoring function...>");
+                throw z;
             }
             return new ExactGene(parameters[0], parameters[1], parameters[2], f);
         }
@@ -73,23 +73,28 @@ namespace Splendor.Exact
         {
             RecordHistory.record();
             AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RouletteWheelSelection());
+            bool tempRecord = GameController.recording;
+            GameController.recording = false;
             for (int i=0; i < generations; i++)
             {
+                if (lastBestChromosome != null) pop.AddChromosome(lastBestChromosome);
                 //Getting an index out of range exception here when using RouletteWheelSelection (16 rounds in, seed 100)
                 pop.RunEpoch();
                 RecordHistory.plot(i + "," + pop.FitnessMax + Environment.NewLine);
-                if ((GameController.turn % 10 == 0) && (i == 0 || i == generations / 2 || i == generations - 1)) RecordHistory.snapshot(pop.getFitnesses());
+                if ((GameController.turn % 5 == 0) && (i == 0 || i == generations / 2 || i == generations - 1)) RecordHistory.snapshot(pop.getFitnesses());
+                lastBestChromosome = pop.BestChromosome as ExactChromosome;
 
             }
-            ExactChromosome g = (ExactChromosome)pop.BestChromosome;
-            Move m = g.moves[0];
+            GameController.recording = tempRecord;
+            Move m = lastBestChromosome.moves[0];
             if (m == null)
             {
                 m = Move.getRandomMove();
-                Debug.Assert(m != null, "ExactGene couldn't even find a random move.");
+                throw new NullReferenceException("ExactGene couldn't find a random move.");
             }
+            fit.Evaluate(lastBestChromosome);
             m.takeAction();
-            Board b = Board.current;
+            RecordHistory.record(this + " took move " + m);
         }
 
 

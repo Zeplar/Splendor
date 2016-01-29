@@ -7,11 +7,14 @@ namespace Splendor
     public static class RecordHistory
     {
         public enum actions { BUY, RESERVE, RESERVETOP, TAKEGEMS };
-        const string directory = @"..\..\..\..\Splendor\History\";
         const string suffix = @".csv";
         const string name = @"game";
         static StreamWriter file;
         static bool init;
+        static string directory { get
+            {
+                return getDirectory();
+            } }
         static string plottingDirectory;
         static string snapshotDirectory;
         public static bool plotting;
@@ -24,7 +27,6 @@ namespace Splendor
             }
 
             //Create the game file
-            Debug.Assert(Directory.Exists(directory));
             int i = 0;
             while (File.Exists(directory + name + i + suffix))
             {
@@ -130,6 +132,16 @@ namespace Splendor
                 File.AppendAllText(snapshotDirectory, j + "," + x.ToString() + Environment.NewLine);
                 j++;
             }
+        }
+
+        private static string getDirectory()
+        {
+            string folder = @"C:\Users\JHep\Desktop\SelfishGenePlots\" + DateTime.Today.ToLongDateString() + "\\";
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            return folder;
         }
 
         public static void plot(string info)

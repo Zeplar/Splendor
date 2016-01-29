@@ -37,9 +37,9 @@ namespace Splendor
             try
             {
                 f = ScoringMethods.parse(args);
-            } catch (FormatException)
+            } catch (FormatException z)
             {
-                throw new FormatException("Improper arguments passed to scoring function parser.");
+                throw z;
             }
             return new Greedy(f);
         }
@@ -72,7 +72,7 @@ namespace Splendor
                 RecordHistory.record(this + " took move " + m);
                 return;
             }
-            Debug.Assert(m != null, "Greedy couldn't even find a random move.");
+            if (m == null) throw new Exception("Greedy couldn't even find a random move.");
         }
     }
 }

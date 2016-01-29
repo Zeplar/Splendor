@@ -33,10 +33,10 @@ namespace Splendor
                     i = int.Parse(commands.Dequeue());
                     for (int j=0; j < i; j++)
                     {
+                        setPlot();
                         if (j > 0) CONSOLE.Overwrite(7, "Repeat " + j + "/" + i + ", ETA " + (i/j - 1) * watch.Elapsed.Minutes + " minutes");
                         GameController.replayGame();
                         getStats();
-                        setPlot();
                     }
                     watch.Stop();
                     Console.WriteLine("P1 wins : " + p1Wins + "     Ties: " + ties + "      Stalemates: " + stalemates);
@@ -54,6 +54,7 @@ namespace Splendor
                     return null;
                 case "record":
                     GameController.recording = !GameController.recording;
+                    CONSOLE.WriteLine("Recording = " + GameController.recording);
                     return null;
                 case "plot":
                     RecordHistory.plotting = !RecordHistory.plotting;
@@ -149,7 +150,6 @@ namespace Splendor
                         GameController.Start(players[0], players[1]);
                         PLAYERS = players.GetRange(0, 2);
                         players.Clear();
-                        setPlot();
                     }
                 }
                 else
