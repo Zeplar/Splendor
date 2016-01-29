@@ -150,11 +150,24 @@ public class Board
             get
             {
                 if (GameOverFlag) return gameOverValue;
-                gameOverValue = legalMoves.Count == 0 || (currentPlayer.turnOrder == 0 && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15));
+                gameOverValue = (currentPlayer.turnOrder == 0 && (maximizingPlayer.points >= 15 || minimizingPlayer.points >= 15));
                 GameOverFlag = true;
                 return gameOverValue;
             }
         }
+
+        /// <summary>
+        /// Returns 0 if maximizing player won; 1 if minimizing player won; -1 on a tie. Throws an exception if the game is not over.
+        /// </summary>
+        public int winner
+        { get {
+                if (!gameOver) throw new System.Exception("No winner in this game.");
+                if (maximizingPlayer.points > minimizingPlayer.points) return 0;
+                if (minimizingPlayer.points > maximizingPlayer.points) return 1;
+                if (maximizingPlayer.field.Count == minimizingPlayer.field.Count) return -1;
+                return (maximizingPlayer.field.Count > minimizingPlayer.field.Count) ? 1 : 0;
+
+        } }
 
         /// <summary>
         /// Returns a list of legal moves for the board.	
