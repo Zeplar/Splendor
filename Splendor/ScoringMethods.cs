@@ -91,6 +91,23 @@ namespace Splendor
             {
                 return new Function(bd => fn(bd) - fn(bd.prevBoard), "delta- " + description);
             }
+            /// <summary>
+            /// Evaluates the board with the opponent as the Maximizing Player
+            /// </summary>
+            public Function opponent()
+            {
+                return new Function(bd =>
+                {
+                    Player mini = bd.minimizingPlayer;
+                    bd.players.Reverse();
+                    bd.turn++;
+                    if (mini != bd.maximizingPlayer) throw new Exception("opponent function faulty");
+                    double temp = fn(bd);
+                    bd.players.Reverse();
+                    bd.turn--;
+                    return temp;
+                }, "Opponent " + description);
+            }
             public override string ToString()
             {
                 return description;
@@ -110,7 +127,7 @@ namespace Splendor
                     case "delta":
                         return this.delta();
                     default:
-                        throw new KeyNotFoundException("Invalid operator");
+                        throw new FormatException("Invalid operator");
                 }
             }
             public Function operate(string op, double rhs)
@@ -122,7 +139,7 @@ namespace Splendor
                     case "/":
                         return this / rhs;
                     default:
-                        throw new KeyNotFoundException("Invalid operator");
+                        throw new FormatException("Invalid operator");
                 }
             }
             public Function(double i) : this(b => i, i.ToString()) { }
@@ -253,7 +270,7 @@ namespace Splendor
                     if (double.TryParse(s, out i)) stack.Push(new Function(i));
                     else
                     {
-                        Debug.Assert(dictionary.ContainsKey(s), s + " is not in the function dictionary");
+                        if (!dictionary.ContainsKey(s)) throw new FormatException(s + " is not in the dictionary.");
                         stack.Push(dictionary[s]);
                     }
                 }
@@ -286,7 +303,7 @@ namespace Splendor
             }
             foreach (string s in stack)
             {
-                if (s == ")" || s == "(") Debug.Fail("Mismatched parenthesis");
+                if (s == ")" || s == "(") throw new FormatException("Mismatched parenthesis");
                 output.Enqueue(s);
             }
             return output;
