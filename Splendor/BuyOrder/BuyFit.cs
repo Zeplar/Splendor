@@ -10,41 +10,55 @@ namespace Splendor.BuyOrder
     {
         public List<Card> cards;
         private ScoringMethods.Function scoringFunction;
+        private bool wonPreviousGeneration = false;
+        private ScoringMethods.Function greedy = ScoringMethods.Points.opponent();
 
         public BuyFit(ScoringMethods.Function scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }
 
-
+        private bool predictWin(Board current, Move pred)
+        {
+            if (current.gameOver)
+            {
+                if (current.winner == 0) { RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win! Pred. Greedy move " + pred); wonPreviousGeneration = true; }
+                else if (current.winner == 1) { RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!"); wonPreviousGeneration = false; }
+                return true;
+            }
+            return false;
+        }
         public double Evaluate(IChromosome chromosome)
         {
             PermutationChromosome c = (PermutationChromosome)chromosome;
             Board current = Board.current;
             int i = 0;
             double score = 0;
+            Move pred = null;
             while (i < 10)
             {
-                if (current.gameOver) break;
+
+                if (predictWin(current, pred)) break;
                 current = simulateMyTurn(c, current);
                 score += scoringFunction.evaluate(current);
-                if (current.gameOver) break;
-                current = simulateGreedyTurn(current);
+                if (predictWin(current, pred)) break;
+                if (i == 0) pred = simulateGreedyTurn(current);
+                current = current.generate(simulateGreedyTurn(current));
                 i++;
             }
-            Debug.Assert(current.gameOver ? true : (current != Board.current), "Boardstate did not evolve.");
-            return score;
+            wonPreviousGeneration = false;
+            return score / i;
 
 
         }
 
-        private Board simulateGreedyTurn(Board current)
+        private Move simulateGreedyTurn(Board current)
         {
-            Move m = Greedy.getGreedyMove(current, ScoringMethods.Lead);
-            return current.generate(m);
+            Move m = Greedy.getGreedyMove(current, greedy);
+            return m;
         }
 
-        private Board simulateMyTurn(PermutationChromosome c, Board current)
+        public Board simulateMyTurn(PermutationChromosome c, Board current)
         {
             int nextBuy = 0;
             if (current.gameOver) return current;
@@ -55,7 +69,7 @@ namespace Splendor.BuyOrder
             }
             
             Move nextMove = new BuySeeker(cards[c.Value[nextBuy]], current).getMove();
-            Debug.Assert(nextMove != null, "BuySeeker shouldn't return null on !gameOver boards");
+            if (nextMove == null) throw new Exception("BuySeeker shouldn't return null on !gameOver boards");
             return current.generate(nextMove);
         }
     }
