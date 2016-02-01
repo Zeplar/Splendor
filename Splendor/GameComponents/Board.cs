@@ -7,7 +7,11 @@ namespace Splendor
 
 public class Board
     {
-
+        /// <summary>
+        /// The last real boardstate.
+        /// </summary>
+        public static Board lastBoard;
+        public static Move lastMove;
         public List<Player> players;
         public Gem gems;
         public List<Card> boardCards;
@@ -37,18 +41,16 @@ public class Board
         /// <summary>
         /// Creates a deep copy of the given board. Turn indicates the current player as well as the "starting" player.
         /// </summary>
-        public Board(List<Player> players, int turn, List<Card> cards, Gem gems)
+        public Board(Board parent)
         {
             this.players = new List<Player>();
-            foreach (Player p in players)
+            foreach (Player p in parent.players)
             {
                 this.players.Add(copyPlayer(p));
             }
-            boardCards = cards.ToList();
-            this.gems = gems;
-            this.turn = turn;
-            this.prevBoard = null;
-            this.prevMove = null;
+            boardCards = parent.boardCards.ToList();
+            this.gems = parent.gems;
+            this.turn = parent.turn;
         }
 
         private Board()
@@ -61,8 +63,9 @@ public class Board
             this.gems = Gem.board;
             this.turn = 0;
             this.boardCards = GameController.boardCards;
-            this.prevBoard = null;
-            this.prevMove = null;
+            this.prevBoard = lastBoard;
+            this.prevMove = lastMove;
+            bool setGameOver = gameOver;
         }
 
         private int EncodeHelper(byte[] array, int index, List<Card> list)
@@ -223,7 +226,7 @@ public class Board
         public Board generate(Move m)
         {
             Debug.Assert(m.isLegal(this), "Illegal generating move!");
-            Board b = new Board(players, turn, boardCards, gems);
+            Board b = new Board(this);
             b.gems = gems;
             Player p = b.currentPlayer;
             b.prevMove = m;
