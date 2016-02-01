@@ -32,7 +32,11 @@ namespace Splendor
         public abstract bool isLegal();
         public abstract bool isLegal(Board b);
 
-        public abstract void takeAction();
+        public virtual void takeAction()
+        {
+            Board.lastBoard = Board.current;
+            Board.lastMove = this;
+        }
 
         public static List<Move> getAllLegalMoves()
         {
@@ -48,7 +52,6 @@ namespace Splendor
         {
             return dictMoveInt[m];
         }
-
 
 
         /// <summary>
@@ -178,9 +181,9 @@ namespace Splendor
 
             public override void takeAction()
             {
-     //           Console.WriteLine(Splendor.currentPlayer + " chose move " + this.ToString());
                 if (isLegal())
                 {
+                    base.takeAction();
                     GameController.currentPlayer.gems += color;
                     Gem.board -= color;
                 }
@@ -235,7 +238,7 @@ namespace Splendor
 
             public override bool Equals(object obj)
             {
-                if (obj.GetType() != typeof(Move.TAKE2)) return false;
+                if (obj == null || ((Move)obj).moveType != Type.TAKE2) return false;
                 return ((Move.TAKE2)obj).color == color;
             }
 
@@ -318,6 +321,7 @@ namespace Splendor
             {
                 if (isLegal())
                 {
+                    base.takeAction();
                     GameController.currentPlayer.takeGems(colors);
                 }
                 else
@@ -328,8 +332,8 @@ namespace Splendor
 
             public override bool Equals(object obj)
             {
-                if (obj.GetType() != typeof(Move.TAKE3)) return false;
-                return ((Move.TAKE3)obj).colors == colors;
+                if (obj == null || ((Move)obj).moveType != Type.TAKE3) return false;
+                return ((TAKE3)obj).colors == colors;
             }
 
             public override int GetHashCode()
@@ -417,6 +421,7 @@ namespace Splendor
 
                 if (isLegal())
                 {
+                    base.takeAction();
                     GameController.currentPlayer.Buy(card);
                 }
                 else
@@ -427,7 +432,7 @@ namespace Splendor
 
             public override bool Equals(object obj)
             {
-                if (obj.GetType() != typeof(Move.BUY)) return false;
+                if (obj == null || ((Move)obj).moveType != Type.BUY) return false;
                 return ((Move.BUY)obj).card == card;
             }
 
@@ -513,6 +518,7 @@ namespace Splendor
             {
                 if (isLegal())
                 {
+                    base.takeAction();
                     GameController.currentPlayer.Reserve(card);
                 }
                 else
@@ -523,7 +529,7 @@ namespace Splendor
 
             public override bool Equals(object obj)
             {
-                if (obj.GetType() != typeof(Move.RESERVE)) return false;
+                if (obj == null || ((Move)obj).moveType != Type.RESERVE) return false;
                 return ((Move.RESERVE)obj).card == card;
             }
 

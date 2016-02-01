@@ -47,7 +47,14 @@ namespace Splendor
             private string description = "";
             public double evaluate(Board b)
             {
-                return fn(b);
+                try
+                {
+                    return fn(b);
+                }
+                catch
+                {
+                    throw new Exception("Something happened during fitness evaluation.");
+                }
             }
             public Function(Func<Board, double> fn, string description="")
             {
@@ -156,6 +163,11 @@ namespace Splendor
         public static Function Lead
         {
             get { return new Function(bd => bd.maximizingPlayer.points - bd.minimizingPlayer.points, "Lead"); }
+        }
+
+        public static Function minPoints
+        {
+            get { return new Function(bd => bd.minimizingPlayer.points - bd.prevBoard.minimizingPlayer.points, "minPoints"); }
         }
 
         /// <summary>

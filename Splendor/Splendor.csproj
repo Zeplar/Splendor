@@ -71,28 +71,8 @@
       <HintPath>..\packages\CH.Combinatorics.1.0.2\lib\net40\CH.Combinatorics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GeneticSharp.Domain, Version=1.0.5801.38650, Culture=neutral, PublicKeyToken=d63d2a65268366c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\GeneticSharp.1.0.94\lib\net35\GeneticSharp.Domain.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GeneticSharp.Extensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f24c5e2578f0ecff, processorArchitecture=MSIL">
-      <HintPath>..\packages\GeneticSharp.1.0.94\lib\net35\GeneticSharp.Extensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GeneticSharp.Infrastructure.Framework, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f24c5e2578f0ecff, processorArchitecture=MSIL">
-      <HintPath>..\packages\GeneticSharp.1.0.94\lib\net35\GeneticSharp.Infrastructure.Framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GeneticSharp.Infrastructure.Threading, Version=1.0.5801.38650, Culture=neutral, PublicKeyToken=f24c5e2578f0ecff, processorArchitecture=MSIL">
-      <HintPath>..\packages\GeneticSharp.1.0.94\lib\net35\GeneticSharp.Infrastructure.Threading.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="HelperSharp, Version=1.0.5560.27038, Culture=neutral, PublicKeyToken=3d44152485e1a4e1, processorArchitecture=MSIL">
       <HintPath>..\packages\GeneticSharp.1.0.94\lib\net35\HelperSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MathParser, Version=1.0.10.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathosParser.1.0.10.1\lib\MathParser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
@@ -154,12 +134,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Desktop\AForge\Genetic\Genetic.csproj">
-      <Project>{2efaa327-1789-4438-b9f5-e83acae12db2}</Project>
-      <Name>Genetic</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
@@ -170,6 +144,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\AForge.NET Framework-2.2.5\Genetic\Genetic.csproj">
+      <Project>{2efaa327-1789-4438-b9f5-e83acae12db2}</Project>
+      <Name>Genetic</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

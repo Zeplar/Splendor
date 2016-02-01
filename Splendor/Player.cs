@@ -28,11 +28,15 @@ namespace Splendor
 
         public bool canBuyNextTurn(Board b, Card c)
         {
-            int turn = b.turn;
-            while (b.currentPlayer != this) b.turn++;
-            bool result = new Move.BUY(c).isLegal(b);
-            b.turn = turn;
-            return result;
+            try
+            {
+                (b.notCurrentPlayer.gems + b.notCurrentPlayer.discount).takeaway(c.cost);
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+            return true;
         }
 
         protected void showState()
@@ -166,21 +170,21 @@ namespace Splendor
         /// <summary>
         /// Returns a random gem to the pile.
         /// </summary>
-        private void returnRandomGems()
-        {
-            int k = 0;
+        //private void returnRandomGems()
+        //{
+        //    int k = 0;
 
-            while (true)
-            {
-                k = random.Next(5);
-                if (gems[k] > 0)
-                {
-                    Gem.board[k] += 1;
-                    gems[k] -= 1;
-                    return;
-                }
-            }
-        }
+        //    while (true)
+        //    {
+        //        k = random.Next(5);
+        //        if (gems[k] > 0)
+        //        {
+        //            Gem.board[k] += 1;
+        //            gems[k] -= 1;
+        //            return;
+        //        }
+        //    }
+        //}
 
     }
 }

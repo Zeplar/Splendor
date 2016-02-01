@@ -10,44 +10,42 @@ namespace Splendor.BuyOrder
     {
         public List<Card> cards;
         private ScoringMethods.Function scoringFunction;
-        private bool wonPreviousGeneration = false;
-        private ScoringMethods.Function greedy = ScoringMethods.Points.opponent();
+        private ScoringMethods.Function greedy = ScoringMethods.minPoints;
 
         public BuyFit(ScoringMethods.Function scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }
 
-        private bool predictWin(Board current, Move pred)
+        private bool predictWin(Board current)
         {
             if (current.gameOver)
             {
-                if (current.winner == 0) { RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win! Pred. Greedy move " + pred); wonPreviousGeneration = true; }
-                else if (current.winner == 1) { RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!"); wonPreviousGeneration = false; }
+                if (current.winner == 0) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win!");
+                else if (current.winner == 1) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
                 return true;
             }
             return false;
         }
+
         public double Evaluate(IChromosome chromosome)
         {
             PermutationChromosome c = (PermutationChromosome)chromosome;
             Board current = Board.current;
             int i = 0;
             double score = 0;
-            Move pred = null;
             while (i < 10)
             {
 
-                if (predictWin(current, pred)) break;
+                if (predictWin(current)) break;
                 current = simulateMyTurn(c, current);
                 score += scoringFunction.evaluate(current);
-                if (predictWin(current, pred)) break;
-                if (i == 0) pred = simulateGreedyTurn(current);
+                if (predictWin(current)) break;
+                if (i == 0) SelfishGene.predicted = simulateGreedyTurn(current);
                 current = current.generate(simulateGreedyTurn(current));
                 i++;
             }
-            wonPreviousGeneration = false;
-            return score / i;
+            return Math.Max(1, score / i);
 
 
         }
@@ -61,11 +59,10 @@ namespace Splendor.BuyOrder
         public Board simulateMyTurn(PermutationChromosome c, Board current)
         {
             int nextBuy = 0;
-            if (current.gameOver) return current;
             while (!current.viewableCards.Contains(cards[c.Value[nextBuy]]))
             {
                 nextBuy++;
-                if (nextBuy >= current.viewableCards.Count) return current;
+                if (current.viewableCards.Count == 0) throw new IndexOutOfRangeException("Got through all of the cards.");
             }
             
             Move nextMove = new BuySeeker(cards[c.Value[nextBuy]], current).getMove();

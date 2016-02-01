@@ -72,7 +72,7 @@ namespace Splendor.Exact
         public override void takeTurn()
         {
             RecordHistory.record();
-            AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RouletteWheelSelection());
+            AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RankSelection());
             bool tempRecord = GameController.recording;
             GameController.recording = false;
             for (int i=0; i < generations; i++)
@@ -86,13 +86,13 @@ namespace Splendor.Exact
 
             }
             GameController.recording = tempRecord;
+            fit.Evaluate(lastBestChromosome);
             Move m = lastBestChromosome.moves[0];
             if (m == null)
             {
                 m = Move.getRandomMove();
                 throw new NullReferenceException("ExactGene couldn't find a random move.");
             }
-            fit.Evaluate(lastBestChromosome);
             m.takeAction();
             RecordHistory.record(this + " took move " + m);
         }

@@ -334,7 +334,7 @@ namespace Splendor
             }
             if (ret.gold < 0)
             {
-                Trace.TraceError("Got negative gold gems somehow.");
+                throw new InvalidOperationException("Got negative gold gems somehow.");
             }
             return ret;
         }

@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Splendor", "Splendor\Splend
 		{2EFAA327-1789-4438-B9F5-E83ACAE12DB2} = {2EFAA327-1789-4438-B9F5-E83ACAE12DB2}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genetic", "..\..\..\..\Desktop\AForge\Genetic\Genetic.csproj", "{2EFAA327-1789-4438-B9F5-E83ACAE12DB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genetic", "..\..\..\AForge.NET Framework-2.2.5\Genetic\Genetic.csproj", "{2EFAA327-1789-4438-B9F5-E83ACAE12DB2}"
 EndProject
 Global
 	GlobalSection(Performance) = preSolution

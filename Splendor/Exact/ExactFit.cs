@@ -8,8 +8,7 @@ namespace Splendor.Exact
     public class ExactFit : IFitnessFunction
     {
         private ScoringMethods.Function scoringFunction;
-        private bool wonPreviousGeneration = false;
-        private ScoringMethods.Function greedy = ScoringMethods.Points.opponent();
+        private ScoringMethods.Function greedy = ScoringMethods.minPoints;
 
         public ExactFit(ScoringMethods.Function scoringFunction)
         {
@@ -18,7 +17,7 @@ namespace Splendor.Exact
 
         public double Evaluate(IChromosome chromosome)
         {
-            return score((ExactChromosome)chromosome);
+            return Math.Max(1, score((ExactChromosome)chromosome));
 
         }
 
@@ -60,8 +59,14 @@ namespace Splendor.Exact
         {
             if (current.gameOver)
             {
-                if (current.winner == 0) { RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win! Pred. Greedy move " + pred); wonPreviousGeneration = true; }
-                else if (current.winner == 1) { RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!"); wonPreviousGeneration = false; }
+                if (current.winner == 0)
+                {
+                    RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win! Pred. Greedy move " + pred);
+                }
+                else if (current.winner == 1)
+                {
+                    RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
+                }
                 return true;
             }
             return false;
