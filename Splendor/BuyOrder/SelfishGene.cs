@@ -14,6 +14,8 @@ namespace Splendor.BuyOrder
         private PermutationChromosome lastBestChromosome = null;
         public static Move predicted;
 
+        //Watchpoints
+
         public SelfishGene(ScoringMethods.Function scoringFunction) : this(scoringFunction, 200, 20) { }
 
         public SelfishGene(ScoringMethods.Function scoringFunction, int popsize, int gens)
@@ -56,23 +58,23 @@ namespace Splendor.BuyOrder
             bool tempRecording = GameController.recording;
             GameController.recording = false;
             lastBestChromosome = null;
-            fitness.cards = Board.current.viewableCards.FindAll(x => true);
-            var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RouletteWheelSelection());
+            fitness.cards = Board.current.viewableCards.FindAll(x => x.deck != GameController.nobles);
+            var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RouletteWheelSelection(), random);
 
         //    if (!predicted.Equals(Board.current.prevMove)) RecordHistory.record("!!! Prediction failed.");
             predicted = null;
 
             for (int i = 0; i < generations; i++)
             {
+                if (lastBestChromosome != null) ga.AddChromosome(lastBestChromosome);
                 ga.RunEpoch();
+                lastBestChromosome = ga.BestChromosome as PermutationChromosome;
                 CONSOLE.Overwrite(6, "Generations " + i + " out of " + generations);
-                //CONSOLE.WriteLine("Best chromosome this generation: " + ((PermutationChromosome)ga.BestChromosome).Value + " | " + ga.BestChromosome.Fitness);
                 RecordHistory.plot(i + "," + ga.FitnessMax + Environment.NewLine);
                 if ((GameController.turn % 10 == 0) && (i == 0 || i == generations / 2 || i == generations-1)) RecordHistory.snapshot(ga.getFitnesses());
             }
-            lastBestChromosome = ga.BestChromosome as PermutationChromosome;
             GameController.recording = tempRecording;
-            fitness.Evaluate(lastBestChromosome);
+            lastBestChromosome.Evaluate(fitness);
             Move m = fitness.simulateMyTurn(lastBestChromosome, Board.current).prevMove;
             RecordHistory.record(this + " took move " + m);
             m.takeAction();

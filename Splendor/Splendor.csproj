@@ -67,6 +67,10 @@
     <StartupObject>Splendor.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.dll</HintPath>
+    </Reference>
     <Reference Include="CH.Combinatorics, Version=1.0.2.0, Culture=neutral, PublicKeyToken=9ba62c7481cc8055, processorArchitecture=MSIL">
       <HintPath>..\packages\CH.Combinatorics.1.0.2\lib\net40\CH.Combinatorics.dll</HintPath>
       <Private>True</Private>
@@ -86,10 +90,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Numerics.Vectors.4.1.0\ref\dotnet\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />

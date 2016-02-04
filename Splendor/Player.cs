@@ -17,7 +17,7 @@ namespace Splendor
         public string name;
         public ScoringMethods.Function fn;
 
-        protected Random random { get { return GameController.random; } }
+        protected AForge.ThreadSafeRandom random { get { return GameController.random; } }
 
         public virtual void takeTurn() { }
 

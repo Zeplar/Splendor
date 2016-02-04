@@ -72,7 +72,7 @@ namespace Splendor.Exact
         public override void takeTurn()
         {
             RecordHistory.record();
-            AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RankSelection());
+            AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RankSelection(), random);
             bool tempRecord = GameController.recording;
             GameController.recording = false;
             for (int i=0; i < generations; i++)

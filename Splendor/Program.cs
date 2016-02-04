@@ -35,6 +35,8 @@ namespace Splendor
                     {
                         setPlot();
                         if (j > 0) CONSOLE.Overwrite(7, "Repeat " + j + "/" + i + ", ETA " + (i/j - 1) * watch.Elapsed.Minutes + " minutes");
+                        GameController.random = new AForge.ThreadSafeRandom(j);
+                        CONSOLE.Overwrite(12, "Seed: " + j);
                         GameController.replayGame();
                         getStats();
                     }
@@ -61,7 +63,8 @@ namespace Splendor
                     Console.WriteLine("Plotting = " + RecordHistory.plotting);
                     return null;
                 case "runseed":
-                    GameController.Start(PLAYERS[0], PLAYERS[1], 100);
+                    GameController.random = new AForge.ThreadSafeRandom(10);
+                    GameController.replayGame();
                     return null;
                 case "description":
                     RecordHistory.plot(new List<string>(commands).String() + Environment.NewLine);

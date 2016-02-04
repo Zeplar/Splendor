@@ -2,6 +2,7 @@
 using System.IO;
 using System.Diagnostics;
 using System;
+using AForge;
 
 namespace Splendor
 {
@@ -21,7 +22,7 @@ namespace Splendor
         public static Card selected;
         public static bool gameOver = true;
         public static bool takingTurn;
-        public static Random random;
+        public static ThreadSafeRandom random;
         public static Stopwatch timer;
         public static bool recording = false;
 
@@ -211,7 +212,7 @@ namespace Splendor
             decks[1].shuffle();
             decks[2].shuffle();
             nobles.shuffle();
-            nobles.getAllCards().RemoveRange(4, 6);
+            nobles.getAllCards().RemoveRange(3, 6);
         }
 
         //Initialize the cards, players, and recording tool. Then start the game.
@@ -221,7 +222,7 @@ namespace Splendor
             decks = new Deck[3] { new Deck(), new Deck(), new Deck() };
             nobles = new Deck();
             players = new Player[2] { p1, p2 };
-            random = new Random(randomSeed);
+            random = new ThreadSafeRandom(randomSeed);
             p1.turnOrder = 0;
             p2.turnOrder = 1;
             getCards();

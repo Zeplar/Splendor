@@ -11,6 +11,7 @@ namespace Splendor.BuyOrder
         public List<Card> cards;
         private ScoringMethods.Function scoringFunction;
         private ScoringMethods.Function greedy = ScoringMethods.minPoints;
+        private BuySeeker buyer = new BuySeeker();
 
         public BuyFit(ScoringMethods.Function scoringFunction)
         {
@@ -21,6 +22,7 @@ namespace Splendor.BuyOrder
         {
             if (current.gameOver)
             {
+                if (!current.viewableCards.Exists(x=>x.deck != GameController.nobles)) return true;
                 if (current.winner == 0) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win!");
                 else if (current.winner == 1) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
                 return true;
@@ -36,14 +38,12 @@ namespace Splendor.BuyOrder
             double score = 0;
             while (i < 10)
             {
-
+                i++;
                 if (predictWin(current)) break;
                 current = simulateMyTurn(c, current);
                 score += scoringFunction.evaluate(current);
                 if (predictWin(current)) break;
-                if (i == 0) SelfishGene.predicted = simulateGreedyTurn(current);
                 current = current.generate(simulateGreedyTurn(current));
-                i++;
             }
             return Math.Max(1, score / i);
 
@@ -62,11 +62,9 @@ namespace Splendor.BuyOrder
             while (!current.viewableCards.Contains(cards[c.Value[nextBuy]]))
             {
                 nextBuy++;
-                if (current.viewableCards.Count == 0) throw new IndexOutOfRangeException("Got through all of the cards.");
             }
-            
-            Move nextMove = new BuySeeker(cards[c.Value[nextBuy]], current).getMove();
-            if (nextMove == null) throw new Exception("BuySeeker shouldn't return null on !gameOver boards");
+
+            Move nextMove = buyer.getMove(current, cards[c.Value[nextBuy]]);
             return current.generate(nextMove);
         }
     }

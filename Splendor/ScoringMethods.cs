@@ -82,39 +82,12 @@ namespace Splendor
             {
                 return new Function(bd => a.fn(bd) / b.fn(bd), a.description + " / " + b.description);
             }
-            public static Function operator *(double a, Function b)
-            {
-                return new Function(bd => a * b.fn(bd), a + "(" + b.description + ")");
-            }
-            public static Function operator /(double a, Function b)
-            {
-                return new Function(bd => a / b.fn(bd), a + "/(" + b.description + ")");
-            }
-            public static Function operator /(Function a, double b)
-            {
-                return new Function(bd => a.fn(bd) / b, "(" + a.description + ")/" + b);
-            }
+
             public Function delta()
             {
                 return new Function(bd => fn(bd) - fn(bd.prevBoard), "delta- " + description);
             }
-            /// <summary>
-            /// Evaluates the board with the opponent as the Maximizing Player
-            /// </summary>
-            public Function opponent()
-            {
-                return new Function(bd =>
-                {
-                    Player mini = bd.minimizingPlayer;
-                    bd.players.Reverse();
-                    bd.turn++;
-                    if (mini != bd.maximizingPlayer) throw new Exception("opponent function faulty");
-                    double temp = fn(bd);
-                    bd.players.Reverse();
-                    bd.turn--;
-                    return temp;
-                }, "Opponent " + description);
-            }
+
             public override string ToString()
             {
                 return description;
@@ -137,18 +110,7 @@ namespace Splendor
                         throw new FormatException("Invalid operator");
                 }
             }
-            public Function operate(string op, double rhs)
-            {
-                switch (op)
-                {
-                    case "*":
-                        return rhs * this;
-                    case "/":
-                        return this / rhs;
-                    default:
-                        throw new FormatException("Invalid operator");
-                }
-            }
+
             public Function(double i) : this(b => i, i.ToString()) { }
         }
 

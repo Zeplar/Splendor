@@ -8,52 +8,54 @@ namespace Splendor
 {
     public class BuySeeker
     {
-        private Card toBuy;
-        private Gem neededGems(Board b)
+        private Gem neededGems(Board b, Card toBuy)
         {
-            return (b.maximizingPlayer.discount + b.maximizingPlayer.gems).requiredToBuy(toBuy.cost);
+            Gem ret = toBuy.cost - (b.currentPlayer.gems + b.currentPlayer.discount);
+            return ret.positive;
         }
-        private Board state;
+
+        public BuySeeker() { }
 
         public BuySeeker(Card target, Board state)
         {
-            toBuy = target;
-            this.state = state;
+            throw new Exception();
         }
 
         public BuySeeker(Card target) : this(target, Board.current) { }
 
-        public Move getMove()
+        public Move getMove(Board state, Card toBuy)
         {
             Move targetMove = new Move.BUY(toBuy);
-            int value = 100;
             if (targetMove.isLegal(state)) return targetMove; //Buy if possible
 
             if (new Move.RESERVE(toBuy).isLegal(state) && state.notCurrentPlayer.canBuyNextTurn(state, toBuy))
                 return new Move.RESERVE(toBuy); //Reserve if opponent can buy next turn
 
-            targetMove = null;
-            foreach (Move m in Move.TAKE3.getLegalMoves(state))
-            {
-                int x = neededGems(state.generate(m)).magnitude;
-                if (x < value)
-                {
-                    value = x;
-                    targetMove = m;
-                }
-            }
-            foreach (Move m in Move.TAKE2.getLegalMoves(state))
-            {
-                int x = neededGems(state.generate(m)).magnitude;
-                if (x < value)
-                {
-                    value = x;
-                    targetMove = m;
-                }
-            }
-            if (targetMove != null) return targetMove;
+            Gem needed = neededGems(state, toBuy);
+            int value = 0;
+            int x;
 
-            if (new Move.RESERVE(toBuy).isLegal(state)) return new Move.RESERVE(toBuy);
+            foreach (Move.TAKE3 m in Move.TAKE3.getLegalMoves(state))
+            {
+                x = (needed - (needed - m.colors).positive).magnitude;
+                if (x > value)
+                {
+                    value = x;
+                    targetMove = m;
+                }
+            }
+            if (value >= 2) return targetMove;
+            foreach (Move.TAKE2 m in Move.TAKE2.getLegalMoves(state))
+            {
+                x = (needed - (needed - m.color).positive).magnitude;
+                if (x > value)
+                {
+                    value = x;
+                    targetMove = m;
+                }
+            }
+            if (value > 0) return targetMove;
+
             return state.legalMoves[0];
         }
 

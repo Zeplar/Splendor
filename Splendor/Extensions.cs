@@ -16,17 +16,17 @@ namespace Splendor
                 list[j] = temp;
             }
         }
-        public static int addUp(this List<Card> list)
+        public static int addUp(this IEnumerable<Card> list)
         {
             int ret = 0;
-            for (int i=0; i < list.Count; i++)
+            foreach (Card i in list)
             {
-                ret += list[i].id;
+                ret += i.id;
             }
             return ret;
         }
 
-        public static string String<T>(this IList<T> list)
+        public static string String<T>(this IEnumerable<T> list)
         {
             StringBuilder sb = new StringBuilder();
             foreach (T t in list)
@@ -36,7 +36,7 @@ namespace Splendor
             return sb.ToString();
         } 
 
-        public static string String(this List<Card> list)
+        public static string String(this IEnumerable<Card> list)
         {
             StringBuilder sb = new StringBuilder();
             foreach (Card c in list)
