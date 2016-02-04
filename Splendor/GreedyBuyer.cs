@@ -12,7 +12,7 @@ namespace Splendor
 
         public override void takeTurn()
         {
-            buyOrder = Board.current.viewableCards.FindAll(x => x.deck != GameController.nobles);
+            buyOrder = Board.current.viewableCards.FindAll(x => x.Deck != Card.Decks.nobles);
             buyOrder.OrderBy(x => random.Next());
             foreach (Card c in buyOrder)
             {

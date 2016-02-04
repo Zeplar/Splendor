@@ -114,7 +114,7 @@ namespace Splendor
         public static Move getRandomMove(Board bd)
         {
             List<Move> m = getAllLegalMoves(bd);
-            return (m.Count > 0) ? m[GameController.random.Next(m.Count)] : null;
+            return (m.Count > 0) ? m[GameController.Random.Next(m.Count)] : null;
         }
 
         public class TAKE2 : Move
@@ -175,7 +175,7 @@ namespace Splendor
             {
                 Gem after = b.currentPlayer.gems + color;
                 bool haveRoom = after.magnitude <= 10 && after.deficit == 0;
-                bool avail = b.gems[index] >= 4;
+                bool avail = b.Gems[index] >= 4;
                 return (haveRoom && avail);
             }
 
@@ -307,7 +307,7 @@ namespace Splendor
             public override bool isLegal(Board b)
             {
                 Gem after = b.currentPlayer.gems + colors;
-                bool avail = b.gems > colors;
+                bool avail = b.Gems > colors;
                 bool haveRoom = after.magnitude <= 10 && after.deficit == 0;
                 return avail && haveRoom && (colors[5] == 0);
             }
@@ -378,7 +378,7 @@ namespace Splendor
                 List<BUY> l = new List<BUY>();
                 BUY temp;
 
-                foreach (Card c in b.boardCards)
+                foreach (Card c in b.BoardCards)
                 {
                     temp = new BUY(c);
                     if (temp.isLegal(b))
@@ -404,7 +404,7 @@ namespace Splendor
 
             public override bool isLegal(Board b)
             {
-                bool exists = b.boardCards.Contains(card) || b.currentPlayer.reserve.Contains(card);
+                bool exists = b.BoardCards.Contains(card) || b.currentPlayer.reserve.Contains(card);
                 exists &= (card.deck != GameController.nobles);
                 bool affordable = (b.currentPlayer.gems + b.currentPlayer.discount - card.cost).deficit <= b.currentPlayer.gems[5];
                 return exists && affordable;
@@ -417,8 +417,6 @@ namespace Splendor
 
             public override void takeAction()
             {
-                Debug.Assert(Board.current.currentPlayer == GameController.currentPlayer, "Board is misrepresenting players: " + Board.current.currentPlayer.detailedInfo + " != " + GameController.currentPlayer.detailedInfo);
-
                 if (isLegal())
                 {
                     base.takeAction();
@@ -469,7 +467,7 @@ namespace Splendor
                     return l;
                 }
 
-                foreach (Card c in b.boardCards)
+                foreach (Card c in b.BoardCards)
                 {
                     if (c.id < 90)
                     {
@@ -505,7 +503,7 @@ namespace Splendor
                 {
                     return false;
                 }
-                bool isAvail = b.boardCards.Contains(card) && card.deck != GameController.nobles;
+                bool isAvail = b.BoardCards.Contains(card) && card.deck != GameController.nobles;
                 return isAvail;
             }
 
@@ -519,7 +517,7 @@ namespace Splendor
                 if (isLegal())
                 {
                     base.takeAction();
-                    GameController.currentPlayer.Reserve(card);
+                    GameController.currentPlayer.m_reserve(card);
                 }
                 else
                 {

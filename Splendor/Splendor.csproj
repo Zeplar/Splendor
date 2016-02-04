@@ -71,10 +71,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\AForge.NET\Framework\Release\AForge.dll</HintPath>
     </Reference>
-    <Reference Include="CH.Combinatorics, Version=1.0.2.0, Culture=neutral, PublicKeyToken=9ba62c7481cc8055, processorArchitecture=MSIL">
-      <HintPath>..\packages\CH.Combinatorics.1.0.2\lib\net40\CH.Combinatorics.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="HelperSharp, Version=1.0.5560.27038, Culture=neutral, PublicKeyToken=3d44152485e1a4e1, processorArchitecture=MSIL">
       <HintPath>..\packages\GeneticSharp.1.0.94\lib\net35\HelperSharp.dll</HintPath>
       <Private>True</Private>
@@ -100,38 +96,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GreedyBuyer.cs" />
-    <Compile Include="GameComponents\Board.cs" />
-    <Compile Include="GameComponents\Card.cs" />
     <Compile Include="Console.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="BuySeeker.cs" />
+    <Compile Include="BuyOrder\BuySeeker.cs" />
     <Compile Include="Human.cs" />
     <Compile Include="BuyOrder\BuyFit.cs" />
     <Compile Include="BuyOrder\SelfishGene.cs" />
     <Compile Include="PlayerFactory.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Exact\ExactGene.cs" />
     <Compile Include="Exact\ExactFit.cs" />
     <Compile Include="Exact\ExactChromosome.cs" />
     <Compile Include="Greedy.cs" />
     <Compile Include="Minimax.cs" />
-    <Compile Include="GameComponents\Move.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="RandomPlayer.cs" />
-    <Compile Include="RecordHistory.cs" />
     <Compile Include="ScoringMethods.cs" />
-    <Compile Include="SocketAPI.cs" />
-    <Compile Include="GameComponents\GameController.cs" />
-    <Compile Include="GameComponents\Deck.cs" />
-    <Compile Include="GameComponents\Gem.cs" />
-    <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="splendor_cards.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -149,6 +131,10 @@
     <ProjectReference Include="..\..\..\..\AForge.NET Framework-2.2.5\Genetic\Genetic.csproj">
       <Project>{2efaa327-1789-4438-b9f5-e83acae12db2}</Project>
       <Name>Genetic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameComponents\GameComponents.csproj">
+      <Project>{28bb625c-6df2-4ccd-9c93-4afb60badce2}</Project>
+      <Name>GameComponents</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

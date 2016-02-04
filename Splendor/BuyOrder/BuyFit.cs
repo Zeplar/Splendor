@@ -22,7 +22,7 @@ namespace Splendor.BuyOrder
         {
             if (current.gameOver)
             {
-                if (!current.viewableCards.Exists(x=>x.deck != GameController.nobles)) return true;
+                if (!current.viewableCards.Exists(x=>x.Deck != Card.Decks.nobles)) return true;
                 if (current.winner == 0) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win!");
                 else if (current.winner == 1) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
                 return true;

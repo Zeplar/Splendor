@@ -21,10 +21,9 @@ namespace Splendor.BuyOrder
         public SelfishGene(ScoringMethods.Function scoringFunction, int popsize, int gens)
         {
             fitness = new BuyFit(scoringFunction);
-            name = "SelfishGene";
+            name = "SelfishGene " + scoringFunction.ToString();
             popSize = popsize;
             generations = gens;
-            fn = scoringFunction;
         }
 
         /// <summary>
@@ -58,7 +57,7 @@ namespace Splendor.BuyOrder
             bool tempRecording = GameController.recording;
             GameController.recording = false;
             lastBestChromosome = null;
-            fitness.cards = Board.current.viewableCards.FindAll(x => x.deck != GameController.nobles);
+            fitness.cards = Board.current.viewableCards.FindAll(x => x.Deck != Card.Decks.nobles);
             var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RouletteWheelSelection(), random);
 
         //    if (!predicted.Equals(Board.current.prevMove)) RecordHistory.record("!!! Prediction failed.");
@@ -75,14 +74,14 @@ namespace Splendor.BuyOrder
             }
             GameController.recording = tempRecording;
             lastBestChromosome.Evaluate(fitness);
-            Move m = fitness.simulateMyTurn(lastBestChromosome, Board.current).prevMove;
+            Move m = fitness.simulateMyTurn(lastBestChromosome, Board.current).PrevMove;
             RecordHistory.record(this + " took move " + m);
             m.takeAction();
         }
 
         public override string ToString()
         {
-            return "BuyOrder " + fn;
+            return name;
         }
 
     }

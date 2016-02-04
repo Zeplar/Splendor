@@ -28,7 +28,7 @@ namespace Splendor.Exact
             {
                 return null;
             }
-            return moves[GameController.random.Next(moves.Count)];
+            return moves[GameController.Random.Next(moves.Count)];
         }
        
 
@@ -37,8 +37,8 @@ namespace Splendor.Exact
         /// </summary>
         private Board generate(ExactChromosome max, Board b)
         {
-            Debug.Assert(b.turn % 2 == 0);
-            int i = b.turn / 2;
+            Debug.Assert(b.Turn % 2 == 0);
+            int i = b.Turn / 2;
             if (max.moves.Count <= i)
             {
                 max.moves.Add(null);
@@ -83,7 +83,7 @@ namespace Splendor.Exact
             Move pred = null; //Predicted move next turn for Greedy
             double score = 0;
             int i = 0;
-            while (current.turn < max.length)
+            while (current.Turn < max.length)
             {
                 if (predictWin(current, pred)) break;
                 next = generate(max, current);
@@ -109,7 +109,7 @@ namespace Splendor.Exact
 
         private uint hash(Board b)
         {
-            Gem bp = b.currentPlayer.gems + b.currentPlayer.discount;
+            Gem bp = b.currentPlayer.Gems + b.currentPlayer.discount;
             Byte[] buyingPower = new Byte[6];
             for (int i=0; i < 6; i++)
             {
@@ -120,7 +120,7 @@ namespace Splendor.Exact
             List<Card> startingCards = GameController.boardCards;
             for (int i=0; i < 8 && i < startingCards.Count; i++)
             {
-                if (b.boardCards.Contains(startingCards[i]))
+                if (b.BoardCards.Contains(startingCards[i]))
                 {
                     fieldState[0] <<= 1;
                     fieldState[0] += 1;
@@ -128,7 +128,7 @@ namespace Splendor.Exact
             }
             for (int i = 8; i < 16 && i < startingCards.Count; i++)
             {
-                if (b.boardCards.Contains(startingCards[i]))
+                if (b.BoardCards.Contains(startingCards[i]))
                 {
                     fieldState[1] <<= 1;
                     fieldState[1] += 1;

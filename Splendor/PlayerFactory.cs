@@ -37,7 +37,7 @@ namespace Splendor
 
         public static void Load()
         {
-            Register("human", (x) => new Human());
+            //Register("human", (x) => new Human());
             Register("greedy", Greedy.Create);
             Register("player", (x) => new Player());
             Register("minimax", x =>

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
-using System.Diagnostics;
+using AForge;
 
 namespace Splendor
 {
@@ -9,28 +9,35 @@ namespace Splendor
     public class Player
     {
 
-        public int turnOrder;
-        public Gem gems;
-        public List<Card> reserve;
-        public List<Card> field;
-        public int wins;
+        internal Gem gems;
+        internal List<Card> reserve;
+        internal List<Card> field;
         public string name;
-        public ScoringMethods.Function fn;
+        internal int wins = 0;
+        internal int turnOrder;
 
-        protected AForge.ThreadSafeRandom random { get { return GameController.random; } }
+        public Gem Gems { get { return gems; } }
+
+        public List<Card> Reserve { get { return new List<Card>(reserve); } }
+
+        public List<Card> Field { get { return new List<Card>(field); } }
 
         public virtual void takeTurn() { }
+
+        protected ThreadSafeRandom random { get { return GameController.Random; } }
+
+        public int Wins {get { return wins; } }
 
         public override string ToString()
         {
             return name;
         }
 
-        public bool canBuyNextTurn(Board b, Card c)
+        public bool canBuy(Board b, Card c)
         {
             try
             {
-                (b.notCurrentPlayer.gems + b.notCurrentPlayer.discount).takeaway(c.cost);
+                (gems + discount).takeaway(c.cost);
             }
             catch (InvalidOperationException)
             {
@@ -48,44 +55,30 @@ namespace Splendor
             Console.WriteLine("Tier2: " + GameController.decks[1].viewableCards.String());
             Console.WriteLine("Tier3: " + GameController.decks[0].viewableCards.String());
             Console.WriteLine();
-            Console.WriteLine("Opponent: " + opponent.gems + "|Field: " + opponent.field.String());
             Console.WriteLine();
             Console.WriteLine("Self: " + gems + "|Field: " + field.String() + "   |Reserve: " + reserve.String());
 
         }
 
-        public string detailedInfo
+        public Player() : this("BasePlayer")
         {
-            get
-            {
-                return "turnOrder: " + turnOrder + " Gems: " + gems + " Card Count: " + field.Count;
-            }
+
         }
 
-        public Player()
+        public Player(string name)
         {
             gems = new Gem();
             reserve = new List<Card>();
             field = new List<Card>();
-            name = "BasePlayer";
-            fn = new ScoringMethods.Function();
+            this.name = name;
         }
         
 
-        public void takeGems(Gem x)
+        internal void takeGems(Gem x)
         {
             Gem.board -= x;
             gems += x;
         }
-
-        protected Player opponent { get
-            {
-                foreach (Player p in GameController.players)
-                {
-                    if (p != this) return p;
-                }
-                throw new IndexOutOfRangeException();
-            } }
 
         public int points
         {
@@ -132,7 +125,7 @@ namespace Splendor
         }
 
 
-        public void Buy(Card c)
+        internal void Buy(Card c)
         {
             Gem newGems = gems.takeaway((c.cost - discount));
             Gem.board += (gems - newGems);
@@ -151,7 +144,7 @@ namespace Splendor
             UnitTests.testBoard();
         }
 
-        public void Reserve(Card c)
+        internal void m_reserve(Card c)
         {
             if (Gem.board[5] > 0)
             {
@@ -166,25 +159,6 @@ namespace Splendor
         {
             return this.ToString().GetHashCode();
         }
-
-        /// <summary>
-        /// Returns a random gem to the pile.
-        /// </summary>
-        //private void returnRandomGems()
-        //{
-        //    int k = 0;
-
-        //    while (true)
-        //    {
-        //        k = random.Next(5);
-        //        if (gems[k] > 0)
-        //        {
-        //            Gem.board[k] += 1;
-        //            gems[k] -= 1;
-        //            return;
-        //        }
-        //    }
-        //}
 
     }
 }

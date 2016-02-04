@@ -85,7 +85,7 @@ namespace Splendor
 
             public Function delta()
             {
-                return new Function(bd => fn(bd) - fn(bd.prevBoard), "delta- " + description);
+                return new Function(bd => fn(bd) - fn(bd.PrevBoard), "delta- " + description);
             }
 
             public override string ToString()
@@ -116,7 +116,7 @@ namespace Splendor
 
         private static Function turn
         {
-            get { return new Function(bd => bd.turn, "Turn"); }
+            get { return new Function(bd => bd.Turn, "Turn"); }
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Splendor
 
         public static Function minPoints
         {
-            get { return new Function(bd => bd.minimizingPlayer.points - bd.prevBoard.minimizingPlayer.points, "minPoints"); }
+            get { return new Function(bd => bd.minimizingPlayer.points - bd.PrevBoard.minimizingPlayer.points, "minPoints"); }
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Splendor
                         {
                             return 1;
                         }
-                        return (bd.maximizingPlayer.field.Count < bd.minimizingPlayer.field.Count) ? 1 : -1;
+                        return (bd.maximizingPlayer.Field.Count < bd.minimizingPlayer.Field.Count) ? 1 : -1;
 
                     }
                     return 0;
@@ -161,7 +161,7 @@ namespace Splendor
         {
             get
             {
-                return new Function(bd => bd.prevMove?.moveType == Move.Type.BUY ? 0 : bd.maximizingPlayer.gems.magnitude - bd.prevBoard.maximizingPlayer.gems.magnitude, "Gems");
+                return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? 0 : bd.maximizingPlayer.Gems.magnitude - bd.PrevBoard.maximizingPlayer.Gems.magnitude, "Gems");
             }
         }
 
@@ -169,28 +169,28 @@ namespace Splendor
         /// Scores only points.
         /// </summary>
         public static Function Points
-        { get { return new Function(bd => bd.prevMove?.moveType == Move.Type.BUY ? bd.maximizingPlayer.points - bd.prevBoard.maximizingPlayer.points : 0, "Points"); } }
+        { get { return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? bd.maximizingPlayer.points - bd.PrevBoard.maximizingPlayer.points : 0, "Points"); } }
 
         /// <summary>
         /// Scores only prestige.
         /// </summary>
         public static Function Prestige
-        { get { return new Function(bd => bd.prevMove?.moveType == Move.Type.BUY ? 1 : 0, "Prestige"); } }
+        { get { return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? 1 : 0, "Prestige"); } }
 
         public static Function DistanceFromNobles
         {
             get
             {
-                return new Function(bd => bd.prevMove?.moveType == Move.Type.BUY ? _DistanceFromNobles(bd) - _DistanceFromNobles(bd.prevBoard) : 0, "Nobles");
+                return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? _DistanceFromNobles(bd) - _DistanceFromNobles(bd.PrevBoard) : 0, "Nobles");
             }
         }
 
         private static double _DistanceFromNobles(Board b)
         {
             double i = 0;
-            foreach (Card c in b.viewableCards.FindAll(x => x.deck == GameController.nobles))
+            foreach (Card c in b.viewableCards.FindAll(x => x.Deck == Card.Decks.nobles))
             {
-                i += (c.cost - b.maximizingPlayer.gems).positive.magnitude;
+                i += (c.Cost - b.maximizingPlayer.Gems).positive.magnitude;
             }
             return i;
         }

@@ -11,22 +11,18 @@ namespace Splendor
         private List<Card> cards = new List<Card>();
 
 
-        public void removeCard(Card c)
+        internal void removeCard(Card c)
         {
             cards.Remove(c);
-            Debug.Assert(!cards.Contains(c));
         }
 
-        //Necessary for RecordHistory to get initial deck configuration
-        public List<Card> getAllCards()
+        /// <summary>
+        ///Necessary for RecordHistory to get initial deck configuration. This is the actual cardlist; do not modify!!!
+        /// </summary>
+        /// <returns></returns>
+        internal List<Card> getAllCards()
         {
             return cards;
-        }
-
-        //Marks the selected card so the human player can decide whether to buy or reserve it.
-        void selectCard(Card c)
-        {
-            GameController.selected = c;
         }
 
         //Returns the first (up to 4) visible cards.
@@ -39,9 +35,9 @@ namespace Splendor
             }
         }
 
-        public void shuffle()
+        internal void shuffle()
         {
-            this.cards.shuffle();
+            cards.shuffle();
         }
         
         

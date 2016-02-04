@@ -39,28 +39,25 @@ namespace Splendor
         {
             Board b = Board.current;
             testBoard(b);
-            Debug.Assert(b.currentPlayer == GameController.currentPlayer, "Board is misrepresenting players: " + b.currentPlayer.detailedInfo + " != " + GameController.currentPlayer.detailedInfo);
+            Debug.Assert(b.currentPlayer == GameController.currentPlayer, "Board is misrepresenting players: ");
         }
 
         public static void testBoard(Board b)
         {
-            Gem g = b.gems;
-            foreach (Player p in b.players)
-            {
-                g += p.gems;
-            }
+            Gem g = b.Gems;
+            g += b.currentPlayer.Gems;
+            g += b.notCurrentPlayer.Gems;
             Debug.Assert(g == new Gem(4, 4, 4, 4, 4, 8), "Gems didn't add up.");
-            ScoringMethods.testScoringMethods(b);
         }
 
-        [Conditional("DEBUG")]
-        public static void testEncoder()
-        {
-            Board current = Board.current;
-            byte[] encoded = current.Encode();
-            Board decoded = Board.Decode(encoded);
-            Debug.Assert(decoded.Equals(Board.current), "Board did not encode correctly.");
-        }
+        //[Conditional("DEBUG")]
+        //public static void testEncoder()
+        //{
+        //    Board current = Board.current;
+        //    byte[] encoded = current.Encode();
+        //    Board decoded = Board.Decode(encoded);
+        //    Debug.Assert(decoded.Equals(Board.current), "Board did not encode correctly.");
+        //}
 
     }
 

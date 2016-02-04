@@ -13,14 +13,12 @@ namespace Splendor
         public Greedy()
         {
             scoringFunction = ScoringMethods.Lead + ScoringMethods.WinLoss;
-            fn = scoringFunction;
             name = "Greedy Delta";
         }
         public Greedy(ScoringMethods.Function scoringFunction)
         {
             this.scoringFunction = scoringFunction;
-            name = "Greedy Custom";
-            fn = scoringFunction;
+            name = "Greedy " + scoringFunction.ToString();
         }
 
         public override string ToString()

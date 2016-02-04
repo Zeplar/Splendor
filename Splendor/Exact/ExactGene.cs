@@ -28,10 +28,10 @@ namespace Splendor.Exact
 
         public ExactGene(int popsize, int depth, int generations, ScoringMethods.Function scoringFunction)
         {
+            name = "Exact " + scoringFunction.ToString();
             this.popSize = popsize;
             this.depth = depth;
             this.generations = generations;
-            fn = scoringFunction;
             fit = new ExactFit(scoringFunction);
             RecordHistory.clearPlot();
             RecordHistory.plot("EXACT GENE|||Population: " + popsize + " ; Generations: " + generations + Environment.NewLine);
@@ -66,7 +66,7 @@ namespace Splendor.Exact
 
         public override string ToString()
         {
-            return "Exact " + fn;
+            return name;
         }
 
         public override void takeTurn()

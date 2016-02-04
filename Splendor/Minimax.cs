@@ -10,15 +10,11 @@ namespace Splendor
     public class Minimax : Player
     {
         public int treeDepth;
-        public Minimax(int i, ScoringMethods.Function f)
+        public Minimax(int i, ScoringMethods.Function f) : base()
         {
-            gems = Gem.zero;
-            reserve = new List<Card>();
-            field = new List<Card>();
             treeDepth = i;
             scoringFunction = f;
             name = "Minimax " + treeDepth;
-            fn = f;
         }
 
         private ScoringMethods.Function scoringFunction;
@@ -37,7 +33,7 @@ namespace Splendor
                 return null;
             }
 
-            if (startingPoint.turn % 2 == 1)
+            if (startingPoint.Turn % 2 == 1)
             {
                 for(int i=0; i < bestScore.Length; i++) bestScore[i] = int.MaxValue;
                 comp = (x, y) => (x < y);

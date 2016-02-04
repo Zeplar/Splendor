@@ -10,7 +10,7 @@ namespace Splendor
     {
         private Gem neededGems(Board b, Card toBuy)
         {
-            Gem ret = toBuy.cost - (b.currentPlayer.gems + b.currentPlayer.discount);
+            Gem ret = toBuy.Cost - (b.currentPlayer.Gems + b.currentPlayer.discount);
             return ret.positive;
         }
 
@@ -28,7 +28,7 @@ namespace Splendor
             Move targetMove = new Move.BUY(toBuy);
             if (targetMove.isLegal(state)) return targetMove; //Buy if possible
 
-            if (new Move.RESERVE(toBuy).isLegal(state) && state.notCurrentPlayer.canBuyNextTurn(state, toBuy))
+            if (new Move.RESERVE(toBuy).isLegal(state) && state.notCurrentPlayer.canBuy(state, toBuy))
                 return new Move.RESERVE(toBuy); //Reserve if opponent can buy next turn
 
             Gem needed = neededGems(state, toBuy);

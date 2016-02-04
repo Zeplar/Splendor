@@ -35,7 +35,7 @@ namespace Splendor
                     {
                         setPlot();
                         if (j > 0) CONSOLE.Overwrite(7, "Repeat " + j + "/" + i + ", ETA " + (i/j - 1) * watch.Elapsed.Minutes + " minutes");
-                        GameController.random = new AForge.ThreadSafeRandom(j);
+                        GameController.__random__ = new AForge.ThreadSafeRandom(j);
                         CONSOLE.Overwrite(12, "Seed: " + j);
                         GameController.replayGame();
                         getStats();
@@ -63,7 +63,7 @@ namespace Splendor
                     Console.WriteLine("Plotting = " + RecordHistory.plotting);
                     return null;
                 case "runseed":
-                    GameController.random = new AForge.ThreadSafeRandom(10);
+                    GameController.__random__ = new AForge.ThreadSafeRandom(10);
                     GameController.replayGame();
                     return null;
                 case "description":
@@ -86,7 +86,7 @@ namespace Splendor
         static void recordScore()
         {
             CONSOLE.Overwrite(8, new string(' ', Console.WindowWidth - 1));
-            CONSOLE.Overwrite(8, PLAYERS[0] + ": " + PLAYERS[0].wins + " --- " + PLAYERS[1] + ": " + PLAYERS[1].wins);
+            CONSOLE.Overwrite(8, PLAYERS[0] + ": " + PLAYERS[0].Wins + " --- " + PLAYERS[1] + ": " + PLAYERS[1].Wins);
         }
 
         static void debugGame()
@@ -110,7 +110,7 @@ namespace Splendor
                 GameController.replayGame();
                 Console.Write("" + i);
                 Console.CursorLeft = 0;
-                winArray[i] = g1.wins;
+                winArray[i] = g1.Wins;
             }
             GameController.Start(g3, m, 100);
             for (int i = 0; i < tries; i++)
@@ -118,7 +118,7 @@ namespace Splendor
                 GameController.replayGame();
                 Console.Write("" + i);
                 Console.CursorLeft = 0;
-                Debug.Assert(winArray[i] == g3.wins, "Games diverged at i= " + i);
+                Debug.Assert(winArray[i] == g3.Wins, "Games diverged at i= " + i);
             }
         }
 
