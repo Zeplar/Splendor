@@ -76,7 +76,7 @@ namespace Splendor.BuyOrder
             lastBestChromosome.Evaluate(fitness);
             Move m = fitness.simulateMyTurn(lastBestChromosome, Board.current).PrevMove;
             RecordHistory.record(this + " took move " + m);
-            m.takeAction();
+            takeAction(m);
         }
 
         public override string ToString()

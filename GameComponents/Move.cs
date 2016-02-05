@@ -32,7 +32,7 @@ namespace Splendor
         public abstract bool isLegal();
         public abstract bool isLegal(Board b);
 
-        public virtual void takeAction()
+        internal virtual void takeAction()
         {
             Board.lastBoard = Board.current;
             Board.lastMove = this;
@@ -179,7 +179,7 @@ namespace Splendor
                 return (haveRoom && avail);
             }
 
-            public override void takeAction()
+            internal override void takeAction()
             {
                 if (isLegal())
                 {
@@ -317,7 +317,7 @@ namespace Splendor
                 return isLegal(Board.current);
             }
 
-            public override void takeAction()
+            internal override void takeAction()
             {
                 if (isLegal())
                 {
@@ -415,7 +415,7 @@ namespace Splendor
                 return isLegal(Board.current);
             }
 
-            public override void takeAction()
+            internal override void takeAction()
             {
                 if (isLegal())
                 {
@@ -512,7 +512,7 @@ namespace Splendor
                 return isLegal(Board.current);
             }
 
-            public override void takeAction()
+            internal override void takeAction()
             {
                 if (isLegal())
                 {

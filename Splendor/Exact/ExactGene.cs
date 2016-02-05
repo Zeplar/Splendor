@@ -93,7 +93,7 @@ namespace Splendor.Exact
                 m = Move.getRandomMove();
                 throw new NullReferenceException("ExactGene couldn't find a random move.");
             }
-            m.takeAction();
+            takeAction(m);
             RecordHistory.record(this + " took move " + m);
         }
 

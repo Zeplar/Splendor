@@ -10,7 +10,7 @@ namespace Splendor
         {
             Move m = Move.getRandomMove();
             Debug.Assert(m != null, "Random couldn't find a legal move.");
-            m.takeAction();
+            takeAction(m);
         }
 
         public override string ToString()

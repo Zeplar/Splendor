@@ -66,8 +66,7 @@ namespace Splendor
             double x;
             Move k = minimax(b, treeDepth, scoringFunction, out x);
             RecordHistory.record(this + " made move " + k?.ToString());
-            k.takeAction();
-
+            takeAction(k);
         }
 
     }

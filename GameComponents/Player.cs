@@ -144,6 +144,12 @@ namespace Splendor
             UnitTests.testBoard();
         }
 
+        public void takeAction(Move m)
+        {
+            if (GameController.currentPlayer == this) m.takeAction();
+            else throw new Exception(this + " tried to take its turn out of order!");
+        }
+
         internal void m_reserve(Card c)
         {
             if (Gem.board[5] > 0)

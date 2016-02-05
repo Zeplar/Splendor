@@ -12,18 +12,19 @@ namespace Splendor
 
         public override void takeTurn()
         {
-            buyOrder = Board.current.viewableCards.FindAll(x => x.Deck != Card.Decks.nobles);
+            Board current = Board.current;
+            buyOrder = current.viewableCards.FindAll(x => x.Deck != Card.Decks.nobles);
             buyOrder.OrderBy(x => random.Next());
             foreach (Card c in buyOrder)
             {
-                if (new Move.BUY(c).isLegal())
+                if (canBuy(current, c))
                 {
-                    new Move.BUY(c).takeAction();
+                    takeAction(new Move.BUY(c));
                     return;
                 }
             }
             Move m = buyer.getMove(Board.current, buyOrder[0]);
-            m.takeAction();
+            takeAction(m);
             return;
         }
 

@@ -66,7 +66,7 @@ namespace Splendor
             Move m = getGreedyMove(Board.current, scoringFunction);
             if (m != null)
             {
-                m.takeAction();
+                takeAction(m);
                 RecordHistory.record(this + " took move " + m);
                 return;
             }
