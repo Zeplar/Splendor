@@ -73,6 +73,7 @@ namespace Splendor.BuyOrder
                 if ((GameController.turn % 10 == 0) && (i == 0 || i == generations / 2 || i == generations-1)) RecordHistory.snapshot(ga.getFitnesses());
             }
             GameController.recording = tempRecording;
+            if (lastBestChromosome == null) throw new Exception("Null chromosome");
             lastBestChromosome.Evaluate(fitness);
             Move m = fitness.simulateMyTurn(lastBestChromosome, Board.current).PrevMove;
             RecordHistory.record(this + " took move " + m);

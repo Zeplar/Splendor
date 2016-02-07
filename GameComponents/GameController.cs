@@ -69,7 +69,8 @@ namespace Splendor
         {
             gameOver = true;
             if (Board.current.winner == 0) currentPlayer.wins++;
-            if (Board.current.winner == 1) players[turn % 2 + 1].wins++;
+
+            else if (Board.current.winner == 1) players[(turn + 1) % 2].wins++;
         }
 
         public static void replayGame()
@@ -92,10 +93,7 @@ namespace Splendor
             RecordHistory.initialize ();
             gameOver = false;
             takingTurn = false;
-            while (!gameOver)
-            {
-                nextTurn();
-            }
+            while (!gameOver) nextTurn();
             endGame();
         }
 

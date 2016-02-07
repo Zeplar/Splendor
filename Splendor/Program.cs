@@ -63,7 +63,9 @@ namespace Splendor
                     Console.WriteLine("Plotting = " + RecordHistory.plotting);
                     return null;
                 case "runseed":
-                    GameController.__random__ = new AForge.ThreadSafeRandom(10);
+                    i = int.Parse(commands.Dequeue());
+                    if (i % 2 == 1) GameController.players = new Player[2] { GameController.players[1], GameController.players[0] };
+                    GameController.__random__ = new AForge.ThreadSafeRandom(i);
                     GameController.replayGame();
                     return null;
                 case "description":
@@ -91,7 +93,6 @@ namespace Splendor
 
         static void debugGame()
         {
-            Console.WriteLine("Go");
             GameController.replayGame();
 
         }

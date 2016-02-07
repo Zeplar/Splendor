@@ -20,9 +20,9 @@ namespace Splendor.BuyOrder
 
         private bool predictWin(Board current)
         {
+            if (!current.viewableCards.Exists(x => x.Deck != Card.Decks.nobles)) return true;
             if (current.gameOver)
             {
-                if (!current.viewableCards.Exists(x=>x.Deck != Card.Decks.nobles)) return true;
                 if (current.winner == 0) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win!");
                 else if (current.winner == 1) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
                 return true;
@@ -56,15 +56,27 @@ namespace Splendor.BuyOrder
             return m;
         }
 
+        private bool containsBuy(PermutationChromosome c, int i, Board current, out Card card)
+        {
+            int value = -1;
+            card = null;
+            try { value = c.Value[i]; } catch (IndexOutOfRangeException) { Console.WriteLine("Value out of range: " + i);
+                Console.WriteLine("Cardlist: " + cards.String());
+                Console.WriteLine("Real cards: " + current.viewableCards.String()); }
+            try { card = cards[value]; } catch (IndexOutOfRangeException) { Console.WriteLine("Card out of range: " + value); }
+            return current.viewableCards.Contains(card);
+        }
+
         public Board simulateMyTurn(PermutationChromosome c, Board current)
         {
             int nextBuy = 0;
-            while (!current.viewableCards.Contains(cards[c.Value[nextBuy]]))
+            Card card;
+            while (!containsBuy(c, nextBuy, current, out card))
             {
                 nextBuy++;
             }
 
-            Move nextMove = buyer.getMove(current, cards[c.Value[nextBuy]]);
+            Move nextMove = buyer.getMove(current, card);
             return current.generate(nextMove);
         }
     }

@@ -117,6 +117,7 @@ namespace Splendor
         private static Function turn
         {
             get { return new Function(bd => bd.Turn, "Turn"); }
+
         }
 
         /// <summary>
