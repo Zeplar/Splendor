@@ -35,8 +35,8 @@ namespace Splendor
                     {
                         setPlot();
                         if (j > 0) CONSOLE.Overwrite(7, "Repeat " + j + "/" + i + ", ETA " + (i/j - 1) * watch.Elapsed.Minutes + " minutes");
-                        GameController.__random__ = new AForge.ThreadSafeRandom(j);
-                        CONSOLE.Overwrite(12, "Seed: " + j);
+                        //GameController.__random__ = new AForge.ThreadSafeRandom(j);
+                        //CONSOLE.Overwrite(12, "Seed: " + j);
                         GameController.replayGame();
                         getStats();
                     }
