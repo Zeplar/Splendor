@@ -13,6 +13,8 @@ namespace Splendor
     public static class ScoringMethods
     {
 
+        private static string save = System.IO.Directory.GetCurrentDirectory() + @"\save.txt";
+
         public static Dictionary<string,Function> dictionary = new Dictionary<string, Function>();
 
         public static void register()
@@ -25,10 +27,28 @@ namespace Splendor
             dictionary.Add("turn", turn);
             dictionary.Add("gems", Gems);
             dictionary.Add("nobles", DistanceFromNobles);
+            Load();
 
             //Check how many losers thought they were winners
             //Check where losses occur-- is it always a card draw?
             //
+        }
+
+        public static void Save(string name, Function fn)
+        {
+            System.IO.File.AppendAllText(save, name + ":" + fn.ToString() + "\n");
+        }
+        private static void Load()
+        {
+            string[] lines = System.IO.File.ReadAllLines(save);
+            string[] split, descr;
+            foreach (string line in lines)
+            {
+                split = line.Split(':');
+                descr = split[1].Replace("(","( ").Replace(")"," )").ToLower().Split();
+                Function fn = parse(descr);
+                dictionary.Add(split[0], fn);
+            }
         }
 
         public static string listAll
