@@ -94,6 +94,8 @@ namespace Splendor.Exact
                     if (other.boardState[j] == hash)
                     {
                         CrossoverFrom(other, i, j);
+                        this.parentFitness = Math.Max(this.fitness, pair.Fitness);
+                        other.parentFitness = this.parentFitness;
                         return;
                     }
                 }

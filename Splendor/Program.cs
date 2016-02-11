@@ -11,6 +11,7 @@ namespace Splendor
         static int p1Wins = 0;
         static int stalemates = 0;
         static List<Player> PLAYERS;
+        static List<Player> tempPlayers;
 
         static void getStats()
         {
@@ -123,17 +124,28 @@ namespace Splendor
             }
         }
 
-
-        static void Main(string[] args)
+        static bool save(string[] s)
         {
-            List<Player> players = new List<Player>();
-            PlayerFactory.Load();
-            ScoringMethods.register();
-            Console.WriteLine("Available players: " + PlayerFactory.listAll);
-            Console.WriteLine("Scoring functions: " + ScoringMethods.listAll);
-            while (true)
+            if (s[0] == "save")
             {
-                string[] s = Console.ReadLine().Replace("(", "( ").Replace(")", " )").Replace("+", " + ").Replace("-"," - ").Replace("*"," * ").Replace("/"," / ").Split();
+                try
+                {
+                    ScoringMethods.Function fn = ScoringMethods.parse(s, 2);
+                    ScoringMethods.Save(s[1], fn);
+                }
+                catch
+                {
+                    Console.WriteLine("Error.");
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        static bool makePlayer(string[] s)
+        {
+            try {
                 if (PlayerFactory.Exists(s[0]))
                 {
                     Player temp = null;
@@ -147,19 +159,43 @@ namespace Splendor
                     }
                     finally
                     {
-                        if (temp != null) players.Add(temp);
+                        if (temp != null) tempPlayers.Add(temp);
                     }
-                    if (players.Count == 2)
+                    if (tempPlayers.Count == 2)
                     {
-                        GameController.Start(players[0], players[1]);
-                        PLAYERS = players.GetRange(0, 2);
-                        players.Clear();
+                        GameController.Start(tempPlayers[0], tempPlayers[1]);
+                        PLAYERS = tempPlayers.GetRange(0, 2);
+                        tempPlayers.Clear();
                     }
+                    return true;
                 }
+                return false;
+            } catch { Console.WriteLine("Error."); return false; }
+        }
+
+        static void help(string[] s)
+        {
+            if (ScoringMethods.dictionary.ContainsKey(s[0])) CONSOLE.WriteLine(ScoringMethods.dictionary[s[0]].ToString());
+        }
+
+
+        static void Main(string[] args)
+        {
+            tempPlayers = new List<Player>();
+            PlayerFactory.Load();
+            ScoringMethods.register();
+            Console.WriteLine("Available players: " + PlayerFactory.listAll);
+            Console.WriteLine("Scoring functions: " + ScoringMethods.listAll);
+            while (true)
+            {
+                string[] s = Console.ReadLine().Replace("(", "( ").Replace(")", " )").Replace("+", " + ").Replace("-"," - ").Replace("*"," * ").Replace("/"," / ").Split();
+                help(s);
+                if (makePlayer(s)) { }
+                else if (save(s)) { }
                 else
                 {
                     foreach (string x in s)
-                    commands.Enqueue(x);
+                        commands.Enqueue(x);
                 }
                 if (commands.Count > 0)
                 {

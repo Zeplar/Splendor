@@ -72,19 +72,18 @@ namespace Splendor.Exact
         public override void takeTurn()
         {
             RecordHistory.record();
-            AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RankSelection(), random);
+            AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RouletteWheelSelection(), random);
             bool tempRecord = GameController.recording;
             GameController.recording = false;
             for (int i=0; i < generations; i++)
             {
-                if (lastBestChromosome != null) pop.AddChromosome(lastBestChromosome);
                 //Getting an index out of range exception here when using RouletteWheelSelection (16 rounds in, seed 100)
                 pop.RunEpoch();
                 RecordHistory.plot(i + "," + pop.FitnessMax + Environment.NewLine);
                 if ((GameController.turn % 5 == 0) && (i == 0 || i == generations / 2 || i == generations - 1)) RecordHistory.snapshot(pop.getFitnesses());
-                lastBestChromosome = pop.BestChromosome as ExactChromosome;
-
             }
+            lastBestChromosome = pop.BestChromosome as ExactChromosome;
+
             GameController.recording = tempRecord;
             fit.Evaluate(lastBestChromosome);
             Move m = lastBestChromosome.moves[0];
