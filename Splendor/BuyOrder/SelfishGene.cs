@@ -24,6 +24,8 @@ namespace Splendor.BuyOrder
             name = "SelfishGene " + scoringFunction.ToString();
             popSize = popsize;
             generations = gens;
+            RecordHistory.clearPlot();
+            RecordHistory.plot("EXACT GENE|||Population: " + popsize + " ; Generations: " + generations + Environment.NewLine);
         }
 
         /// <summary>
@@ -32,7 +34,7 @@ namespace Splendor.BuyOrder
         public static SelfishGene Create(string[] args)
         {
             ScoringMethods.Function f;
-            if (args.Length < 4)
+            if (args.Length < 3)
             {
                 Console.WriteLine("Usage: selfish <popSize> <generations> <...scoring function...>");
                 return null;
@@ -70,7 +72,14 @@ namespace Splendor.BuyOrder
                 lastBestChromosome = ga.BestChromosome as PermutationChromosome;
                 CONSOLE.Overwrite(6, "Generations " + i + " out of " + generations);
                 RecordHistory.plot(i + "," + ga.FitnessMax + Environment.NewLine);
-                if ((GameController.turn % 10 == 0) && (i == 0 || i == generations / 2 || i == generations-1)) RecordHistory.snapshot(ga.getFitnesses());
+                if ((GameController.turn % 5 == 0) && (i == 0 || i == generations / 2 || i == generations-1))
+                {
+                    List<double> fitnesses = ga.getFitnesses();
+                    List<double> parents = ga.getParentFitnesses();
+                    List<string> snap = new List<string>();
+                    for (int j = 0; j < fitnesses.Count; j++) snap.Add(fitnesses[j].ToString() + "," + parents[j].ToString());
+                    RecordHistory.snapshot(snap);
+                }
             }
             GameController.recording = tempRecording;
             if (lastBestChromosome == null) throw new Exception("Null chromosome");

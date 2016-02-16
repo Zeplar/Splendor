@@ -10,11 +10,10 @@ namespace Splendor
     public class Minimax : Player
     {
         public int treeDepth;
-        public Minimax(int i, ScoringMethods.Function f) : base()
+        public Minimax(int i, ScoringMethods.Function f) : base("Minimax " + i + "(" + f.ToString() + ")")
         {
             treeDepth = i;
             scoringFunction = f;
-            name = "Minimax " + treeDepth;
         }
 
         private ScoringMethods.Function scoringFunction;

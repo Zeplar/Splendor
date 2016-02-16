@@ -120,7 +120,7 @@ namespace Splendor
                 GameController.replayGame();
                 Console.Write("" + i);
                 Console.CursorLeft = 0;
-                Debug.Assert(winArray[i] == g3.Wins, "Games diverged at i= " + i);
+                if (winArray[i] != g3.Wins) throw new Exception("Games diverged at i= " + i);
             }
         }
 

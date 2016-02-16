@@ -35,6 +35,7 @@ namespace Splendor.Exact
             fit = new ExactFit(scoringFunction);
             RecordHistory.clearPlot();
             RecordHistory.plot("EXACT GENE|||Population: " + popsize + " ; Generations: " + generations + Environment.NewLine);
+
         }
 
         public ExactGene(ScoringMethods.Function fn) : this(500, 10, 20, fn) { }
@@ -72,17 +73,24 @@ namespace Splendor.Exact
         public override void takeTurn()
         {
             RecordHistory.record();
-            AForge.Genetic.Population pop = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RouletteWheelSelection(), random);
+            AForge.Genetic.Population ga = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RouletteWheelSelection(), random);
             bool tempRecord = GameController.recording;
             GameController.recording = false;
             for (int i=0; i < generations; i++)
             {
                 //Getting an index out of range exception here when using RouletteWheelSelection (16 rounds in, seed 100)
-                pop.RunEpoch();
-                RecordHistory.plot(i + "," + pop.FitnessMax + Environment.NewLine);
-                if ((GameController.turn % 5 == 0) && (i == 0 || i == generations / 2 || i == generations - 1)) RecordHistory.snapshot(pop.getFitnesses());
+                ga.RunEpoch();
+                RecordHistory.plot(i + "," + ga.FitnessMax + Environment.NewLine);
+                if ((GameController.turn % 5 == 0) && (i == 0 || i == generations / 2 || i == generations - 1))
+                {
+                    List<double> fitnesses = ga.getFitnesses();
+                    List<double> parents = ga.getParentFitnesses();
+                    List<string> snap = new List<string>();
+                    for (int j = 0; j < fitnesses.Count; j++) snap.Add(fitnesses[j].ToString() + "," + parents[j].ToString());
+                    RecordHistory.snapshot(snap);
+                }
             }
-            lastBestChromosome = pop.BestChromosome as ExactChromosome;
+            lastBestChromosome = ga.BestChromosome as ExactChromosome;
 
             GameController.recording = tempRecord;
             fit.Evaluate(lastBestChromosome);
