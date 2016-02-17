@@ -23,7 +23,7 @@ namespace Splendor
             dictionary.Add("points", Points);
             dictionary.Add("winloss", WinLoss);
             dictionary.Add("prestige", Prestige);
-            dictionary.Add("legalbuys", LegalBuys);
+            //dictionary.Add("legalbuys", LegalBuys);
             dictionary.Add("turn", turn);
             dictionary.Add("gems", Gems);
             dictionary.Add("nobles", DistanceFromNobles);
@@ -65,6 +65,7 @@ namespace Splendor
         {
             private Func<Board, double> fn;
             private string description = "";
+            public bool perMove = true;
             public double evaluate(Board b)
             {
                 try
@@ -140,18 +141,20 @@ namespace Splendor
 
         }
 
+        private static Function score = new Function(b => b.notCurrentPlayer.points, "Score");
+
         /// <summary>
         /// Scores difference in points.
         /// </summary>
         public static Function Lead
         {
-            get { return new Function(bd => bd.maximizingPlayer.points - bd.minimizingPlayer.points, "Lead"); }
+            get { return new Function(bd => bd.notCurrentPlayer.points - bd.currentPlayer.points, "Lead"); }
         }
 
-        public static Function minPoints
-        {
-            get { return new Function(bd => bd.minimizingPlayer.points - bd.PrevBoard.minimizingPlayer.points, "minPoints"); }
-        }
+        //public static Function minPoints
+        //{
+        //    get { return new Function(bd => bd.minimizingPlayer.points - bd.PrevBoard.minimizingPlayer.points, "minPoints"); }
+        //}
 
         /// <summary>
         /// Scores maxPoints for a win, minPoints )for a loss, else zero. Tiebreaks on prestige.
@@ -162,16 +165,16 @@ namespace Splendor
                 {
                     if (bd.gameOver)
                     {
-                        if (bd.maximizingPlayer.points < 15 && bd.minimizingPlayer.points < 15) return 0;
-                        if (bd.maximizingPlayer.points < bd.minimizingPlayer.points)
+                        if (bd.currentPlayer.points < 15 && bd.notCurrentPlayer.points < 15) return 0;
+                        if (bd.notCurrentPlayer.points < bd.currentPlayer.points)
                         {
                             return -1;
                         }
-                        if (bd.maximizingPlayer.points > bd.minimizingPlayer.points)
+                        if (bd.notCurrentPlayer.points > bd.currentPlayer.points)
                         {
                             return 1;
                         }
-                        return (bd.maximizingPlayer.Field.Count < bd.minimizingPlayer.Field.Count) ? 1 : -1;
+                        return (bd.notCurrentPlayer.Field.Count < bd.currentPlayer.Field.Count) ? 1 : -1;
 
                     }
                     return 0;
@@ -182,7 +185,7 @@ namespace Splendor
         {
             get
             {
-                return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? 0 : bd.maximizingPlayer.Gems.magnitude - bd.PrevBoard.maximizingPlayer.Gems.magnitude, "Gems");
+                return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? 0 : bd.notCurrentPlayer.Gems.magnitude - bd.PrevBoard.currentPlayer.Gems.magnitude, "Gems");
             }
         }
 
@@ -190,7 +193,7 @@ namespace Splendor
         /// Scores only points.
         /// </summary>
         public static Function Points
-        { get { return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? bd.maximizingPlayer.points - bd.PrevBoard.maximizingPlayer.points : 0, "Points"); } }
+        { get { return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? bd.notCurrentPlayer.points - bd.PrevBoard.currentPlayer.points : 0, "Points"); } }
 
         /// <summary>
         /// Scores only prestige.
@@ -202,16 +205,17 @@ namespace Splendor
         {
             get
             {
-                return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? _DistanceFromNobles(bd) - _DistanceFromNobles(bd.PrevBoard) : 0, "Nobles");
+                return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? _DistanceFromNobles(bd.PrevBoard,true) - _DistanceFromNobles(bd, false) : 0, "Nobles");
             }
         }
 
-        private static double _DistanceFromNobles(Board b)
+        private static double _DistanceFromNobles(Board b, bool current)
         {
+            Player p = current ? b.currentPlayer : b.notCurrentPlayer;
             double i = 0;
             foreach (Card c in b.viewableCards.FindAll(x => x.Deck == Card.Decks.nobles))
             {
-                i += (c.Cost - b.maximizingPlayer.Gems).positive.magnitude;
+                i += (c.Cost - p.discount).positive.magnitude;
             }
             return i;
         }
@@ -220,7 +224,7 @@ namespace Splendor
         /// Scores number of legal Buys and Reserves available.
         /// Takes may be bad since trades vastly outnumber pure takes.
         /// </summary>
-        public static Function LegalBuys { get { return new Function(bd => bd.legalMoves.Count(x => x.moveType == Move.Type.BUY),"LegalBuys"); } }
+        //public static Function LegalBuys { get { return new Function(bd => bd.legalMoves.Count(x => x.moveType == Move.Type.BUY),"LegalBuys"); } }
 
         private static int precedence(string op)
         {
