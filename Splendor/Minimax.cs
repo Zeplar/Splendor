@@ -20,24 +20,27 @@ namespace Splendor
 
         public static Move minimax(Board startingPoint, int depth, ScoringMethods.Function scoringFunction, out double score)
         {
+            bool myTurn = startingPoint.Turn % 2 == 0;  //Indicates that it's Minimax's turn.
             Move bestMove = null;
             List<Move> legalMoves = startingPoint.legalMoves;
             double[] bestScore = new double[legalMoves.Count];
             //int val;
             Func<double, double, bool> comp = (x,y) => (x > y);
 
-            if (depth == 0 || legalMoves.Count == 0 || startingPoint.gameOver)
+            if (depth == 0 || legalMoves.Count == 0 || (startingPoint.gameOver))
             {
-                score = scoringFunction.evaluate(startingPoint);
+                //If the root is currently myTurn, then the opponent generated this board; therefore send the negation of the score. Otherwise send the score.
+                score = scoringFunction.evaluate(startingPoint) * (myTurn ? -1 : 1);
                 return null;
             }
 
-            if (startingPoint.Turn % 2 == 1)
+            if (!myTurn)
             {
-                for(int i=0; i < bestScore.Length; i++) bestScore[i] = int.MaxValue;
+                //If it's the opponent's turn, they will select for the minimal score.
+                for (int i=0; i < bestScore.Length; i++) bestScore[i] = double.MaxValue;
                 comp = (x, y) => (x < y);
             }
-            else for (int i = 0; i < bestScore.Length; i++) bestScore[i] = int.MinValue;
+            else for (int i = 0; i < bestScore.Length; i++) bestScore[i] = double.MinValue;
 
 
             Parallel.For(0, legalMoves.Count, (x) =>
@@ -45,8 +48,10 @@ namespace Splendor
                Move m = legalMoves[x];
                minimax(startingPoint.generate(m), depth - 1, scoringFunction, out bestScore[x]);
            });
+            //At this point bestscore[x] is the cumulative score of lower branches guaranteed by choosing the xth move.
             bestMove = legalMoves[0];
-            for (int i=0; i < bestScore.Length; i++)
+            //Minimax finds the maximum of these scores, or the opponent finds the minimum of these scores.
+            for (int i=1; i < bestScore.Length; i++)
             {
                 if (comp(bestScore[i], bestScore[0]))
                 {
@@ -54,7 +59,8 @@ namespace Splendor
                     bestMove = legalMoves[i];
                 }
             }
-            score = bestScore[0] + scoringFunction.evaluate(startingPoint);
+            //If it's Minimax's turn, the opponent generated this board; therefore the score is subtracted. Otherwise the score is added.
+            score = myTurn ? bestScore[0] - scoringFunction.evaluate(startingPoint) : bestScore[0] + scoringFunction.evaluate(startingPoint);
             return bestMove;
         }
 
@@ -64,7 +70,7 @@ namespace Splendor
             Board b = Board.current;
             double x;
             Move k = minimax(b, treeDepth, scoringFunction, out x);
-            RecordHistory.record(this + " made move " + k?.ToString());
+            RecordHistory.record(this + " made move " + k.ToString());
             takeAction(k);
         }
 
