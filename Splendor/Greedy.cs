@@ -43,6 +43,12 @@ namespace Splendor
         }
 
 
+        /// <summary>
+        /// Gets the greedy move based on the given function. Ignores Reserves to save computation.
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="scoringFunction"></param>
+        /// <returns></returns>
         public static Move getGreedyMove(Board b, ScoringMethods.Function scoringFunction)
         {
             Move bestMove = null;
@@ -50,6 +56,7 @@ namespace Splendor
 
             foreach (Move m in b.legalMoves)
             {
+                if (m.moveType == Move.Type.RESERVE) continue;
                 double temp = scoringFunction.evaluate(b.generate(m));
                 if (temp > bestScore)
                 {
@@ -70,7 +77,7 @@ namespace Splendor
                 RecordHistory.record(this + " took move " + m);
                 return;
             }
-            if (m == null) throw new Exception("Greedy couldn't even find a random move.");
+            else throw new Exception("Greedy couldn't even find a random move.");
         }
     }
 }
