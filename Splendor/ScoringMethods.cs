@@ -47,6 +47,7 @@ namespace Splendor
                 split = line.Split(':');
                 descr = split[1].Replace("(","( ").Replace(")"," )").ToLower().Split();
                 Function fn = parse(descr);
+                fn.description = split[0];
                 dictionary.Add(split[0], fn);
             }
         }
@@ -64,7 +65,7 @@ namespace Splendor
         public class Function
         {
             private Func<Board, double> fn;
-            private string description = "";
+            public string description = "";
             public bool perMove = true;
             public double evaluate(Board b)
             {
@@ -135,33 +136,30 @@ namespace Splendor
             public Function(double i) : this(b => i, i.ToString()) { }
         }
 
-        private static Function turn
-        {
-            get { return new Function(bd => bd.Turn, "Turn"); }
-
-        }
+        private static Function turn = new Function(bd => bd.Turn, "Turn");
 
         private static Function score = new Function(b => b.notCurrentPlayer.points, "Score");
+
+        public static Function colors(Gem c)
+        {
+            Func<Board, double> fn = b =>
+             {
+                 Gem deltaGems = (b.notCurrentPlayer.Gems - b.PrevBoard.currentPlayer.Gems);
+                 return (c - (c - deltaGems).positive).magnitude;
+             };
+            return new Function(fn, "colors: " + c);
+        }
 
         /// <summary>
         /// Scores difference in points.
         /// </summary>
-        public static Function Lead
-        {
-            get { return new Function(bd => bd.notCurrentPlayer.points - bd.currentPlayer.points, "Lead"); }
-        }
-
-        //public static Function minPoints
-        //{
-        //    get { return new Function(bd => bd.minimizingPlayer.points - bd.PrevBoard.minimizingPlayer.points, "minPoints"); }
-        //}
+        public static Function Lead = new Function(bd => bd.notCurrentPlayer.points - bd.currentPlayer.points, "Lead");
 
         /// <summary>
-        /// Scores maxPoints for a win, minPoints )for a loss, else zero. Tiebreaks on prestige.
+        /// Scores 1 for a win, -1 for a loss, else zero. Tiebreaks on prestige.
         /// </summary>
-        public static Function WinLoss
-        { get {
-                return new Function(bd =>
+        public static Function WinLoss =
+            new Function(bd =>
                 {
                     if (bd.gameOver)
                     {
@@ -179,35 +177,21 @@ namespace Splendor
                     }
                     return 0;
                 }, "WinLoss");
-            } }
 
-        public static Function Gems
-        {
-            get
-            {
-                return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? 0 : bd.notCurrentPlayer.Gems.magnitude - bd.PrevBoard.currentPlayer.Gems.magnitude, "Gems");
-            }
-        }
+        public static Function Gems = new Function(bd => bd.PrevMove?.moveType == Move.Type.RESERVE ? 1 : bd.PrevMove?.moveType == Move.Type.BUY ? 0
+                                                         : bd.PrevMove == null ? 0 : bd.notCurrentPlayer.Gems.magnitude - bd.PrevBoard.currentPlayer.Gems.magnitude, "Gems");
 
         /// <summary>
         /// Scores only points.
         /// </summary>
-        public static Function Points
-        { get { return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? bd.notCurrentPlayer.points - bd.PrevBoard.currentPlayer.points : 0, "Points"); } }
+        public static Function Points = new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? bd.notCurrentPlayer.points - bd.PrevBoard.currentPlayer.points : 0, "Points");
 
         /// <summary>
         /// Scores only prestige.
         /// </summary>
-        public static Function Prestige
-        { get { return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? 1 : 0, "Prestige"); } }
+        public static Function Prestige = new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? 1 : 0, "Prestige");
 
-        public static Function DistanceFromNobles
-        {
-            get
-            {
-                return new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? _DistanceFromNobles(bd.PrevBoard,true) - _DistanceFromNobles(bd, false) : 0, "Nobles");
-            }
-        }
+        public static Function DistanceFromNobles = new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? _DistanceFromNobles(bd.PrevBoard,true) - _DistanceFromNobles(bd, false) : 0, "Nobles");
 
         private static double _DistanceFromNobles(Board b, bool current)
         {
