@@ -15,6 +15,7 @@ namespace Splendor
         public string name;
         internal int wins = 0;
         internal int turnOrder;
+        public int[] movesTaken = new int[4];
 
         public Gem Gems { get { return gems; } }
 
@@ -146,7 +147,11 @@ namespace Splendor
 
         public void takeAction(Move m)
         {
-            if (GameController.currentPlayer == this) m.takeAction();
+            if (GameController.currentPlayer == this)
+            {
+                movesTaken[(int)m.moveType]++;
+                m.takeAction();
+            }
             else throw new Exception(this + " tried to take its turn out of order!");
         }
 
