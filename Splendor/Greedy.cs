@@ -56,7 +56,7 @@ namespace Splendor
 
             foreach (Move m in b.legalMoves)
             {
-                if (m.moveType == Move.Type.RESERVE) continue;
+               //if (m.moveType == Move.Type.RESERVE) continue;
                 double temp = scoringFunction.evaluate(b.generate(m));
                 if (temp > bestScore)
                 {
@@ -64,6 +64,7 @@ namespace Splendor
                     bestMove = m;
                 }
             }
+            if (bestMove == null) throw new Exception("GreedyMove returned a null move.");
             return bestMove;
         }
 

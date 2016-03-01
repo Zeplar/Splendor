@@ -8,7 +8,6 @@ namespace Splendor
     public class GreedyBuyer : Player
     {
         private List<Card> buyOrder;
-        private BuySeeker buyer = new BuySeeker();
 
         public override void takeTurn()
         {
@@ -23,7 +22,7 @@ namespace Splendor
                     return;
                 }
             }
-            Move m = buyer.getMove(Board.current, buyOrder[0]);
+            Move m = BuySeeker.getMove(Board.current, buyOrder[0]);
             takeAction(m);
             return;
         }

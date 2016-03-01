@@ -8,7 +8,8 @@ namespace Splendor.Exact
     public class ExactFit : IFitnessFunction
     {
         private ScoringMethods.Function scoringFunction;
-        private ScoringMethods.Function greedy = ScoringMethods.minPoints;
+        private ScoringMethods.Function greedy = ScoringMethods.Points;
+        public int timesEvaluated;
 
         public ExactFit(ScoringMethods.Function scoringFunction)
         {
@@ -17,6 +18,7 @@ namespace Splendor.Exact
 
         public double Evaluate(IChromosome chromosome)
         {
+            timesEvaluated++;
             return Math.Max(1, score((ExactChromosome)chromosome));
 
         }

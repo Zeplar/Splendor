@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using AForge.Genetic;
 using System.Diagnostics;
-using System.Text;
 
 namespace Splendor.BuyOrder
 {
@@ -10,8 +9,8 @@ namespace Splendor.BuyOrder
     {
         public List<Card> cards;
         private ScoringMethods.Function scoringFunction;
-        private ScoringMethods.Function greedy = ScoringMethods.minPoints;
-        private BuySeeker buyer = new BuySeeker();
+        private ScoringMethods.Function greedy = ScoringMethods.Points;
+        public int timesEvaluated = 0;
 
         public BuyFit(ScoringMethods.Function scoringFunction)
         {
@@ -30,6 +29,7 @@ namespace Splendor.BuyOrder
             return false;
         }
 
+
         public double Evaluate(IChromosome chromosome)
         {
             PermutationChromosome c = (PermutationChromosome)chromosome;
@@ -45,6 +45,7 @@ namespace Splendor.BuyOrder
                 if (predictWin(current)) break;
                 current = current.generate(simulateGreedyTurn(current));
             }
+            timesEvaluated++;
             return Math.Max(1, score / i);
 
 
@@ -58,12 +59,8 @@ namespace Splendor.BuyOrder
 
         private bool containsBuy(PermutationChromosome c, int i, Board current, out Card card)
         {
-            int value = -1;
-            card = null;
-            try { value = c.Value[i]; } catch (IndexOutOfRangeException) { Console.WriteLine("Value out of range: " + i);
-                Console.WriteLine("Cardlist: " + cards.String());
-                Console.WriteLine("Real cards: " + current.viewableCards.String()); }
-            try { card = cards[value]; } catch (IndexOutOfRangeException) { Console.WriteLine("Card out of range: " + value); }
+            int id = c.Value[i];
+            card = cards[id];
             return current.viewableCards.Contains(card);
         }
 
@@ -76,7 +73,8 @@ namespace Splendor.BuyOrder
                 nextBuy++;
             }
 
-            Move nextMove = buyer.getMove(current, card);
+            Move nextMove = BuySeeker.getMove(current, card);
+            c.depth = nextBuy;
             return current.generate(nextMove);
         }
     }

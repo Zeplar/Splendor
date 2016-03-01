@@ -16,6 +16,13 @@ namespace Splendor
                 list[j] = temp;
             }
         }
+
+        public static void times(this double[] array, double x)
+        {
+            for (int i = 0; i < array.Length; i++) array[i] *= x;
+        }
+
+
         public static int addUp(this IEnumerable<Card> list)
         {
             int ret = 0;
@@ -31,7 +38,7 @@ namespace Splendor
             StringBuilder sb = new StringBuilder();
             foreach (T t in list)
             {
-                sb.Append(t.ToString());
+                sb.Append(t.ToString() + ",");
             }
             return sb.ToString();
         } 

@@ -47,6 +47,11 @@ namespace Splendor
             init = true;
         }
 
+        public static void writeToFile(string file, string line)
+        {
+            File.AppendAllText(directory + @"\" + file, line + Environment.NewLine);
+        }
+
         /// <summary>
         /// Records the board and current player state.
         /// </summary>

@@ -23,8 +23,20 @@ namespace Splendor.Exact
         private int popSize = 200;
         private int depth = 20;
         private int generations = 20;
+        private int evaluations = 0;
         private ExactChromosome lastBestChromosome = null;
         private ExactFit fit;
+
+        public ExactGene(int popsize, int evaluations, ScoringMethods.Function scoringFunction)
+        {
+            name = "Exact " + scoringFunction.ToString();
+            this.popSize = popsize;
+            this.depth = 10;
+            this.evaluations = evaluations;
+            fit = new ExactFit(scoringFunction);
+            RecordHistory.clearPlot();
+            RecordHistory.plot("EXACT GENE|||Population: " + popsize + " ; Generations: " + generations + Environment.NewLine);
+        }
 
         public ExactGene(int popsize, int depth, int generations, ScoringMethods.Function scoringFunction)
         {
@@ -46,13 +58,13 @@ namespace Splendor.Exact
         public static ExactGene Create(string[] args)
         {
             ScoringMethods.Function f;
-            if (args.Length < 4)
+            if (args.Length < 3)
             {
-                throw new FormatException("Usage: exact <popSize> <depth> <generations> <...scoring function...>");
+                throw new FormatException("Usage: exact <popSize> <evaluations> <...scoring function...>");
             }
             List<string> scoring = new List<string>(args);
             List<int> parameters;
-            scoring.RemoveRange(0, 3);
+            scoring.RemoveRange(0, 2);
             try
             {
                 f = ScoringMethods.parse(scoring);
@@ -62,7 +74,7 @@ namespace Splendor.Exact
             {
                 throw z;
             }
-            return new ExactGene(parameters[0], parameters[1], parameters[2], f);
+            return new ExactGene(parameters[0], parameters[1], f);
         }
 
         public override string ToString()
@@ -73,10 +85,11 @@ namespace Splendor.Exact
         public override void takeTurn()
         {
             RecordHistory.record();
-            AForge.Genetic.Population ga = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RouletteWheelSelection(), random);
+            AForge.Genetic.Population ga = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RankSelection(), random);
             bool tempRecord = GameController.recording;
             GameController.recording = false;
-            for (int i=0; i < generations; i++)
+            int i = 0;
+            while (fit.timesEvaluated < evaluations)
             {
                 //Getting an index out of range exception here when using RouletteWheelSelection (16 rounds in, seed 100)
                 ga.RunEpoch();
@@ -89,6 +102,7 @@ namespace Splendor.Exact
                     for (int j = 0; j < fitnesses.Count; j++) snap.Add(fitnesses[j].ToString() + "," + parents[j].ToString());
                     RecordHistory.snapshot(snap);
                 }
+                i++;
             }
             lastBestChromosome = ga.BestChromosome as ExactChromosome;
 

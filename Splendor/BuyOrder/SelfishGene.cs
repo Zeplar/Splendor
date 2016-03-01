@@ -13,19 +13,20 @@ namespace Splendor.BuyOrder
         private int generations;
         private PermutationChromosome lastBestChromosome = null;
         public static Move predicted;
+        private int evaluations = 0;
 
         //Watchpoints
 
         public SelfishGene(ScoringMethods.Function scoringFunction) : this(scoringFunction, 200, 20) { }
 
-        public SelfishGene(ScoringMethods.Function scoringFunction, int popsize, int gens)
+        public SelfishGene(ScoringMethods.Function scoringFunction, int popsize, int evaluations)
         {
             fitness = new BuyFit(scoringFunction);
             name = "SelfishGene " + scoringFunction.ToString();
             popSize = popsize;
-            generations = gens;
+            this.evaluations = evaluations;
             RecordHistory.clearPlot();
-            RecordHistory.plot("EXACT GENE|||Population: " + popsize + " ; Generations: " + generations + Environment.NewLine);
+            RecordHistory.plot("EXACT GENE|||Population: " + popsize + " ; Evaluations: " + evaluations + Environment.NewLine);
         }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace Splendor.BuyOrder
             ScoringMethods.Function f;
             if (args.Length < 3)
             {
-                Console.WriteLine("Usage: selfish <popSize> <generations> <...scoring function...>");
+                Console.WriteLine("Usage: selfish <popSize> <evaluations> <...scoring function...>");
                 return null;
             }
             List<string> scoring = new List<string>(args);
@@ -48,7 +49,7 @@ namespace Splendor.BuyOrder
                 parameters = new List<string>(args).GetRange(0, 2).ConvertAll<int>(x => int.Parse(x));
             } catch (FormatException)
             {
-                throw new FormatException("Usage: selfish <popSize> <generations> <...scoring function...>");
+                throw new FormatException("Usage: selfish <popSize> <evaluations> <...scoring function...>");
             }
             return new SelfishGene(f, parameters[0], parameters[1]);
         }
@@ -60,17 +61,17 @@ namespace Splendor.BuyOrder
             GameController.recording = false;
             lastBestChromosome = null;
             fitness.cards = Board.current.viewableCards.FindAll(x => x.Deck != Card.Decks.nobles);
-            var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RouletteWheelSelection(), random);
+            var ga = new Population(popSize, new PermutationChromosome(fitness.cards.Count), fitness, new RankSelection(), random);
 
         //    if (!predicted.Equals(Board.current.prevMove)) RecordHistory.record("!!! Prediction failed.");
             predicted = null;
-
-            for (int i = 0; i < generations; i++)
+            int i = 0;
+            while (fitness.timesEvaluated < evaluations)
             {
                 if (lastBestChromosome != null) ga.AddChromosome(lastBestChromosome);
                 ga.RunEpoch();
                 lastBestChromosome = ga.BestChromosome as PermutationChromosome;
-                CONSOLE.Overwrite(6, "Generations " + i + " out of " + generations);
+                CONSOLE.Overwrite(6, "Generations " + i + " Evaluation " + fitness.timesEvaluated);
                 RecordHistory.plot(i + "," + ga.FitnessMax + Environment.NewLine);
                 if ((GameController.turn % 5 == 0) && (i == 0 || i == generations / 2 || i == generations-1))
                 {
@@ -80,12 +81,25 @@ namespace Splendor.BuyOrder
                     for (int j = 0; j < fitnesses.Count; j++) snap.Add(fitnesses[j].ToString() + "," + parents[j].ToString());
                     RecordHistory.snapshot(snap);
                 }
+                i++;
             }
+            fitness.timesEvaluated = 0;
             GameController.recording = tempRecording;
             if (lastBestChromosome == null) throw new Exception("Null chromosome");
             lastBestChromosome.Evaluate(fitness);
             Move m = fitness.simulateMyTurn(lastBestChromosome, Board.current).PrevMove;
             RecordHistory.record(this + " took move " + m);
+            List<PermutationChromosome> chromosomes = new List<PermutationChromosome>();
+            for (int j = 0; j < ga.Count; j++)
+            {
+                chromosomes.Add((PermutationChromosome)ga[j]);
+            }
+            chromosomes.Sort();
+            foreach (PermutationChromosome p in chromosomes)
+            {
+                RecordHistory.writeToFile("Chromosomes.txt", string.Format("{0:0.00}",p.Fitness) + "|" + p.depth + "|" + p.Value.String() + "|" + string.Format("{0:0.00}",p.parentFitness));
+            }
+            RecordHistory.writeToFile("Chromosomes.txt", "");
             takeAction(m);
         }
 
