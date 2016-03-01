@@ -68,9 +68,20 @@ namespace Splendor
         static void endGame()
         {
             gameOver = true;
-            if (Board.current.winner == 0) currentPlayer.wins++;
-
-            else if (Board.current.winner == 1) players[(turn + 1) % 2].wins++;
+            Player winner, loser;
+            if (Board.current.winner == 0)
+            {
+                winner = currentPlayer; loser = players[(turn + 1) % 2];
+            }
+            else
+            {
+                winner = players[(turn + 1) % 2]; loser = currentPlayer;
+            }
+            winner.wins++;
+            RecordHistory.record(winner + " won.");
+            RecordHistory.recordWins(winner.ToString(), loser.ToString(), winner.points, loser.points);
+            RecordHistory.record("Moves taken by winner: " + winner.movesTaken.String());
+            RecordHistory.record("Moves taken by loser: " + loser.movesTaken.String());
         }
 
         public static void replayGame()
