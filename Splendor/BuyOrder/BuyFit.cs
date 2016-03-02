@@ -67,13 +67,25 @@ namespace Splendor.BuyOrder
         public Board simulateMyTurn(PermutationChromosome c, Board current)
         {
             int nextBuy = 0;
-            Card card;
-            while (!containsBuy(c, nextBuy, current, out card))
+            Card[] card = new Card[2];
+            while (!containsBuy(c, nextBuy, current, out card[0]))
             {
                 nextBuy++;
             }
+            int nextnextBuy = nextBuy + 1;
+            while (!containsBuy(c, nextnextBuy, current, out card[1]))
+            {
+                nextnextBuy++;
+                //If there's only one card left, return to the old algorithm.
+                if (nextnextBuy > c.Length)
+                {
+                    card[1] = card[0];
+                    break;
+                }
+            }
 
-            Move nextMove = BuySeeker.getMove(current, card);
+            //Move nextMove = BuySeeker.getMove(current, card);
+            Move nextMove = BuySeeker.getMove(current, card, new int[] { 2, 1 });
             c.depth = nextBuy;
             return current.generate(nextMove);
         }

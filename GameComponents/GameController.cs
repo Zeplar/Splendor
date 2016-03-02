@@ -98,6 +98,8 @@ namespace Splendor
                 p.gems = new Gem();
             }
             players = new Player[2] { players[1], players[0] };
+            players[0].movesTaken = new int[4];
+            players[1].movesTaken = new int[4];
             turn = 0;
             Card.getCards();
             Gem.board = new Gem(4, 4, 4, 4, 4, 8);
