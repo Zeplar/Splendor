@@ -68,7 +68,7 @@ namespace Splendor.Exact
             try
             {
                 f = ScoringMethods.parse(scoring);
-                parameters = new List<string>(args).GetRange(0, 3).ConvertAll<int>(x => int.Parse(x));
+                parameters = new List<string>(args).GetRange(0, 2).ConvertAll<int>(x => int.Parse(x));
             }
             catch (FormatException z)
             {
@@ -105,7 +105,7 @@ namespace Splendor.Exact
                 i++;
             }
             lastBestChromosome = ga.BestChromosome as ExactChromosome;
-
+            fit.timesEvaluated = 0;
             GameController.recording = tempRecord;
             fit.Evaluate(lastBestChromosome);
             Move m = lastBestChromosome.moves[0];

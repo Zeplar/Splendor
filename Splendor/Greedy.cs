@@ -70,15 +70,10 @@ namespace Splendor
 
         public override void takeTurn()
         {
-
-            Move m = getGreedyMove(Board.current, scoringFunction);
-            if (m != null)
-            {
-                takeAction(m);
-                RecordHistory.record(this + " took move " + m);
-                return;
-            }
-            else throw new Exception("Greedy couldn't even find a random move.");
+        Move m = getGreedyMove(Board.current, scoringFunction);
+        takeAction(m);
+        RecordHistory.record(this + " took move " + m);
+        return;
         }
     }
 }

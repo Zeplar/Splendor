@@ -73,17 +73,20 @@ namespace Splendor.BuyOrder
                 nextBuy++;
             }
             int nextnextBuy = nextBuy + 1;
-            while (!containsBuy(c, nextnextBuy, current, out card[1]))
+            if (nextnextBuy < c.Length)
             {
-                nextnextBuy++;
-                //If there's only one card left, return to the old algorithm.
-                if (nextnextBuy > c.Length)
+                while (!containsBuy(c, nextnextBuy, current, out card[1]))
                 {
-                    card[1] = card[0];
-                    break;
+                    nextnextBuy++;
+                    //If there's only one card left, return to the old algorithm.
+                    if (nextnextBuy >= c.Length)
+                    {
+                        card[1] = card[0];
+                        break;
+                    }
                 }
             }
-
+            else card[1] = card[0];
             //Move nextMove = BuySeeker.getMove(current, card);
             Move nextMove = BuySeeker.getMove(current, card, new int[] { 2, 1 });
             c.depth = nextBuy;
