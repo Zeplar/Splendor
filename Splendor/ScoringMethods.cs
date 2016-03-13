@@ -64,6 +64,7 @@ namespace Splendor
 
         public class Function
         {
+            private double scalar = 1;
             private Func<Board, double> fn;
             public string description = "";
             public bool perMove = true;
@@ -71,7 +72,7 @@ namespace Splendor
             {
                 try
                 {
-                    return fn(b);
+                    return scalar*fn(b);
                 }
                 catch
                 {
