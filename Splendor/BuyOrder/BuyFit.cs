@@ -11,6 +11,7 @@ namespace Splendor.BuyOrder
         private ScoringMethods.Function scoringFunction;
         private ScoringMethods.Function greedy = ScoringMethods.Points;
         public int timesEvaluated = 0;
+        private int depth = 1;
 
         public BuyFit(ScoringMethods.Function scoringFunction)
         {
@@ -22,8 +23,8 @@ namespace Splendor.BuyOrder
             if (!current.viewableCards.Exists(x => x.Deck != Card.Decks.nobles)) return true;
             if (current.gameOver)
             {
-                if (current.winner == 0) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win!");
-                else if (current.winner == 1) RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
+                if (current.winner == 0) RecordHistory.current.record("!!! " + GameController.currentPlayer + " now thinks it's going to win!");
+                else if (current.winner == 1) RecordHistory.current.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
                 return true;
             }
             return false;
@@ -32,11 +33,11 @@ namespace Splendor.BuyOrder
 
         public double Evaluate(IChromosome chromosome)
         {
-            PermutationChromosome c = (PermutationChromosome)chromosome;
+            BuyOrderChromosome c = (BuyOrderChromosome)chromosome;
             Board current = Board.current;
             int i = 0;
             double score = 0;
-            while (i < 10)
+            while (i < depth)
             {
                 i++;
                 if (predictWin(current)) break;
@@ -57,14 +58,14 @@ namespace Splendor.BuyOrder
             return m;
         }
 
-        private bool containsBuy(PermutationChromosome c, int i, Board current, out Card card)
+        private bool containsBuy(BuyOrderChromosome c, int i, Board current, out Card card)
         {
             int id = c.Value[i];
             card = cards[id];
             return current.viewableCards.Contains(card);
         }
 
-        public Board simulateMyTurn(PermutationChromosome c, Board current)
+        public Board simulateMyTurn(BuyOrderChromosome c, Board current)
         {
             int nextBuy = 0;
             Card[] card = new Card[2];
