@@ -10,8 +10,8 @@ namespace Splendor
         static int ties = 0;
         static int p1Wins = 0;
         static int stalemates = 0;
-        static List<Player> PLAYERS;
-        static List<Player> tempPlayers;
+        static List<Player> PLAYERS = new List<Player>();
+        static List<Command> games = new List<Command>();
 
         static void getStats()
         {
@@ -23,77 +23,111 @@ namespace Splendor
             recordScore();
         }
 
-        static object dequeue()
+        private struct Command
         {
-            int i;
-            switch (commands.Dequeue())
-            {
-                case "repeat":
-                    Stopwatch watch = new Stopwatch();
-                    watch.Start();
-                    i = int.Parse(commands.Dequeue());
-                    for (int j=0; j < i; j++)
-                    {
-                        setPlot();
-                        if (j > 0)
-                        {
-                            double minutes = (watch.Elapsed.TotalMinutes / j) * (i - j);
-                            CONSOLE.Overwrite(7, "Repeat " + j + "/" + i + ", ETA " + minutes.ToString().Substring(0,4) + " minutes");
-                        }
-                        //GameController.__random__ = new AForge.ThreadSafeRandom(j);
-                        //CONSOLE.Overwrite(12, "Seed: " + j);
-                        GameController.replayGame();
-                        getStats();
-                    }
-                    watch.Stop();
-                    Console.WriteLine("P1 wins : " + p1Wins + "     Ties: " + ties + "      Stalemates: " + stalemates);
-                    return null;
-                case "score":
-                    recordScore();
-                    return null;
-                case "debug":
-                    debugGame();
-                    recordScore();
-                    return null;
+            int repeats;
+            public Player[] players;
+            bool plot, snapshot, record;
 
-                case "clear":
-                    Console.Clear();
-                    return null;
-                case "record":
-                    GameController.recording = !GameController.recording;
-                    CONSOLE.WriteLine("Recording = " + GameController.recording);
-                    return null;
-                case "plot":
-                    RecordHistory.plotting = !RecordHistory.plotting;
-                    Console.WriteLine("Plotting = " + RecordHistory.plotting);
-                    return null;
-                case "runseed":
-                    i = int.Parse(commands.Dequeue());
-                    if (i % 2 == 1) GameController.players = new Player[2] { GameController.players[1], GameController.players[0] };
-                    GameController.__random__ = new AForge.ThreadSafeRandom(i);
+            public Command(List<Player> players, int repeats, bool plot, bool snapshot, bool record)
+            {
+                this.players = players.ToArray();
+                this.repeats = repeats;
+                this.plot = plot; this.snapshot = snapshot; this.record = record;
+            }
+
+            public Command(Player player, int repeats, bool plot, bool snapshot, bool record)
+            {
+                players = new Player[2] { player, new Greedy(ScoringMethods.dictionary["allEval"]) };
+                this.repeats = repeats;
+                this.plot = plot; this.snapshot = snapshot; this.record = record;
+            }
+
+            public void run()
+            {
+                GameController.Start(players[0], players[1]);
+                RecordHistory.current = new RecordHistory(plot, snapshot, record);
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
+                for (int j = 0; j < repeats; j++)
+                {
+                    if (j > 0)
+                    {
+                        double minutes = (watch.Elapsed.TotalMinutes / j) * (repeats - j);
+                        CONSOLE.Overwrite(7, "Repeat " + j + "/" + repeats + ", ETA " + minutes.ToString().Substring(0, 4) + " minutes");
+                    }
                     GameController.replayGame();
-                    return null;
-                case "description":
-                    RecordHistory.plot(new List<string>(commands).String() + Environment.NewLine);
-                    commands.Clear();
-                    return null;
-                default:
-                    return null;
+                    getStats();
+                }
+                watch.Stop();
+                CONSOLE.Overwrite(10, "P1 wins : " + p1Wins + "     Ties: " + ties + "      Stalemates: " + stalemates);
             }
         }
 
-        static void setPlot()
+        static void dequeue()
         {
-            RecordHistory.clearPlot();
-            RecordHistory.plot(PLAYERS[0] + "    " + PLAYERS[1] + Environment.NewLine);
-            RecordHistory.plot(Environment.NewLine);
-            RecordHistory.snapshot(new string[] { PLAYERS[0] + "    " + PLAYERS[1], " "});
+            int i;
+            bool record, plot, snapshot;
+            switch (commands.Dequeue())
+            {
+                case "repeat":
+                    Console.WriteLine("Repeat.");
+                   if (PLAYERS.Count != 2)
+                    {
+                        Console.WriteLine("Error: Not enough players.");
+                        return;
+                    }
+                    i = int.Parse(commands.Dequeue());
+                    plot = bool.Parse(commands.Dequeue());
+                    snapshot = bool.Parse(commands.Dequeue());
+                    record = bool.Parse(commands.Dequeue());
+                    CONSOLE.Overwrite(5, "Adding game: " + i + plot + snapshot + record);
+                    games.Add(new Command(PLAYERS, i, plot, snapshot, record));
+                    PLAYERS.Clear();
+                    return;
+
+                case "run":
+                    foreach (Command c in games)
+                    {
+                        CONSOLE.Overwrite(5, "Running a game.");
+                        c.run();
+                    }
+                    return;
+
+                case "score":
+                    recordScore();
+                    return;
+                //case "debug":
+                //    debugGame();
+                //    recordScore();
+                //    return;
+
+                case "clear":
+                    Console.Clear();
+                    return;
+
+                //case "runseed":
+                //    i = int.Parse(commands.Dequeue());
+                //    if (i % 2 == 1) GameController.players = new Player[2] { GameController.players[1], GameController.players[0] };
+                //    GameController.__random__ = new AForge.ThreadSafeRandom(i);
+                //    GameController.replayGame();
+                //    return;
+
+                default:
+                    return;
+            }
         }
 
         static void recordScore()
         {
-            CONSOLE.Overwrite(8, new string(' ', Console.WindowWidth - 1));
-            CONSOLE.Overwrite(8, PLAYERS[0] + ": " + PLAYERS[0].Wins + " --- " + PLAYERS[1] + ": " + PLAYERS[1].Wins);
+            int i = 5;
+            foreach (Command c in games)
+            {
+                if ((c.players[0].Wins | c.players[1].Wins) == 0) break;
+                CONSOLE.Overwrite(i, new string(' ', Console.WindowWidth - 1));
+                CONSOLE.Overwrite(i, c.players[0] + ": " + c.players[0].Wins + " --- " + c.players[1] + ": " + c.players[1].Wins);
+                i++;
+            }
         }
 
         static void debugGame()
@@ -163,18 +197,16 @@ namespace Splendor
                     }
                     finally
                     {
-                        if (temp != null) tempPlayers.Add(temp);
-                    }
-                    if (tempPlayers.Count == 2)
-                    {
-                        GameController.Start(tempPlayers[0], tempPlayers[1]);
-                        PLAYERS = tempPlayers.GetRange(0, 2);
-                        tempPlayers.Clear();
+                        if (PLAYERS.Count < 2) PLAYERS.Add(temp);
+                        else if (PLAYERS.Count == 2)
+                        {
+                            Console.WriteLine("repeat <i> <plot> <snapshot> <record>");
+                        }
                     }
                     return true;
                 }
                 return false;
-            } catch { Console.WriteLine("Error."); return false; }
+            } catch { Console.WriteLine("Error in makePlayer."); return false; }
         }
 
         static void help(string[] s)
@@ -185,8 +217,7 @@ namespace Splendor
 
         static void Main(string[] args)
         {
-            //findDiscrepancy(500);
-            tempPlayers = new List<Player>();
+            Console.WriteLine("Configuration: Selfish depth 3, track.txt");
             PlayerFactory.Load();
             ScoringMethods.register();
             Console.WriteLine("Available players: " + PlayerFactory.listAll);
@@ -201,10 +232,7 @@ namespace Splendor
                 {
                     foreach (string x in s)
                         commands.Enqueue(x);
-                }
-                if (commands.Count > 0)
-                {
-                    dequeue();
+                    while (commands.Count > 0) dequeue();
                 }
             }
         }
