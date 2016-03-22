@@ -57,6 +57,8 @@ namespace Splendor
         {
             Gem.Reset();
             Board.current = new Board();
+            UnitTests.testBoard();
+
             //RecordHistory.record((currentPlayer + " has points: " + currentPlayer.points + " and gems: " + currentPlayer.gems + " and field: " + currentPlayer.field.String()));
             //RecordHistory.record("Board: " + Board.current.boardCards.String());
             currentPlayer.takeTurn();
