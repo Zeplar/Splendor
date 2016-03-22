@@ -140,9 +140,6 @@ namespace Splendor
                 noble.deck.removeCard(noble);
                 field.Add(noble);
             }
-
-            //Make sure we have conservation of gems
-            UnitTests.testBoard();
         }
 
         public void takeAction(Move m)
