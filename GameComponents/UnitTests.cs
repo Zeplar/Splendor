@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-
 namespace Splendor
 {
 
@@ -48,6 +47,22 @@ namespace Splendor
             g += b.currentPlayer.Gems;
             g += b.notCurrentPlayer.Gems;
             Debug.Assert(g == new Gem(4, 4, 4, 4, 4, 8), "Gems didn't add up: " + g);
+
+            if (b.PrevBoard != null)
+            {
+                if (b.BoardCards.FindAll(c => c.Deck != Card.Decks.nobles).Count < 12)
+                {
+                    Debug.Assert(
+                           GameController.decks[0].getAllCards().Count < 4
+                        || GameController.decks[1].getAllCards().Count < 4
+                        || GameController.decks[2].getAllCards().Count < 4,
+                           "Cards didn't add up: " + b.BoardCards.String());
+                }
+                Debug.Assert(b != b.PrevBoard, "Bad board constructor: " + b.PrevMove);
+                Debug.Assert(b.notCurrentPlayer.Field.Count == b.PrevBoard.currentPlayer.Field.Count, "Player cards didn't add up");
+                Debug.Assert(b.currentPlayer.Field.Count == b.PrevBoard.notCurrentPlayer.Field.Count, "Player cards didn't add up");
+            }
+
         }
 
         //[Conditional("DEBUG")]
