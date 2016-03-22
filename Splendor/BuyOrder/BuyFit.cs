@@ -11,7 +11,7 @@ namespace Splendor.BuyOrder
         private ScoringMethods.Function scoringFunction;
         private ScoringMethods.Function greedy = ScoringMethods.Points;
         public int timesEvaluated = 0;
-        private int depth = 1;
+        private int depth = 10;
 
         public BuyFit(ScoringMethods.Function scoringFunction)
         {
@@ -47,7 +47,19 @@ namespace Splendor.BuyOrder
                 current = current.generate(simulateGreedyTurn(current));
             }
             timesEvaluated++;
-            return Math.Max(1, score / i);
+
+            score = Math.Max(1, score / i);
+
+            if (c.parentFitness > 0 && score > c.parentFitness)
+            {
+                BuyOrderChromosome.crossOverImprovements += 1;
+            }
+            else if (c.parentFitness < 0 && score > -c.parentFitness)
+            {
+                BuyOrderChromosome.mutationImprovements += 1;
+            }
+
+            return score;
 
 
         }

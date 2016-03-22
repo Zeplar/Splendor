@@ -18,7 +18,7 @@ namespace Splendor
 
         private ScoringMethods.Function scoringFunction;
 
-        public static Move minimax(Board startingPoint, int depth, ScoringMethods.Function scoringFunction, out double score)
+        public static Move minimax(Board startingPoint, int depth, ScoringMethods.Function scoringFunction, out double score, Func<Board, bool> endCondition=null)
         {
             bool myTurn = startingPoint.Turn % 2 == 0;  //Indicates that it's Minimax's turn.
             Move bestMove = null;
@@ -27,7 +27,7 @@ namespace Splendor
             //int val;
             Func<double, double, bool> comp = (x,y) => (x > y);
 
-            if (depth == 0 || legalMoves.Count == 0 || (startingPoint.gameOver))
+            if (depth == 0 || legalMoves.Count == 0 || (startingPoint.gameOver) || (endCondition != null && endCondition(startingPoint)))
             {
                 //If the root is currently myTurn, then the opponent generated this board; therefore send the negation of the score. Otherwise send the score.
                 score = scoringFunction.evaluate(startingPoint) * (myTurn ? -1 : 1);
@@ -70,7 +70,7 @@ namespace Splendor
             Board b = Board.current;
             double x;
             Move k = minimax(b, treeDepth, scoringFunction, out x);
-            RecordHistory.record(this + " made move " + k.ToString());
+            RecordHistory.current.record(this + " made move " + k.ToString());
             takeAction(k);
         }
 

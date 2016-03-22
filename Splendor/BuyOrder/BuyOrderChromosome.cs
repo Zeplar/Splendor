@@ -27,38 +27,64 @@ namespace Splendor.BuyOrder
     /// 
 	public class BuyOrderChromosome : PermutationChromosome
 	{
-        private static object Lock = new object();
-        private static int tracked = 0;
-        public static List<BuyOrderChromosome>[] track_somes;
-        private static void trackify(BuyOrderChromosome self)
-        {
-            if (tracked > 9) return;
-            lock (Lock)
-            {
-                if (tracked > 9) return;
-                if (track_somes == null)
-                {
-                    track_somes = new List<BuyOrderChromosome>[10];
-                    for (int i = 0; i < 10; i++) track_somes[i] = new List<BuyOrderChromosome>();
-                }
-                tracked++;
-                self.in_list = tracked;
-            }
-        }
-
-        /// <summary>
-        /// 0: not in list      n: in list at index n-1
-        /// </summary>
-        private int in_list = 0;
-
         /// <summary>
         /// Indicates how many values were utilized in evaluation
         /// </summary>
         public int depth = 0;
+
+        private static object Lock = new object();
+        private static int xoimpnts = 0;
+        private static int xos = 0;
+        private static int muts = 0;
+        private static int mutimpnts = 0;
+
+        public static int mutationImprovements
+        {
+            get { return mutimpnts; }
+            set { lock (Lock)
+                {
+                    mutimpnts = value;
+                }
+            }
+        }
+        public static int totalMutations { get { return muts; } set { lock (Lock) { muts = value; } } }
+
+        /// <summary>
+        /// Increments xoimpnts
+        /// </summary>
+        public static int crossOverImprovements
+        {
+            get { return xoimpnts; }
+            set
+            {
+                lock (Lock)
+                {
+                    xoimpnts = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Increments xos
+        /// </summary>
+        public static int totalCrossOvers { get
+            {
+                return xos;
+            }
+        set
+            {
+                lock (Lock)
+                {
+                    xos = value;
+                }
+            }
+        }
+
+
 		/// <summary>
         /// Initializes a new instance of the <see cref="BuyOrderChromosome"/> class.
         /// </summary>
-		public BuyOrderChromosome( int length ) : base( length) { trackify(this); }
+		public BuyOrderChromosome( int length ) : base( length) { }
 
 		/// <summary>
         /// Initializes a new instance of the <see cref="BuyOrderChromosome"/> class.
@@ -73,7 +99,6 @@ namespace Splendor.BuyOrder
         {
             parentFitness = source.parentFitness;
             depth = source.depth;
-            in_list = source.in_list;
         }
 
         /// <summary>
@@ -141,10 +166,8 @@ namespace Splendor.BuyOrder
         ///
 		public override void Mutate( )
 		{
-            if (in_list > 0)
-            {
-                track_somes[in_list - 1].Add((BuyOrderChromosome)Clone());
-            }
+            totalMutations += 1;
+            parentFitness = -fitness;
 			ushort t;
             int maxDepth = Math.Min(length, depth + 1);
 			int j1 = rand.Next( maxDepth );
@@ -168,10 +191,6 @@ namespace Splendor.BuyOrder
 		public override void Crossover( IChromosome pair )
 		{
 			BuyOrderChromosome p = (BuyOrderChromosome) pair;
-            if (in_list > 0)
-            {
-                track_somes[in_list - 1].Add((BuyOrderChromosome)Clone());
-            }
             // check for correct pair
             if ( ( p != null ) && ( p.length == length ) )
 			{
@@ -185,6 +204,8 @@ namespace Splendor.BuyOrder
 				// replace parents with children
 				this.val = child1;
 				p.val    = child2;
+
+                totalCrossOvers += 1;
 			}
 		}
 
@@ -271,6 +292,23 @@ namespace Splendor.BuyOrder
             }
 
             return indexDictionary;
+        }
+
+        /// <summary>
+        /// Return true if the chromosomes are equal up to their fifth value
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool almostEqual(BuyOrderChromosome other)
+        {
+            ushort[] o = other.val;
+            bool eq = true;
+            for (int i=0; i < 5; i++)
+            {
+                eq &= (o[i] == val[i]);
+                if (!eq) break;
+            }
+            return eq;
         }
 	}
 }

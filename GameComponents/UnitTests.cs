@@ -47,7 +47,7 @@ namespace Splendor
             Gem g = b.Gems;
             g += b.currentPlayer.Gems;
             g += b.notCurrentPlayer.Gems;
-            Debug.Assert(g == new Gem(4, 4, 4, 4, 4, 8), "Gems didn't add up.");
+            Debug.Assert(g == new Gem(4, 4, 4, 4, 4, 8), "Gems didn't add up: " + g);
         }
 
         //[Conditional("DEBUG")]

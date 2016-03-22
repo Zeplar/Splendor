@@ -62,58 +62,106 @@ namespace Splendor
             }
         }
 
-        public class Function
+        public struct Function
         {
-            private double scalar = 1;
+            public double scalar;
             private Func<Board, double> fn;
-            public string description = "";
-            public bool perMove = true;
+            public string description;
+            public bool perMove;
+
             public double evaluate(Board b)
             {
                 try
                 {
-                    return scalar*fn(b);
+                    return scalar * fn(b);
                 }
                 catch
                 {
                     throw new Exception("Something happened during fitness evaluation.");
                 }
             }
-            public Function(Func<Board, double> fn, string description="")
+            public Function(Func<Board, double> fn, string description)
             {
                 this.fn = fn;
                 this.description = description;
+                scalar = 1;
+                perMove = true;
             }
-            public Function()
+
+            public Function(double i)
             {
-                this.fn = bd => 0;
-                this.description = "";
+                scalar = i;
+                fn = null;
+                description = "";
+                perMove = true;
             }
+
+            public Function adjustScalar(double scalar)
+            {
+                var temp = this;
+                temp.scalar = scalar;
+                return temp;
+            }
+
             public static Function operator +(Function a, Function b)
             {
-                return new Function(bd => a.fn(bd) + b.fn(bd), "(" + a.description + " + " + b.description +")");
+                if (a.description.Equals(b.description) || b.description == "")
+                {
+                    return a.adjustScalar(a.scalar + b.scalar);
+                }
+                if (a.description == "")
+                {
+                    return b.adjustScalar(a.scalar + b.scalar);
+                }
+                return new Function(bd => a.evaluate(bd) + b.evaluate(bd), "(" + a + " + " + b +")");
             }
             public static Function operator -(Function a, Function b)
             {
-                return new Function(bd => a.fn(bd) - b.fn(bd), "(" + a.description + " - " + b.description + ")");
+                if (a.description.Equals(b.description) || b.description == "")
+                {
+                    return a.adjustScalar(a.scalar - b.scalar);
+                }
+                if (a.description == "")
+                {
+                    return b.adjustScalar(a.scalar - b.scalar);
+                }
+                return new Function(bd => a.evaluate(bd) - b.evaluate(bd), "(" + a + " - " + b + ")");
             }
             public static Function operator *(Function a, Function b)
             {
-                return new Function(bd => a.fn(bd) * b.fn(bd), a.description + " * " + b.description);
+                if (a.description.Equals(b.description) || b.description == "")
+                {
+                    return a.adjustScalar(a.scalar * b.scalar);
+                }
+                if (a.description == "")
+                {
+                    return b.adjustScalar(a.scalar * b.scalar);
+                }
+                return new Function(bd => a.evaluate(bd) * b.evaluate(bd), a + " * " + b);
             }
             public static Function operator /(Function a, Function b)
             {
-                return new Function(bd => a.fn(bd) / b.fn(bd), a.description + " / " + b.description);
+                if (a.description.Equals(b.description) || b.description == "")
+                {
+                    return a.adjustScalar(a.scalar / b.scalar);
+                }
+                if (a.description == "")
+                {
+                    return b.adjustScalar(a.scalar / b.scalar);
+                }
+                return new Function(bd => a.evaluate(bd) / b.evaluate(bd), a + " / " + b);
             }
 
             public Function delta()
             {
-                return new Function(bd => fn(bd) - fn(bd.PrevBoard), "delta- " + description);
+                var fun = this.fn;
+                return new Function(bd => fun(bd) - fun(bd.PrevBoard), "delta- " + description);
             }
 
             public override string ToString()
             {
-                return description;
+                if (scalar == 1) return description;
+                return "(" + scalar + description + ")";
             }
             public Function operate(string op, Function rhs)
             {
@@ -133,11 +181,9 @@ namespace Splendor
                         throw new FormatException("Invalid operator");
                 }
             }
-
-            public Function(double i) : this(b => i, i.ToString()) { }
         }
 
-        private static Function turn = new Function(bd => bd.Turn, "Turn");
+        public static Function turn = new Function(bd => bd.Turn, "Turn");
 
         private static Function score = new Function(b => b.notCurrentPlayer.points, "Score");
 
@@ -155,6 +201,16 @@ namespace Splendor
         /// Scores difference in points.
         /// </summary>
         public static Function Lead = new Function(bd => bd.notCurrentPlayer.points - bd.currentPlayer.points, "Lead");
+
+        public static Function HasCard(Card id)
+        {
+            return new Function(bd => bd.notCurrentPlayer.Field.Contains(id) ? 1 : 0, "HasCard " + id);
+        }
+
+        public static Function DenyCard(Card id)
+        {
+            return new Function(bd => bd.currentPlayer.Field.Contains(id) ? -1 : 0, "DenyCard " + id);
+        }
 
         /// <summary>
         /// Scores 1 for a win, -1 for a loss, else zero. Tiebreaks on prestige.

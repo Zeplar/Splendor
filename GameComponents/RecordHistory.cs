@@ -4,34 +4,38 @@ using System;
 using System.Collections.Generic;
 namespace Splendor
 {
-    public static class RecordHistory
+    public class RecordHistory
     {
         public enum actions { BUY, RESERVE, RESERVETOP, TAKEGEMS };
         const string suffix = @".csv";
         const string name = @"game";
-        static StreamWriter file;
-        static bool init;
-        static string directory { get
+        StreamWriter file;
+        public string directory { get
             {
                 return getDirectory();
             } }
-        static string plottingDirectory;
-        static string snapshotDirectory;
-        public static bool plotting;
+        string plottingDirectory;
+        string snapshotDirectory;
+        bool plotting;
+        bool snapshotting;
+        bool recording;
 
-        public static void initialize()
+        public static RecordHistory current;
+
+        public RecordHistory(bool record)
         {
-            if (!GameController.recording)
-            {
-                return;
-            }
-
+            this.plotting = record;
+            this.snapshotting = record;
+            this.recording = record;
+            if (!record) return;
             //Create the game file
             int i = 0;
             while (File.Exists(directory + name + i + suffix))
             {
                 i++;
             }
+            plottingDirectory = directory + "plot_" + i + suffix;
+            snapshotDirectory = directory + "snapshot_" + i + suffix;
 
             file = new StreamWriter(directory + name + i + suffix);
             file.AutoFlush = true;
@@ -44,10 +48,9 @@ namespace Splendor
                 }
                 file.WriteLine();
             }
-            init = true;
         }
 
-        public static void writeToFile(string file, string line)
+        public void writeToFile(string file, string line)
         {
             File.AppendAllText(directory + @"\" + file, line + Environment.NewLine);
         }
@@ -55,12 +58,9 @@ namespace Splendor
         /// <summary>
         /// Records the board and current player state.
         /// </summary>
-        public static void record()
+        public void record()
         {
-            if (!GameController.recording)
-            {
-                return;
-            }
+            if (!recording) return;
             file.Write("Board State: ");
             foreach (Card c in GameController.boardCards)
             {
@@ -72,65 +72,32 @@ namespace Splendor
             file.WriteLine();
         }
 
-        public static void record(string s)
+        public void record(string s)
         {
-            if (!GameController.recording) {
-                return;
-            }
-
-            Debug.Assert(init, "File not initialized");
+            if (!recording) return;
             file.WriteLine(s);
         }
 
-        public static void record(actions a, Card c)
+        public void record(actions a, Card c)
         {
-            if (!GameController.recording)
-            {
-                return;
-            }
-            Debug.Assert(init, "File not initialized");
+            if (!recording) return;
             file.WriteLine(a + "," + c);
         }
 
-        public static void record(actions a, Gem g)
+        public void record(actions a, Gem g)
         {
-            if (!GameController.recording)
-            {
-                return;
-            }
-            Debug.Assert(init, "File not initialized");
+            if (!recording) return;
             file.WriteLine(a + "," + g);
         }
 
-        public static void close()
+        public void close()
         {
-            if (!GameController.recording)
-            {
-                return;
-            }
-            Debug.Assert(init, "File not initialized");
             file.Close();
-            init = false;
         }
 
-        public static void snapshot<T>(IEnumerable<T> list)
+        public void snapshot<T>(IEnumerable<T> list)
         {
-            if (!plotting) return;
-            if (snapshotDirectory == null)
-            {
-                string folder = @"C:\Users\JHep\Desktop\SelfishGenePlots\" + DateTime.Today.ToLongDateString();
-                if (!Directory.Exists(folder))
-                {
-                    Directory.CreateDirectory(folder);
-                }
-                int i = 0;
-                snapshotDirectory = folder + @"\snapshot_0.csv";
-                while (File.Exists(snapshotDirectory))
-                {
-                    i++;
-                    snapshotDirectory = folder + @"\snapshot_" + i + ".csv";
-                }
-            }
+            if (!snapshotting) return;
             int j = 0;
             foreach (T x in list)
             {
@@ -149,28 +116,13 @@ namespace Splendor
             return folder;
         }
 
-        public static void plot(string info)
+        public void plot(string info)
         {
             if (!plotting) return;
-            if (plottingDirectory == null)
-            {
-                string folder = @"C:\Users\JHep\Desktop\SelfishGenePlots\" + DateTime.Today.ToLongDateString();
-                if (!Directory.Exists(folder))
-                {
-                    Directory.CreateDirectory(folder);
-                }
-                int i = 0;
-                plottingDirectory = folder + @"\plot_0.csv";
-                while (File.Exists(plottingDirectory))
-                {
-                    i++;
-                    plottingDirectory = folder + @"\plot_" + i + ".csv";
-                }
-            }
             File.AppendAllText(plottingDirectory, info);
         }
 
-        public static void plot<T>(IEnumerable<T> list)
+        public void plot<T>(IEnumerable<T> list)
         {
             if (!plotting) return;
             int i = 0;
@@ -181,14 +133,8 @@ namespace Splendor
             }
         }
 
-        public static void clearPlot()
-        {
-            plottingDirectory = null;
-            snapshotDirectory = null;
-        }
 
-
-        public static void recordWins(string winner, string loser, int winscore, int losescore)
+        public void recordWins(string winner, string loser, int winscore, int losescore)
         {
             File.AppendAllText(directory + name + suffix, winner + "," + winscore + "," + loser + "," + losescore + "\n");
         }

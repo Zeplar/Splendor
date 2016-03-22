@@ -49,6 +49,8 @@ namespace Splendor
             Register("exact", Exact.ExactGene.Create);
             Register("selfish", BuyOrder.SelfishGene.Create);
             Register("greedybuyer", x => new GreedyBuyer());
+            Register("strategize", Strategize.Strategize.Create);
+            Register("strategize2", Strategize2.Strategize2.Create);
 
         }
     }

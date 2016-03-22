@@ -63,11 +63,11 @@ namespace Splendor.Exact
             {
                 if (current.winner == 0)
                 {
-                    RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to win! Pred. Greedy move " + pred);
+                    RecordHistory.current.record("!!! " + GameController.currentPlayer + " now thinks it's going to win! Pred. Greedy move " + pred);
                 }
                 else if (current.winner == 1)
                 {
-                    RecordHistory.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
+                    RecordHistory.current.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
                 }
                 return true;
             }

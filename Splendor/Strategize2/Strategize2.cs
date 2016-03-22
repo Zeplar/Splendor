@@ -1,48 +1,50 @@
 ﻿using System.Diagnostics;
 using System;
 using System.Collections.Generic;
-namespace Splendor.Exact
+namespace Splendor.Strategize2
 {
+    //51-49 vs Greedy with 500,10,20
+    //56-44 {54-46} vs Greedy with 500,10,20 and new mutate
 
-    public class ExactGene : Player
+    //With Crossover:
+    //50-50 vs Greedy with (200,10,20)
+    //74-26 vs Greedy with (500,10,40)
+    //55-45 vs Minimax(3) with (500,10,40)
+    //45-39 vs Greedy with (100, 20, 40)
+    //15-27 vs Minimax(3) with (100,20,40)
+    //5-5 vs Minimax(3) with (100,20,100)
+
+
+    //ThreadPool.QueueUserWorkItem()
+
+    public class Strategize2 : Player
     {
 
         private int popSize = 200;
-        private int depth = 20;
-        private int generations = 20;
+        private int depth = 10;
+        private int len = 3;
         private int evaluations = 0;
-        private ExactChromosome lastBestChromosome = null;
-        private ExactFit fit;
+        private Strategize2Chromosome lastBestChromosome = null;
+        private Strategize2Fit fit;
 
-        public ExactGene(int popsize, int evaluations, ScoringMethods.Function scoringFunction)
+        public Strategize2(int popsize, int evaluations, ScoringMethods.Function scoringFunction)
         {
-            name = "Exact " + scoringFunction.ToString();
+            name = "Strategize2 " + scoringFunction.ToString();
             this.popSize = popsize;
             this.depth = 10;
             this.evaluations = evaluations;
-            fit = new ExactFit(scoringFunction);
+            fit = new Strategize2Fit(scoringFunction, depth);
         }
-
-        public ExactGene(int popsize, int depth, int generations, ScoringMethods.Function scoringFunction)
-        {
-            name = "Exact " + scoringFunction.ToString();
-            this.popSize = popsize;
-            this.depth = depth;
-            this.generations = generations;
-            fit = new ExactFit(scoringFunction);
-        }
-
-        public ExactGene(ScoringMethods.Function fn) : this(500, 10, 20, fn) { }
 
         /// <summary>
         /// Used for registration in the player factory.
         /// </summary>
-        public static ExactGene Create(string[] args)
+        public static Strategize2 Create(string[] args)
         {
             ScoringMethods.Function f;
             if (args.Length < 3)
             {
-                throw new FormatException("Usage: exact <popSize> <evaluations> <...scoring function...>");
+                throw new FormatException("Usage: Strategize2 <popSize> <evaluations> <...scoring function...>");
             }
             List<string> scoring = new List<string>(args);
             List<int> parameters;
@@ -56,7 +58,7 @@ namespace Splendor.Exact
             {
                 throw z;
             }
-            return new ExactGene(parameters[0], parameters[1], f);
+            return new Strategize2(parameters[0], parameters[1], f);
         }
 
         public override string ToString()
@@ -67,7 +69,7 @@ namespace Splendor.Exact
         public override void takeTurn()
         {
             RecordHistory.current.record();
-            AForge.Genetic.Population ga = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RankSelection(), random);
+            AForge.Genetic.Population ga = new AForge.Genetic.Population(popSize, new Strategize2Chromosome(len), fit, new AForge.Genetic.RankSelection(), random);
             bool tempRecord = GameController.recording;
             GameController.recording = false;
             int i = 0;
@@ -76,7 +78,7 @@ namespace Splendor.Exact
                 //Getting an index out of range exception here when using RouletteWheelSelection (16 rounds in, seed 100)
                 ga.RunEpoch();
                 RecordHistory.current.plot(i + "," + ga.FitnessMax + Environment.NewLine);
-                if ((GameController.turn % 5 == 0) && (i == 0 || i == generations / 2 || i == generations - 1))
+                if ((GameController.turn % 5 == 0) && (i % 4 == 0))
                 {
                     List<double> fitnesses = ga.getFitnesses();
                     List<double> parents = ga.getParentFitnesses();
@@ -86,15 +88,14 @@ namespace Splendor.Exact
                 }
                 i++;
             }
-            lastBestChromosome = ga.BestChromosome as ExactChromosome;
+            lastBestChromosome = ga.BestChromosome as Strategize2Chromosome;
             fit.timesEvaluated = 0;
             GameController.recording = tempRecord;
             fit.Evaluate(lastBestChromosome);
-            Move m = lastBestChromosome.moves[0];
+            Move m = lastBestChromosome.strategies[0].getMove(Board.current);
             if (m == null)
             {
-                m = Move.getRandomMove();
-                throw new NullReferenceException("ExactGene couldn't find a random move.");
+                throw new NullReferenceException("Strategize2 couldn't find a random move.");
             }
             takeAction(m);
             RecordHistory.current.record(this + " took move " + m);

@@ -56,6 +56,7 @@ namespace Splendor
         public static void nextTurn()
         {
             Gem.Reset();
+            Board.current = new Board();
             //RecordHistory.record((currentPlayer + " has points: " + currentPlayer.points + " and gems: " + currentPlayer.gems + " and field: " + currentPlayer.field.String()));
             //RecordHistory.record("Board: " + Board.current.boardCards.String());
             currentPlayer.takeTurn();
@@ -78,10 +79,10 @@ namespace Splendor
                 winner = players[(turn + 1) % 2]; loser = currentPlayer;
             }
             winner.wins++;
-            RecordHistory.record(winner + " won.");
-            RecordHistory.recordWins(winner.ToString(), loser.ToString(), winner.points, loser.points);
-            RecordHistory.record("Moves taken by winner: " + winner.movesTaken.String());
-            RecordHistory.record("Moves taken by loser: " + loser.movesTaken.String());
+            RecordHistory.current.record(winner + " won.");
+            RecordHistory.current.recordWins(winner.ToString(), loser.ToString(), winner.points, loser.points);
+            RecordHistory.current.record("Moves taken by winner: " + winner.movesTaken.String());
+            RecordHistory.current.record("Moves taken by loser: " + loser.movesTaken.String());
         }
 
         public static void replayGame()
@@ -103,7 +104,6 @@ namespace Splendor
             turn = 0;
             Card.getCards();
             Gem.board = new Gem(4, 4, 4, 4, 4, 8);
-            RecordHistory.initialize ();
             gameOver = false;
             takingTurn = false;
             while (!gameOver) nextTurn();

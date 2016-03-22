@@ -35,9 +35,9 @@ namespace Splendor
             try
             {
                 f = ScoringMethods.parse(args);
-            } catch (FormatException z)
+            } catch (FormatException)
             {
-                throw z;
+                throw new FormatException("Usage: greedy <...scoringFunction...>");
             }
             return new Greedy(f);
         }
@@ -72,7 +72,7 @@ namespace Splendor
         {
         Move m = getGreedyMove(Board.current, scoringFunction);
         takeAction(m);
-        RecordHistory.record(this + " took move " + m);
+        RecordHistory.current.record(this + " took move " + m);
         return;
         }
     }

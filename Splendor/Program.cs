@@ -27,26 +27,26 @@ namespace Splendor
         {
             int repeats;
             public Player[] players;
-            bool plot, snapshot, record;
+            bool record;
 
-            public Command(List<Player> players, int repeats, bool plot, bool snapshot, bool record)
+            public Command(List<Player> players, int repeats, bool record)
             {
                 this.players = players.ToArray();
                 this.repeats = repeats;
-                this.plot = plot; this.snapshot = snapshot; this.record = record;
+                this.record = record;
             }
 
-            public Command(Player player, int repeats, bool plot, bool snapshot, bool record)
+            public Command(Player player, int repeats, bool record)
             {
                 players = new Player[2] { player, new Greedy(ScoringMethods.dictionary["allEval"]) };
                 this.repeats = repeats;
-                this.plot = plot; this.snapshot = snapshot; this.record = record;
+                this.record = record;
             }
 
             public void run()
             {
                 GameController.Start(players[0], players[1]);
-                RecordHistory.current = new RecordHistory(plot, snapshot, record);
+                RecordHistory.current = new RecordHistory(record);
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
                 for (int j = 0; j < repeats; j++)
@@ -67,7 +67,7 @@ namespace Splendor
         static void dequeue()
         {
             int i;
-            bool record, plot, snapshot;
+            bool record;
             switch (commands.Dequeue())
             {
                 case "repeat":
@@ -78,12 +78,14 @@ namespace Splendor
                         return;
                     }
                     i = int.Parse(commands.Dequeue());
-                    plot = bool.Parse(commands.Dequeue());
-                    snapshot = bool.Parse(commands.Dequeue());
                     record = bool.Parse(commands.Dequeue());
-                    CONSOLE.Overwrite(5, "Adding game: " + i + plot + snapshot + record);
-                    games.Add(new Command(PLAYERS, i, plot, snapshot, record));
+                    CONSOLE.Overwrite(5, "Adding game: " + i + record);
+                    games.Add(new Command(PLAYERS, i, record));
                     PLAYERS.Clear();
+                    return;
+
+                case "reset":
+                    games.Clear();
                     return;
 
                 case "run":

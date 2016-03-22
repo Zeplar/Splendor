@@ -10,12 +10,13 @@ namespace Splendor.BuyOrder
     {
         private BuyFit fitness;
         private int popSize;
-        private int generations;
+     //   private int generations;
         private BuyOrderChromosome lastBestChromosome = null;
         public static Move predicted;
         private int evaluations = 0;
 
-
+        int[] xoverimpnts = new int[15];
+        int[] mutimpnts = new int[15];
         //Watchpoints
 
         public SelfishGene(ScoringMethods.Function scoringFunction) : this(scoringFunction, 200, 20) { }
@@ -56,23 +57,29 @@ namespace Splendor.BuyOrder
 
         public override void takeTurn()
         {
+            
+            int totalximpnts = 0;
+            int totalmimpnts = 0;
             bool tempRecording = GameController.recording;
             GameController.recording = false;
             lastBestChromosome = null;
+            double lastBestFitness = 0;
             fitness.cards = Board.current.viewableCards.FindAll(x => x.Deck != Card.Decks.nobles);
             var ga = new Population(popSize, new BuyOrderChromosome(fitness.cards.Count), fitness, new RankSelection(), random);
-
-        //    if (!predicted.Equals(Board.current.prevMove)) RecordHistory.record("!!! Prediction failed.");
+       //     if (!predicted.Equals(Board.current.PrevMove)) RecordHistory.current.record("!!! Prediction failed.");
             predicted = null;
             int i = 0;
             while (fitness.timesEvaluated < evaluations)
             {
                 if (lastBestChromosome != null) ga.AddChromosome(lastBestChromosome);
                 ga.RunEpoch();
+          //      if (ga.FitnessMax < lastBestFitness) throw new Exception("Fitness decreased between generations");
                 lastBestChromosome = ga.BestChromosome as BuyOrderChromosome;
+                lastBestFitness = ga.FitnessMax;
+
                 CONSOLE.Overwrite(6, "Generations " + i + " Evaluation " + fitness.timesEvaluated);
                 RecordHistory.current.plot(i + "," + ga.FitnessMax + Environment.NewLine);
-                if ((GameController.turn % 5 == 0) && (i == 0 || i == generations / 2 || i == generations-1))
+                if ((GameController.turn % 5 == 0) && (i % 4 == 0))
                 {
                     List<double> fitnesses = ga.getFitnesses();
                     List<double> parents = ga.getParentFitnesses();
@@ -80,6 +87,10 @@ namespace Splendor.BuyOrder
                     for (int j = 0; j < fitnesses.Count; j++) snap.Add(fitnesses[j].ToString() + "," + parents[j].ToString());
                     RecordHistory.current.snapshot(snap);
                 }
+                xoverimpnts[i] += BuyOrderChromosome.crossOverImprovements - totalximpnts;
+                totalximpnts = BuyOrderChromosome.crossOverImprovements;
+                mutimpnts[i] += BuyOrderChromosome.mutationImprovements - totalmimpnts;
+                totalmimpnts = BuyOrderChromosome.mutationImprovements;
                 i++;
             }
             fitness.timesEvaluated = 0;
@@ -88,33 +99,47 @@ namespace Splendor.BuyOrder
             lastBestChromosome.Evaluate(fitness);
             Move m = fitness.simulateMyTurn(lastBestChromosome, Board.current).PrevMove;
             RecordHistory.current.record(this + " took move " + m);
-            
-            foreach (var l in BuyOrderChromosome.track_somes)
-            {
-                string s = l.ConvertAll(x => x.Value).String();
-                string f = l.ConvertAll(x => x.Fitness).String();
-                RecordHistory.current.writeToFile("track.txt", s);
-                RecordHistory.current.writeToFile("track.txt", f);
-            }
-            
-            //List<BuyOrderChromosome> chromosomes = new List<BuyOrderChromosome>(); 
-            //for (int j = 0; j < ga.Count; j++)
-            //{
-            //    chromosomes.Add((BuyOrderChromosome)ga[j]);
-            //}
 
-            //chromosomes.Sort();
+
+            List<BuyOrderChromosome> chromosomes = new List<BuyOrderChromosome>();
+            for (int j = 0; j < ga.Count; j++)
+            {
+                chromosomes.Add((BuyOrderChromosome)ga[j]);
+            }
             //foreach (BuyOrderChromosome p in chromosomes)
             //{
             //    RecordHistory.writeToFile("Chromosomes.txt", string.Format("{0:0.00}",p.Fitness) + "|" + p.depth + "|" + p.Value.String() + "|" + string.Format("{0:0.00}",p.parentFitness));
             //}
             //RecordHistory.writeToFile("Chromosomes.txt", "");
+            CONSOLE.Overwrite(12, "XOver Impnts over gen.: " + xoverimpnts.String());
+            CONSOLE.Overwrite(13, "Mut Impnts over gen.: " + mutimpnts.String());
+            CONSOLE.Overwrite(14, "Crossover Improvements: " + BuyOrderChromosome.crossOverImprovements + " / " + BuyOrderChromosome.totalCrossOvers);
+            CONSOLE.Overwrite(15, "Mutation Improvements: " + BuyOrderChromosome.mutationImprovements + " / " + BuyOrderChromosome.totalMutations);
+        //    CONSOLE.Overwrite(16, "Number of Diverse Chromosomes: " + diversity(chromosomes));
             takeAction(m);
         }
 
         public override string ToString()
         {
             return name;
+        }
+
+        public int diversity(List<BuyOrderChromosome> cs)
+        {
+            cs.Sort();
+            for (int i=0; i < cs.Count; i++)
+            {
+                BuyOrderChromosome toCompare = cs[i];
+                for (int j= i+1; j < cs.Count; j++)
+                {
+                    if (toCompare.almostEqual(cs[j]))
+                    {
+                        cs.RemoveAt(j);
+                        j--;
+                    }
+                }
+            }
+            return cs.Count;
         }
 
     }
