@@ -55,15 +55,14 @@ namespace Splendor
         //Signal the current AI to stop, the turn to increment, and the scores to be checked.
         public static void nextTurn()
         {
-            Gem.Reset();
-            Board.current = new Board();
-            UnitTests.testBoard();
-
             //RecordHistory.record((currentPlayer + " has points: " + currentPlayer.points + " and gems: " + currentPlayer.gems + " and field: " + currentPlayer.field.String()));
             //RecordHistory.record("Board: " + Board.current.boardCards.String());
             currentPlayer.takeTurn();
             //RecordHistory.record(Environment.NewLine);
             turn += 1;
+            Gem.Reset();
+            Board.current = new Board();
+            UnitTests.testBoard();
             gameOver = Board.current.gameOver;
         }
 
@@ -108,6 +107,8 @@ namespace Splendor
             Gem.board = new Gem(4, 4, 4, 4, 4, 8);
             gameOver = false;
             takingTurn = false;
+            Board.current = new Board();
+            UnitTests.testBoard();
             while (!gameOver) nextTurn();
             endGame();
         }

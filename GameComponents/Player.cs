@@ -161,6 +161,15 @@ namespace Splendor
             }
             reserve.Add(c);
             c.deck.removeCard(c);
+
+            if (gems.magnitude > 10)
+            {
+                int toDiscard;
+                do { toDiscard = GameController.random.Next(5); } while (gems[toDiscard] == 0);
+                gems[toDiscard] -= 1;
+                Gem.board[toDiscard] += 1;
+            }
+
         }
 
         public override int GetHashCode()

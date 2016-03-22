@@ -73,6 +73,7 @@ namespace Splendor
         Move m = getGreedyMove(Board.current, scoringFunction);
         takeAction(m);
         RecordHistory.current.record(this + " took move " + m);
+        RecordHistory.current.record(this + " current state: " + points + " points and " + Field.Count + " cards and " + Gems.magnitude + " gems.");
         return;
         }
     }
