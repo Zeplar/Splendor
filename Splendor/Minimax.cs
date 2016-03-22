@@ -27,7 +27,7 @@ namespace Splendor
             //int val;
             Func<double, double, bool> comp = (x,y) => (x > y);
 
-            if (depth == 0 || legalMoves.Count == 0 || (startingPoint.gameOver) || (endCondition != null && endCondition(startingPoint)))
+            if (depth == 0 || legalMoves.Count == 0 || (endCondition != null && endCondition(startingPoint)))
             {
                 //If the root is currently myTurn, then the opponent generated this board; therefore send the negation of the score. Otherwise send the score.
                 score = scoringFunction.evaluate(startingPoint) * (myTurn ? -1 : 1);
