@@ -25,7 +25,7 @@ namespace Splendor
 
         private struct Command
         {
-            int repeats;
+            public int repeats;
             public Player[] players;
             bool record;
 
@@ -46,11 +46,11 @@ namespace Splendor
             public void run()
             {
                 GameController.Start(players[0], players[1]);
-                RecordHistory.current = new RecordHistory(record);
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
                 for (int j = 0; j < repeats; j++)
                 {
+                    RecordHistory.current = new RecordHistory(record);
                     if (j > 0)
                     {
                         double minutes = (watch.Elapsed.TotalMinutes / j) * (repeats - j);
@@ -86,6 +86,18 @@ namespace Splendor
 
                 case "reset":
                     games.Clear();
+                    PLAYERS.Clear();
+                    p1Wins = 0;
+                    Console.Clear();
+                    Console.Write("Reset\n");
+                    return;
+                case "games":
+                    foreach (Command c in games) Console.WriteLine(c.players[0] + " vs " + c.players[1] + " for " + c.repeats + " games.");
+                    return;
+                case "remove":
+                    i = int.Parse(commands.Dequeue());
+                    if (i < games.Count) games.RemoveAt(i);
+                    else Console.WriteLine("There are not " + (i + 1) + " games in the queue.");
                     return;
 
                 case "run":
