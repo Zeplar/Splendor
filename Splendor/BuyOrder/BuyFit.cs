@@ -9,22 +9,31 @@ namespace Splendor.BuyOrder
     {
         public List<Card> cards;
         private ScoringMethods.Function scoringFunction;
-        private ScoringMethods.Function greedy = ScoringMethods.Points;
+        private ScoringMethods.Function greedy = ScoringMethods.Function.allEval2;
         public int timesEvaluated = 0;
         private int depth = 5;
+        public bool willWin; //Whether the last evaluation determined a win was imminent.
+        public bool willLose;
+        public Move predictedMove; //Move the algorithm predicts Greedy will take.
 
         public BuyFit(ScoringMethods.Function scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }
 
+        
+        /// <summary>
+        /// Used to halt evaluation if the board state is empty or a player has won.
+        /// Sets flags which can be used for data collection.
+        /// </summary>
         private bool predictWin(Board current)
         {
+            willWin = willLose = false;
             if (!current.viewableCards.Exists(x => x.Deck != Card.Decks.nobles)) return true;
             if (current.gameOver)
             {
-                if (current.winner == 0) RecordHistory.current.record("!!! " + GameController.currentPlayer + " now thinks it's going to win!");
-                else if (current.winner == 1) RecordHistory.current.record("!!! " + GameController.currentPlayer + " now thinks it's going to lose!");
+                if (current.winner == 0) willWin = true;
+                else if (current.winner == 1) willLose = true;
                 return true;
             }
             return false;

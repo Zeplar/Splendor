@@ -13,6 +13,10 @@ namespace Splendor.Exact
         /// Probability of a large mutation instead of a small mutation
         /// </summary>
         public static float largeMutationRate = 0.3f;
+        public static int totalMuts = 0;
+        public static int mutImpnts = 0;
+        public static int totalXos = 0;
+        public static int xoImpnts = 0;
 
         /// <summary>
         /// Chromosome's length (#moves simulated)
@@ -23,8 +27,6 @@ namespace Splendor.Exact
         /// Represents boardstate at each turn
         /// </summary> 
         public uint[] boardState;
-
-
         public List<Move> moves;
 
 
@@ -90,11 +92,13 @@ namespace Splendor.Exact
             for (int i=0; i < length; i++)
             {
                 uint hash = boardState[i];
-                for (int j=0; j < length; j++)
+                for (int j=i+1; j < length; j++)
                 {
-                    if (other.boardState[j] == hash)
+                    if (hash != 0 && other.boardState[j] == hash)
                     {
                         CrossoverFrom(other, i, j);
+                        if (i == 0 && j == 0) CONSOLE.WriteLine("Trivial XOver.");
+                       // else CONSOLE.WriteLine("XOver at " + i + "," + j);
                         return;
                     }
                 }
@@ -104,19 +108,21 @@ namespace Splendor.Exact
         private void CrossoverFrom(ExactChromosome other, int thisStart, int otherStart)
         {
             List<Move> temp = new List<Move>();
-            for (int i=thisStart; i < length && i < moves.Count; i++)
+            for (int i=thisStart; i < moves.Count; i++)
             {
                 temp.Add(moves[i]);
  //               if (moves[i]?.moveType == 2) break;
             }
-            int j = thisStart;
-            for (int i= otherStart; i < length && i < other.moves.Count; i++)
+            moves.RemoveRange(thisStart, temp.Count);
+            for (int i= otherStart; i < other.moves.Count; i++)
             {
-                moves.Insert(i, other.moves[i]);
+                moves.Add(other.moves[i]);
  //               if (other.moves[i]?.moveType == 2) break;
             }
-            moves = moves.GetRange(0, Math.Min(moves.Count, length));
+            other.moves = other.moves.GetRange(0, otherStart);
             other.moves.InsertRange(otherStart, temp);
+
+            moves = moves.GetRange(0, Math.Min(moves.Count, length));
             other.moves = other.moves.GetRange(0, Math.Min(other.moves.Count, length));
         }
 
@@ -135,6 +141,7 @@ namespace Splendor.Exact
         {
             //bool large = Splendor.random.NextDouble() < largeMutationRate;
             moves[GameController.Random.Next(moves.Count)] = null;
+            parentFitness = -parentFitness;
         }
 
         public override int GetHashCode()
