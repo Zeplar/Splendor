@@ -103,6 +103,8 @@ namespace Splendor
                 return temp;
             }
 
+            public static Function allEval2 = (WinLoss * new Function(100)) + (Points * new Function(1.5)) + Prestige + Gems + DistanceFromNobles * (new Function(2));
+
             public static Function operator +(Function a, Function b)
             {
                 if (a.description.Equals(b.description) || b.description == "")
