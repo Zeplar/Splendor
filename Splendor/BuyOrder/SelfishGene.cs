@@ -24,7 +24,7 @@ namespace Splendor.BuyOrder
         public SelfishGene(ScoringMethods.Function scoringFunction, int popsize, int evaluations)
         {
             fitness = new BuyFit(scoringFunction);
-            name = "SelfishGene " + scoringFunction.ToString();
+            name = "SelfishGene " + scoringFunction.ToString() + " " + popsize + " {" + evaluations + "}";
             popSize = popsize;
             this.evaluations = evaluations;
         }
@@ -66,8 +66,6 @@ namespace Splendor.BuyOrder
             double lastBestFitness = 0;
             fitness.cards = Board.current.viewableCards.FindAll(x => x.Deck != Card.Decks.nobles);
             var ga = new Population(popSize, new BuyOrderChromosome(fitness.cards.Count), fitness, new RankSelection(), random);
-            ga.CrossoverRate = 0;
-            ga.MutationRate = 0;
        //     if (!predicted.Equals(Board.current.PrevMove)) RecordHistory.current.record("!!! Prediction failed.");
             predicted = null;
             int i = 0;
@@ -89,10 +87,10 @@ namespace Splendor.BuyOrder
                     for (int j = 0; j < fitnesses.Count; j++) snap.Add(fitnesses[j].ToString() + "," + parents[j].ToString());
                     RecordHistory.current.snapshot(snap);
                 }
-                //xoverimpnts[i] += BuyOrderChromosome.crossOverImprovements - totalximpnts;
-                //totalximpnts = BuyOrderChromosome.crossOverImprovements;
-                //mutimpnts[i] += BuyOrderChromosome.mutationImprovements - totalmimpnts;
-                //totalmimpnts = BuyOrderChromosome.mutationImprovements;
+                xoverimpnts[i] += BuyOrderChromosome.crossOverImprovements - totalximpnts;
+                totalximpnts = BuyOrderChromosome.crossOverImprovements;
+                mutimpnts[i] += BuyOrderChromosome.mutationImprovements - totalmimpnts;
+                totalmimpnts = BuyOrderChromosome.mutationImprovements;
                 i++;
             }
             fitness.timesEvaluated = 0;

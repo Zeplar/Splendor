@@ -11,7 +11,7 @@ namespace Splendor.BuyOrder
         private ScoringMethods.Function scoringFunction;
         private ScoringMethods.Function greedy = ScoringMethods.Points;
         public int timesEvaluated = 0;
-        private int depth = 10;
+        private int depth = 5;
 
         public BuyFit(ScoringMethods.Function scoringFunction)
         {
