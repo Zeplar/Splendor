@@ -207,6 +207,8 @@ namespace Splendor.BuyOrder
 
                 totalCrossOvers += 1;
 			}
+            parentFitness = Math.Max(fitness, pair.Fitness);
+            pair.parentFitness = this.parentFitness;
 		}
 
 		// Produce new child applying crossover to two parents
