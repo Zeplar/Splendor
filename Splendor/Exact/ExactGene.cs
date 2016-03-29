@@ -14,6 +14,9 @@ namespace Splendor.Exact
         private ExactChromosome lastBestChromosome = null;
         private ExactFit fit;
 
+        int[] xoverimpnts = new int[15];
+        int[] mutimpnts = new int[15];
+
         public ExactGene(int popsize, int evaluations, ScoringMethods.Function scoringFunction)
         {
             name = "Exact " + scoringFunction.ToString();
@@ -66,6 +69,8 @@ namespace Splendor.Exact
 
         public override void takeTurn()
         {
+            int totalximpnts = 0;
+            int totalmimpnts = 0;
             RecordHistory.current.record();
             AForge.Genetic.Population ga = new AForge.Genetic.Population(popSize, new ExactChromosome(depth), fit, new AForge.Genetic.RankSelection(), random);
             bool tempRecord = GameController.recording;
@@ -84,6 +89,12 @@ namespace Splendor.Exact
                     for (int j = 0; j < fitnesses.Count; j++) snap.Add(fitnesses[j].ToString() + "," + parents[j].ToString());
                     RecordHistory.current.snapshot(snap);
                 }
+
+                xoverimpnts[i] += ExactChromosome.crossOverImprovements - totalximpnts;
+                totalximpnts = ExactChromosome.crossOverImprovements;
+                mutimpnts[i] += ExactChromosome.mutationImprovements - totalmimpnts;
+                totalmimpnts = ExactChromosome.mutationImprovements;
+
                 i++;
             }
             lastBestChromosome = ga.BestChromosome as ExactChromosome;
@@ -96,6 +107,17 @@ namespace Splendor.Exact
                 m = Move.getRandomMove();
                 throw new NullReferenceException("ExactGene couldn't find a random move.");
             }
+
+
+            CONSOLE.Overwrite(12, "XOver Impnts over gen.: " + xoverimpnts.String());
+            CONSOLE.Overwrite(13, "Mut Impnts over gen.: " + mutimpnts.String());
+            CONSOLE.Overwrite(14, "Crossover Improvements: " + ExactChromosome.crossOverImprovements + " / " + ExactChromosome.totalCrossOvers);
+            CONSOLE.Overwrite(15, "Mutation Improvements: " + ExactChromosome.mutationImprovements + " / " + ExactChromosome.totalMutations);
+
+
+
+
+
             takeAction(m);
             RecordHistory.current.record(this + " took move " + m);
         }

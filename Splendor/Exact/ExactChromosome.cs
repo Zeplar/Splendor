@@ -13,10 +13,47 @@ namespace Splendor.Exact
         /// Probability of a large mutation instead of a small mutation
         /// </summary>
         public static float largeMutationRate = 0.3f;
-        public static int totalMuts = 0;
-        public static int mutImpnts = 0;
-        public static int totalXos = 0;
-        public static int xoImpnts = 0;
+
+        private static int xoimpnts = 0;
+        private static int xos = 0;
+        private static int muts = 0;
+        private static int mutimpnts = 0;
+        private static object Lock = new object();
+
+        public static int mutationImprovements
+        {
+            get { return mutimpnts; }
+            set
+            {
+                lock (Lock)
+                {
+                    mutimpnts = value;
+                }
+            }
+        }
+        public static int totalMutations { get { return muts; } set { lock (Lock) { muts = value; } } }
+
+        /// <summary>
+        /// Increments xoimpnts
+        /// </summary>
+        public static int crossOverImprovements
+        {
+            get { return xoimpnts; } set {  lock (Lock)
+                { xoimpnts = value; }
+            }
+        }
+
+        /// <summary>
+        /// Increments xos
+        /// </summary>
+        public static int totalCrossOvers
+        {
+            get  {return xos; } set {lock (Lock)
+                {
+                    xos = value;
+                }  }
+        }
+
 
         /// <summary>
         /// Chromosome's length (#moves simulated)
@@ -97,8 +134,9 @@ namespace Splendor.Exact
                     if (hash != 0 && other.boardState[j] == hash)
                     {
                         CrossoverFrom(other, i, j);
+                        totalCrossOvers++;
                         if (i == 0 && j == 0) CONSOLE.WriteLine("Trivial XOver.");
-                       // else CONSOLE.WriteLine("XOver at " + i + "," + j);
+                        else CONSOLE.WriteLine("XOver at " + i + "," + j);
                         return;
                     }
                 }
@@ -141,6 +179,7 @@ namespace Splendor.Exact
         {
             //bool large = Splendor.random.NextDouble() < largeMutationRate;
             moves[GameController.Random.Next(moves.Count)] = null;
+            totalMutations++;
             parentFitness = -parentFitness;
         }
 

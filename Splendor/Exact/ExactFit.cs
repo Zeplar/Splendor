@@ -103,9 +103,19 @@ namespace Splendor.Exact
                 }
                 else
                 {
-                    return score / i;
+                    break;
                 }
             }
+
+            if (max.parentFitness > 0 && score > max.parentFitness)
+            {
+                ExactChromosome.crossOverImprovements += 1;
+            }
+            else if (max.parentFitness < 0 && score > -max.parentFitness)
+            {
+                ExactChromosome.mutationImprovements += 1;
+            }
+
             return score / i;
         }
 
