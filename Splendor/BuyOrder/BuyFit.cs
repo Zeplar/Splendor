@@ -54,10 +54,11 @@ namespace Splendor.BuyOrder
                 score += scoringFunction.evaluate(current);
                 if (predictWin(current)) break;
                 current = current.generate(simulateGreedyTurn(current));
+                score -= scoringFunction.evaluate(current);
             }
             timesEvaluated++;
 
-            score = Math.Max(1, score / i);
+            score = Math.Max(1, score);
 
             if (c.parentFitness > 0 && score > c.parentFitness)
             {

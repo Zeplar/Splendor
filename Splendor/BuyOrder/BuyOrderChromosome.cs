@@ -297,7 +297,7 @@ namespace Splendor.BuyOrder
         }
 
         /// <summary>
-        /// Return true if the chromosomes are equal up to their fifth value
+        /// Return true if the chromosomes are equal up to their evaluation depth
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -305,12 +305,32 @@ namespace Splendor.BuyOrder
         {
             ushort[] o = other.val;
             bool eq = true;
-            for (int i=0; i < 5; i++)
+            if (depth != other.depth) return false;
+            for (int i=0; i < depth; i++)
             {
                 eq &= (o[i] == val[i]);
                 if (!eq) break;
             }
             return eq;
         }
-	}
+
+        public static List<BuyOrderChromosome> diversify(List<IChromosome> pop)
+        {
+            List<BuyOrderChromosome> cs = pop.ConvertAll(x => (BuyOrderChromosome)x);
+            cs.Sort();
+            for (int i = 0; i < cs.Count; i++)
+            {
+                BuyOrderChromosome toCompare = cs[i];
+                for (int j = i + 1; j < cs.Count; j++)
+                {
+                    if (toCompare.almostEqual(cs[j]))
+                    {
+                        cs.RemoveAt(j);
+                        j--;
+                    }
+                }
+            }
+            return cs;
+        }
+    }
 }
