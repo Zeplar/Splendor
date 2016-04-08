@@ -8,7 +8,7 @@ namespace Splendor.Exact
     {
 
         private int popSize = 200;
-        private int depth = 20;
+        private int depth;
         private int generations = 20;
         private int evaluations = 0;
         private ExactChromosome lastBestChromosome = null;
@@ -21,7 +21,7 @@ namespace Splendor.Exact
         {
             name = "Exact " + scoringFunction.ToString();
             this.popSize = popsize;
-            this.depth = 10;
+            this.depth = 5;
             this.evaluations = evaluations;
             fit = new ExactFit(scoringFunction);
         }

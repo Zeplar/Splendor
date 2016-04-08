@@ -61,6 +61,7 @@ namespace Splendor
                 }
                 watch.Stop();
                 CONSOLE.Overwrite(10, "P1 wins : " + p1Wins + "     Ties: " + ties + "      Stalemates: " + stalemates);
+                CONSOLE.Overwrite(11, "Average number of legal moves: " + (double)Board.MoveCounter / Board.BoardCounter);
             }
         }
 
@@ -78,7 +79,12 @@ namespace Splendor
                         return;
                     }
                     i = int.Parse(commands.Dequeue());
-                    record = bool.Parse(commands.Dequeue());
+                    if (commands.Count > 0)
+                    {
+                        record = true;
+                        commands.Dequeue();
+                    }
+                    else record = false;
                     CONSOLE.Overwrite(5, "Adding game: " + i + record);
                     games.Add(new Command(PLAYERS, i, record));
                     PLAYERS.Clear();

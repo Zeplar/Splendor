@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="BuyOrder\BuyOrderChromosome.cs" />
     <Compile Include="GATest.cs" />
+    <Compile Include="RandomSearch.cs" />
     <Compile Include="Strategize2\Strategize2.cs" />
     <Compile Include="Strategize2\Strategize2Chromosome.cs" />
     <Compile Include="Strategize2\Strategize2Fit.cs" />

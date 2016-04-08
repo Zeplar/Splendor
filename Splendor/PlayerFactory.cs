@@ -39,6 +39,7 @@ namespace Splendor
         {
             //Register("human", (x) => new Human());
             Register("greedy", Greedy.Create);
+            Register("random", RandomSearch.Create);
             Register("player", (x) => new Player());
             Register("minimax", x =>
             {

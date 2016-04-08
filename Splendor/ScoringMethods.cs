@@ -23,7 +23,7 @@ namespace Splendor
             dictionary.Add("points", Points);
             dictionary.Add("winloss", WinLoss);
             dictionary.Add("prestige", Prestige);
-            //dictionary.Add("legalbuys", LegalBuys);
+            dictionary.Add("legalbuys", LegalBuys);
             dictionary.Add("turn", turn);
             dictionary.Add("gems", Gems);
             dictionary.Add("nobles", DistanceFromNobles);
@@ -91,7 +91,7 @@ namespace Splendor
             public Function(double i)
             {
                 scalar = i;
-                fn = null;
+                fn = bd => 1;
                 description = "";
                 perMove = true;
             }
@@ -154,6 +154,11 @@ namespace Splendor
                 return new Function(bd => a.evaluate(bd) / b.evaluate(bd), a + " / " + b);
             }
 
+            public static Function operator ^(Function a, Function b)
+            {
+                return new Function(bd => Math.Pow(a.evaluate(bd), b.evaluate(bd)), a.description + "^" + b.description);
+            }
+
             public Function delta()
             {
                 var fun = this.fn;
@@ -177,6 +182,8 @@ namespace Splendor
                         return this * rhs;
                     case "/":
                         return this / rhs;
+                    case "^":
+                        return this ^ rhs;
                     case "delta":
                         return this.delta();
                     default:
@@ -188,6 +195,8 @@ namespace Splendor
         public static Function turn = new Function(bd => bd.Turn, "Turn");
 
         private static Function score = new Function(b => b.notCurrentPlayer.points, "Score");
+
+        public static Function LegalBuys = new Function(b => Move.BUY.getLegalMoves(b.PrevBoard).Count, "Buys");
 
         public static Function colors(Gem c)
         {
@@ -273,6 +282,8 @@ namespace Splendor
         {
             switch (op)
             {
+                case "^":
+                    return 3;
                 case "*":
                     return 2;
                 case "/":
@@ -351,15 +362,15 @@ namespace Splendor
             return output;
         }
 
-        public static void testScoringMethods(Board bd)
-        {
-            Function a = parse(new List<string>("1 + 2 / 3".Split()));
-            Function b = parse(new List<string>("( 1 + 2 ) / 3".Split()));
-            Function c = parse(new List<string>("1 + ( 2 / 3 )".Split()));
+        //public static void testScoringMethods(Board bd)
+        //{
+        //    Function a = parse(new List<string>("1 + 2 / 3".Split()));
+        //    Function b = parse(new List<string>("( 1 + 2 ) / 3".Split()));
+        //    Function c = parse(new List<string>("1 + ( 2 / 3 )".Split()));
 
-            Debug.Assert(a.evaluate(bd) == c.evaluate(bd));
-            Debug.Assert(a.evaluate(bd) != b.evaluate(bd));
-        }
+        //    Debug.Assert(a.evaluate(bd) == c.evaluate(bd));
+        //    Debug.Assert(a.evaluate(bd) != b.evaluate(bd));
+        //}
     }
 
 }

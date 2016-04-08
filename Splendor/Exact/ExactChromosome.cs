@@ -136,7 +136,7 @@ namespace Splendor.Exact
                         CrossoverFrom(other, i, j);
                         totalCrossOvers++;
                         if (i == 0 && j == 0) CONSOLE.WriteLine("Trivial XOver.");
-                        else CONSOLE.WriteLine("XOver at " + i + "," + j);
+//else CONSOLE.WriteLine("XOver at " + i + "," + j);
                         return;
                     }
                 }
