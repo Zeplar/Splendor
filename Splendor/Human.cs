@@ -1,75 +1,79 @@
-﻿//using System;
+﻿using System;
 
-//namespace Splendor
-//{
-//    public class Human : Player
-//    {
-//        public override void takeTurn()
-//        {
-//            showState();
-//            getInput();
-//            return;
-//        }
+namespace Splendor
+{
+    public class Human : Player
+    {
+        public override void takeTurn()
+        {
+            Move action = null;
+            while (action == null || !action.isLegal())
+            {
+                action = parseMove(Console.ReadLine());
+            }
+            takeAction(action);
+            return;
+        }
 
-//        private bool buyCard(string s)
-//        {
-//            int id = int.Parse(s);
-//            if (!Board.current.viewableCards.Exists(x => x.id == id)) return false;
-//            Move.BUY b = new Move.BUY(Card.allCardsByID[id]);
-//            if (b.isLegal())
-//            {
-//                b.takeAction();
-//                return true;
-//            }
-//            return false;
-//        }
+        private Move parseMove(string cmd)
+        {
+            string[] cmds = cmd.Split();
+            if (cmds.Length < 1) return null;
 
-//        private bool reserveCard(string s)
-//        {
-//            if (s[0] != 'r') return false;
-//            int id = int.Parse(s.Substring(1));
-//            if (!Board.current.viewableCards.Exists(x => x.id == id)) return false;
-//            Move.RESERVE r = new Move.RESERVE(Card.allCardsByID[id]);
-//            if (r.isLegal())
-//            {
-//                r.takeAction();
-//                return true;
-//            }
-//            return false;
-//        }
+            switch (cmds[0])
+            {
+                case "buy":
+                    return new Move.RESERVE(parseCard(cmds[1]));
+                case "res":
+                    return new Move.BUY(parseCard(cmds[1]));
+                case "take":
+                    return parseTake(cmds[1]);
+                default:
+                    return null;
+            }
+        }
 
-//        private bool takeGems(string g)
-//        {
-//            Gem gems = parseGems(g);
-//            if (Move.getAllLegalMoves().Exists(x => (x.moveType == Move.Type.TAKE2 && ((Move.TAKE2)x).color == gems) || (x.moveType == Move.Type.TAKE3 && ((Move.TAKE3)x).colors == gems)))
-//            {
-//                Move.getAllLegalMoves().Find(x => (x.moveType == Move.Type.TAKE2 && ((Move.TAKE2)x).color == gems) || (x.moveType == Move.Type.TAKE3 && ((Move.TAKE3)x).colors == gems)).takeAction();
-//                return true;
-//            }
-//            return false;
-//        }
+        private Move parseTake(string s)
+        {
+            Gem toTake = new Gem();
+            string[] fields = s.Split(',');
+            foreach (string x in fields)
+            {
+                switch (s)
+                {
+                    case "w":
+                        toTake[0] += 1;
+                        break;
+                    case "u":
+                        toTake[1] += 1;
+                        break;
+                   case "b":
+                        toTake[2] += 1;
+                        break;
+                    case "r":
+                        toTake[3] += 1;
+                        break;
+                    case "g":
+                        toTake[4] += 1;
+                        break;
+                    default:
+                        return null;
+                }
+            }
+            if (toTake.magnitude == 3) return new Move.TAKE3(toTake);
+            if (toTake.magnitude == 2) return new Move.TAKE2(toTake);
+            else
+            {
+                Console.WriteLine("Gem returns are not implemented. Take 2 or 3 gems.");
+                return null;
+            }
 
-//        private Gem parseGems(string g)
-//        {
-//            if (g.Length != 5) return Gem.zero;
-//            char[] split = g.ToCharArray();
-//            int[] i = new int[5];
-//            for (int j=0; j < 5; j++)
-//            {
-//                i[j] = (int)char.GetNumericValue(split[j]);
-//            }
-//            return new Gem(i);
-//        }
+        }
 
-//        private void getInput()
-//        {
-//            while (true)
-//                {
-//                    string input = Console.ReadLine();
-//                    if (takeGems(input)) return;
-//                    if (reserveCard(input)) return;
-//                    if (buyCard(input)) return;
-//                }
-//        }
-//    }
-//}
+        private Card parseCard(string s)
+        {
+            int id = int.Parse(s);
+            return Card.allCardsByID[id];
+        }
+    }
+}

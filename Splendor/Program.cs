@@ -38,7 +38,7 @@ namespace Splendor
 
             public Command(Player player, int repeats, bool record)
             {
-                players = new Player[2] { player, new Greedy(ScoringMethods.dictionary["allEval"]) };
+                players = new Player[2] { player, new Greedy(Heuristic.dictionary["allEval"]) };
                 this.repeats = repeats;
                 this.record = record;
             }
@@ -161,7 +161,7 @@ namespace Splendor
             Greedy g1 = new Greedy();
             Greedy g2 = new Greedy();
             Greedy g3 = new Greedy();
-            Minimax m = new Minimax(1, ScoringMethods.Lead + ScoringMethods.WinLoss);
+            Minimax m = new Minimax(1, Heuristic.Lead + Heuristic.WinLoss);
             int[] winArray = new int[tries];
 
            GameController.Start(g1, g2, 100);
@@ -188,8 +188,8 @@ namespace Splendor
             {
                 try
                 {
-                    ScoringMethods.Function fn = ScoringMethods.parse(s, 2);
-                    ScoringMethods.Save(s[1], fn);
+                    Heuristic fn = Heuristic.parse(s, 2);
+                    Heuristic.Save(s[1], fn);
                 }
                 catch
                 {
@@ -231,7 +231,7 @@ namespace Splendor
 
         static void help(string[] s)
         {
-            if (ScoringMethods.dictionary.ContainsKey(s[0])) CONSOLE.WriteLine(ScoringMethods.dictionary[s[0]].ToString());
+            if (Heuristic.dictionary.ContainsKey(s[0])) CONSOLE.WriteLine(Heuristic.dictionary[s[0]].ToString());
         }
 
 
@@ -239,9 +239,9 @@ namespace Splendor
         {
             Console.WriteLine("Configuration: Selfish depth 3, track.txt");
             PlayerFactory.Load();
-            ScoringMethods.register();
+            Heuristic.register();
             Console.WriteLine("Available players: " + PlayerFactory.listAll);
-            Console.WriteLine("Scoring functions: " + ScoringMethods.listAll);
+            Console.WriteLine("Scoring functions: " + Heuristic.listAll);
             while (true)
             {
                 string[] s = Console.ReadLine().Replace("(", "( ").Replace(")", " )").Replace("+", " + ").Replace("-"," - ").Replace("*"," * ").Replace("/"," / ").Split();

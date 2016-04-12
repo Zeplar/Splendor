@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System;
 
 namespace Splendor
 {
@@ -22,6 +23,22 @@ namespace Splendor
             for (int i = 0; i < array.Length; i++) array[i] *= x;
         }
 
+        /// <summary>
+        /// Returns an array containing only one object for each equivalance class
+        /// </summary>
+        /// <param name="arr"></param>
+        /// <param name="equality"></param>
+        /// <returns></returns>
+        public static Array Set(this Array arr, Func<object, object, bool> equality = null)
+        {
+            if (equality == null) { equality = Equals; }
+            List<object> ret = new List<object>();
+            foreach (object c in arr)
+            {
+                if (!ret.Contains(c)) ret.Add(c);
+            }
+            return ret.ToArray();
+        }
 
         public static int addUp(this IEnumerable<Card> list)
         {

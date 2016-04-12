@@ -10,10 +10,10 @@ namespace Splendor
     {
         private int depth;
         private int evaluations;
-        private ScoringMethods.Function f;
+        private Heuristic f;
         public static RandomSearch Create(string[] args)
         {
-            ScoringMethods.Function f;
+            Heuristic f;
             if (args.Length < 3)
             {
                throw new FormatException("Usage: random <depth> <evaluations> <...scoring function...>");
@@ -23,7 +23,7 @@ namespace Splendor
             scoring.RemoveRange(0, 2);
             try
             {
-                f = ScoringMethods.parse(scoring);
+                f = Heuristic.parse(scoring);
                 parameters = new List<string>(args).GetRange(0, 2).ConvertAll<int>(x => int.Parse(x));
             }
             catch (FormatException excpt)
@@ -33,7 +33,7 @@ namespace Splendor
             return new RandomSearch(f, parameters[0], parameters[1]);
         }
 
-        public RandomSearch(ScoringMethods.Function f, int depth, int evaluations)
+        public RandomSearch(Heuristic f, int depth, int evaluations)
         {
             this.f = f;
             this.depth = depth - 1;

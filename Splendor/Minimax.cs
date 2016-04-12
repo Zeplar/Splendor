@@ -10,15 +10,15 @@ namespace Splendor
     public class Minimax : Player
     {
         public int treeDepth;
-        public Minimax(int i, ScoringMethods.Function f) : base("Minimax " + i + "(" + f.ToString() + ")")
+        public Minimax(int i, Heuristic f) : base("Minimax " + i + "(" + f.ToString() + ")")
         {
             treeDepth = i;
             scoringFunction = f;
         }
 
-        private ScoringMethods.Function scoringFunction;
+        private Heuristic scoringFunction;
 
-        public static Move minimax(Board startingPoint, int depth, ScoringMethods.Function scoringFunction, out double score, Func<Board, bool> endCondition=null)
+        public static Move minimax(Board startingPoint, int depth, Heuristic scoringFunction, out double score, Func<Board, bool> endCondition=null)
         {
             bool myTurn = startingPoint.Turn % 2 == 0;  //Indicates that it's Minimax's turn.
             Move bestMove = null;
@@ -61,6 +61,12 @@ namespace Splendor
             }
             //If it's Minimax's turn, the opponent generated this board; therefore the score is subtracted. Otherwise the score is added.
             score = myTurn ? bestScore[0] - scoringFunction.evaluate(startingPoint) : bestScore[0] + scoringFunction.evaluate(startingPoint);
+            if (startingPoint.Equals(Board.current))
+            {
+                Array scores = bestScore.Set();
+                var best = new List<double>(bestScore).FindAll(x => x == bestScore[0]);
+                RecordHistory.current.writeToFile("minimax.txt", "Diversity: " + scores.Length + "   " + "BestScores:  " + best.Count + Environment.NewLine);
+            }
             return bestMove;
         }
 

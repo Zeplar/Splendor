@@ -36,9 +36,9 @@ namespace Splendor.Strategize2
 
             public override Move getMove(Board b)
             {
-                ScoringMethods.Function fn = new ScoringMethods.Function(10) * ScoringMethods.HasCard(reference);
-                fn += ScoringMethods.Gems;
-                fn += ScoringMethods.Lead;
+                Heuristic fn = new Heuristic(10) * Heuristic.HasCard(reference);
+                fn += Heuristic.Gems;
+                fn += Heuristic.Lead;
                 return BuySeeker.getMove(b, reference);
             }
         }

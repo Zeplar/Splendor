@@ -21,7 +21,7 @@ namespace Splendor
                 return new Move.RESERVE(toBuy); //Reserve if opponent can buy next turn
 
             Gem needed = neededGems(state, toBuy);
-            ScoringMethods.Function fn = ScoringMethods.colors(needed);
+            Heuristic fn = Heuristic.colors(needed);
             return Greedy.getGreedyMove(state, fn);
 
             //int value = 0;
@@ -68,7 +68,7 @@ namespace Splendor
                 for (int i = 0; i < 5; i++) needed[i] += toAdd[i] * a.wt;
             }
             Gem targetGems = new Gem(needed);
-            ScoringMethods.Function fn = ScoringMethods.colors(targetGems);
+            Heuristic fn = Heuristic.colors(targetGems);
             return Greedy.getGreedyMove(state, fn);
         }
 

@@ -17,11 +17,13 @@ namespace Splendor.BuyOrder
 
         int[] xoverimpnts = new int[15];
         int[] mutimpnts = new int[15];
+        int diverseChromosomes = 0;
+        int totalChromosomes = 0;
         //Watchpoints
 
-        public SelfishGene(ScoringMethods.Function scoringFunction) : this(scoringFunction, 200, 20) { }
+        public SelfishGene(Heuristic scoringFunction) : this(scoringFunction, 200, 20) { }
 
-        public SelfishGene(ScoringMethods.Function scoringFunction, int popsize, int evaluations)
+        public SelfishGene(Heuristic scoringFunction, int popsize, int evaluations)
         {
             fitness = new BuyFit(scoringFunction);
             name = "SelfishGene " + scoringFunction.ToString() + " " + popsize + " {" + evaluations + "}";
@@ -34,7 +36,7 @@ namespace Splendor.BuyOrder
         /// </summary>
         public static SelfishGene Create(string[] args)
         {
-            ScoringMethods.Function f;
+            Heuristic f;
             if (args.Length < 3)
             {
                 Console.WriteLine("Usage: selfish <popSize> <evaluations> <...scoring function...>");
@@ -45,7 +47,7 @@ namespace Splendor.BuyOrder
             scoring.RemoveRange(0, 2);
             try
             {
-                f = ScoringMethods.parse(scoring);
+                f = Heuristic.parse(scoring);
                 parameters = new List<string>(args).GetRange(0, 2).ConvertAll<int>(x => int.Parse(x));
             } catch (FormatException)
             {
@@ -66,6 +68,7 @@ namespace Splendor.BuyOrder
             double lastBestFitness = 0;
             fitness.cards = Board.current.viewableCards.FindAll(x => x.Deck != Card.Decks.nobles);
             var ga = new Population(popSize, new BuyOrderChromosome(fitness.cards.Count), fitness, new RankSelection(), random);
+            ga.CrossoverRate = 0.2;
 
        //     if (!predicted.Equals(Board.current.PrevMove)) RecordHistory.current.record("!!! Prediction failed.");
        //     predicted = null;
@@ -113,9 +116,13 @@ namespace Splendor.BuyOrder
             CONSOLE.Overwrite(14, "Crossover Improvements: " + BuyOrderChromosome.crossOverImprovements + " / " + BuyOrderChromosome.totalCrossOvers);
             CONSOLE.Overwrite(15, "Mutation Improvements: " + BuyOrderChromosome.mutationImprovements + " / " + BuyOrderChromosome.totalMutations);
             CONSOLE.Overwrite(16, "Number of Diverse Chromosomes: " + chromosomes.Count);
+
+            totalChromosomes += ga.population.Count;
+            diverseChromosomes += chromosomes.Count;
+            CONSOLE.Overwrite(17, "Total diverse/chromosomes: " + ((double)diverseChromosomes / totalChromosomes));
             for (int j = 0; j < chromosomes.Count; j++)
             {
-                CONSOLE.Overwrite(17 + j, chromosomes[j].Value.String() + "   depth: " +chromosomes[j].depth + "    fitness: " + chromosomes[j].Fitness);
+                CONSOLE.Overwrite(18 + j, chromosomes[j].Value.String() + "   depth: " +chromosomes[j].depth + "    fitness: " + chromosomes[j].Fitness);
             }
             takeAction(m);
         }

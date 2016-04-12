@@ -11,7 +11,7 @@ namespace Splendor.Strategize
         /// <summary>
         /// Represents boardstate at each turn
         /// </summary> 
-        protected ScoringMethods.Function[] fn;
+        protected Heuristic[] fn;
 
         public int len;
 
@@ -31,7 +31,7 @@ namespace Splendor.Strategize
             fitness = source.fitness;
             parentFitness = source.parentFitness;
             this.len = source.len;
-            fn = new ScoringMethods.Function[source.fn.Length];
+            fn = new Heuristic[source.fn.Length];
             source.fn.CopyTo(fn, 0);
         }
 
@@ -48,11 +48,11 @@ namespace Splendor.Strategize
         /// Produces a scoring function that is the sum of all scoring functions in the chromosome.
         /// The sum of the scalars is always 1.
         /// </summary>
-        public ScoringMethods.Function getFn
+        public Heuristic getFn
         {
             get
             {
-                ScoringMethods.Function ret = fn[0];
+                Heuristic ret = fn[0];
                 for (int i = 1; i < fn.Length; i++)
                 {
                     ret += fn[i];
@@ -80,7 +80,7 @@ namespace Splendor.Strategize
         private void smallCrossover(StrategizeChromosome other)
         {
             int index = GameController.Random.Next(fn.Length);
-            ScoringMethods.Function temp = fn[index];
+            Heuristic temp = fn[index];
             fn[index] = other.fn[index];
             other.fn[index] = temp;
         }
@@ -114,8 +114,8 @@ namespace Splendor.Strategize
         /// </summary>
         public override void Generate()
         {
-            fn = new ScoringMethods.Function[(ScoringMethods.dictionary.Count)];
-            ScoringMethods.dictionary.Values.CopyTo(fn, 0);
+            fn = new Heuristic[(Heuristic.dictionary.Count)];
+            Heuristic.dictionary.Values.CopyTo(fn, 0);
             for (int i = 0; i < fn.Length; i++) fn[i].scalar = GameController.Random.NextDouble();
         }
 

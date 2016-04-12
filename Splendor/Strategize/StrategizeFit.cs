@@ -7,11 +7,11 @@ namespace Splendor.Strategize
 {
     public class StrategizeFit : IFitnessFunction
     {
-        private ScoringMethods.Function scoringFunction;
-        private ScoringMethods.Function greedy = ScoringMethods.Points;
+        private Heuristic scoringFunction;
+        private Heuristic greedy = Heuristic.Points;
         public int timesEvaluated;
 
-        public StrategizeFit(ScoringMethods.Function scoringFunction)
+        public StrategizeFit(Heuristic scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }

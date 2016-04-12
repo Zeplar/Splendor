@@ -93,13 +93,6 @@
     <Compile Include="BuyOrder\BuyOrderChromosome.cs" />
     <Compile Include="GATest.cs" />
     <Compile Include="RandomSearch.cs" />
-    <Compile Include="Strategize2\Strategize2.cs" />
-    <Compile Include="Strategize2\Strategize2Chromosome.cs" />
-    <Compile Include="Strategize2\Strategize2Fit.cs" />
-    <Compile Include="Strategize2\Strategy.cs" />
-    <Compile Include="Strategize\StrategizeChromosome.cs" />
-    <Compile Include="Strategize\StrategizeFit.cs" />
-    <Compile Include="Strategize\Strategize.cs" />
     <Compile Include="GreedyBuyer.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="BuyOrder\BuySeeker.cs" />
@@ -114,7 +107,7 @@
     <Compile Include="Minimax.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RandomPlayer.cs" />
-    <Compile Include="ScoringMethods.cs" />
+    <Compile Include="Heuristic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

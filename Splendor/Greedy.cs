@@ -7,15 +7,15 @@ namespace Splendor
 
     public class Greedy : Player
     {
-        private ScoringMethods.Function scoringFunction;
+        private Heuristic scoringFunction;
 
 
         public Greedy()
         {
-            scoringFunction = ScoringMethods.Lead + ScoringMethods.WinLoss;
+            scoringFunction = Heuristic.Lead + Heuristic.WinLoss;
             name = "Greedy Delta";
         }
-        public Greedy(ScoringMethods.Function scoringFunction)
+        public Greedy(Heuristic scoringFunction)
         {
             this.scoringFunction = scoringFunction;
             name = "Greedy " + scoringFunction.ToString();
@@ -31,10 +31,10 @@ namespace Splendor
         /// </summary>
         public static Greedy Create(string[] args)
         {
-            ScoringMethods.Function f;
+            Heuristic f;
             try
             {
-                f = ScoringMethods.parse(args);
+                f = Heuristic.parse(args);
             } catch (FormatException)
             {
                 throw new FormatException("Usage: greedy <...scoringFunction...>");
@@ -49,7 +49,7 @@ namespace Splendor
         /// <param name="b"></param>
         /// <param name="scoringFunction"></param>
         /// <returns></returns>
-        public static Move getGreedyMove(Board b, ScoringMethods.Function scoringFunction)
+        public static Move getGreedyMove(Board b, Heuristic scoringFunction)
         {
             Move bestMove = null;
             double bestScore = int.MinValue;

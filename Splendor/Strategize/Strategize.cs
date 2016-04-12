@@ -27,7 +27,7 @@ namespace Splendor.Strategize
         private StrategizeChromosome lastBestChromosome = null;
         private StrategizeFit fit;
 
-        public Strategize(int popsize, int evaluations, ScoringMethods.Function scoringFunction)
+        public Strategize(int popsize, int evaluations, Heuristic scoringFunction)
         {
             name = "Strategize " + scoringFunction.ToString();
             this.popSize = popsize;
@@ -36,7 +36,7 @@ namespace Splendor.Strategize
             fit = new StrategizeFit(scoringFunction);
         }
 
-        public Strategize(int popsize, int depth, int generations, ScoringMethods.Function scoringFunction)
+        public Strategize(int popsize, int depth, int generations, Heuristic scoringFunction)
         {
             name = "Strategize " + scoringFunction.ToString();
             this.popSize = popsize;
@@ -46,14 +46,14 @@ namespace Splendor.Strategize
 
         }
 
-        public Strategize(ScoringMethods.Function fn) : this(500, 10, 20, fn) { }
+        public Strategize(Heuristic fn) : this(500, 10, 20, fn) { }
 
         /// <summary>
         /// Used for registration in the player factory.
         /// </summary>
         public static Strategize Create(string[] args)
         {
-            ScoringMethods.Function f;
+            Heuristic f;
             if (args.Length < 3)
             {
                 throw new FormatException("Usage: Strategize <popSize> <evaluations> <...scoring function...>");
@@ -63,7 +63,7 @@ namespace Splendor.Strategize
             scoring.RemoveRange(0, 2);
             try
             {
-                f = ScoringMethods.parse(scoring);
+                f = Heuristic.parse(scoring);
                 parameters = new List<string>(args).GetRange(0, 2).ConvertAll<int>(x => int.Parse(x));
             }
             catch (FormatException z)

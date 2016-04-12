@@ -10,12 +10,12 @@ namespace Splendor
     /// <summary>
     /// Scores the board from the perspective of the generating player	
     /// </summary>
-    public static class ScoringMethods
+    public struct Heuristic
     {
 
         private static string save = System.IO.Directory.GetCurrentDirectory() + @"\save.txt";
 
-        public static Dictionary<string,Function> dictionary = new Dictionary<string, Function>();
+        public static Dictionary<string,Heuristic> dictionary = new Dictionary<string, Heuristic>();
 
         public static void register()
         { 
@@ -34,7 +34,7 @@ namespace Splendor
             //
         }
 
-        public static void Save(string name, Function fn)
+        public static void Save(string name, Heuristic fn)
         {
             System.IO.File.AppendAllText(save, name + ":" + fn.ToString() + "\n");
         }
@@ -46,7 +46,7 @@ namespace Splendor
             {
                 split = line.Split(':');
                 descr = split[1].Replace("(","( ").Replace(")"," )").ToLower().Split();
-                Function fn = parse(descr);
+                Heuristic fn = parse(descr);
                 fn.description = split[0];
                 dictionary.Add(split[0], fn);
             }
@@ -62,172 +62,167 @@ namespace Splendor
             }
         }
 
-        public struct Function
+        public double scalar;
+        private Func<Board, double> fn;
+        public string description;
+        public bool perMove;
+
+        public double evaluate(Board b)
         {
-            public double scalar;
-            private Func<Board, double> fn;
-            public string description;
-            public bool perMove;
+            try
+            {
+                return scalar * fn(b);
+            }
+            catch
+            {
+                throw new Exception("Something happened during fitness evaluation.");
+            }
+        }
+        public Heuristic(Func<Board, double> fn, string description)
+        {
+            this.fn = fn;
+            this.description = description;
+            scalar = 1;
+            perMove = true;
+        }
 
-            public double evaluate(Board b)
-            {
-                try
-                {
-                    return scalar * fn(b);
-                }
-                catch
-                {
-                    throw new Exception("Something happened during fitness evaluation.");
-                }
-            }
-            public Function(Func<Board, double> fn, string description)
-            {
-                this.fn = fn;
-                this.description = description;
-                scalar = 1;
-                perMove = true;
-            }
+        public Heuristic(double i)
+        {
+            scalar = i;
+            fn = bd => 1;
+            description = "";
+            perMove = true;
+        }
 
-            public Function(double i)
-            {
-                scalar = i;
-                fn = bd => 1;
-                description = "";
-                perMove = true;
-            }
+        public Heuristic adjustScalar(double scalar)
+        {
+            var temp = this;
+            temp.scalar = scalar;
+            return temp;
+        }
 
-            public Function adjustScalar(double scalar)
+        public static Heuristic operator +(Heuristic a, Heuristic b)
+        {
+            if (a.description.Equals(b.description) || b.description == "")
             {
-                var temp = this;
-                temp.scalar = scalar;
-                return temp;
+                return a.adjustScalar(a.scalar + b.scalar);
             }
+            if (a.description == "")
+            {
+                return b.adjustScalar(a.scalar + b.scalar);
+            }
+            return new Heuristic(bd => a.evaluate(bd) + b.evaluate(bd), "(" + a + " + " + b +")");
+        }
+        public static Heuristic operator -(Heuristic a, Heuristic b)
+        {
+            if (a.description.Equals(b.description) || b.description == "")
+            {
+                return a.adjustScalar(a.scalar - b.scalar);
+            }
+            if (a.description == "")
+            {
+                return b.adjustScalar(a.scalar - b.scalar);
+            }
+            return new Heuristic(bd => a.evaluate(bd) - b.evaluate(bd), "(" + a + " - " + b + ")");
+        }
+        public static Heuristic operator *(Heuristic a, Heuristic b)
+        {
+            if (a.description.Equals(b.description) || b.description == "")
+            {
+                return a.adjustScalar(a.scalar * b.scalar);
+            }
+            if (a.description == "")
+            {
+                return b.adjustScalar(a.scalar * b.scalar);
+            }
+            return new Heuristic(bd => a.evaluate(bd) * b.evaluate(bd), a + " * " + b);
+        }
+        public static Heuristic operator /(Heuristic a, Heuristic b)
+        {
+            if (a.description.Equals(b.description) || b.description == "")
+            {
+                return a.adjustScalar(a.scalar / b.scalar);
+            }
+            if (a.description == "")
+            {
+                return b.adjustScalar(a.scalar / b.scalar);
+            }
+            return new Heuristic(bd => a.evaluate(bd) / b.evaluate(bd), a + " / " + b);
+        }
 
-            public static Function allEval2 = (WinLoss * new Function(100)) + (Points * new Function(1.5)) + Prestige + Gems + DistanceFromNobles * (new Function(2));
+        public static Heuristic operator ^(Heuristic a, Heuristic b)
+        {
+            return new Heuristic(bd => Math.Pow(a.evaluate(bd), b.evaluate(bd)), a.description + "^" + b.description);
+        }
 
-            public static Function operator +(Function a, Function b)
-            {
-                if (a.description.Equals(b.description) || b.description == "")
-                {
-                    return a.adjustScalar(a.scalar + b.scalar);
-                }
-                if (a.description == "")
-                {
-                    return b.adjustScalar(a.scalar + b.scalar);
-                }
-                return new Function(bd => a.evaluate(bd) + b.evaluate(bd), "(" + a + " + " + b +")");
-            }
-            public static Function operator -(Function a, Function b)
-            {
-                if (a.description.Equals(b.description) || b.description == "")
-                {
-                    return a.adjustScalar(a.scalar - b.scalar);
-                }
-                if (a.description == "")
-                {
-                    return b.adjustScalar(a.scalar - b.scalar);
-                }
-                return new Function(bd => a.evaluate(bd) - b.evaluate(bd), "(" + a + " - " + b + ")");
-            }
-            public static Function operator *(Function a, Function b)
-            {
-                if (a.description.Equals(b.description) || b.description == "")
-                {
-                    return a.adjustScalar(a.scalar * b.scalar);
-                }
-                if (a.description == "")
-                {
-                    return b.adjustScalar(a.scalar * b.scalar);
-                }
-                return new Function(bd => a.evaluate(bd) * b.evaluate(bd), a + " * " + b);
-            }
-            public static Function operator /(Function a, Function b)
-            {
-                if (a.description.Equals(b.description) || b.description == "")
-                {
-                    return a.adjustScalar(a.scalar / b.scalar);
-                }
-                if (a.description == "")
-                {
-                    return b.adjustScalar(a.scalar / b.scalar);
-                }
-                return new Function(bd => a.evaluate(bd) / b.evaluate(bd), a + " / " + b);
-            }
+        public Heuristic delta()
+        {
+            var fun = this.fn;
+            return new Heuristic(bd => fun(bd) - fun(bd.PrevBoard), "delta- " + description);
+        }
 
-            public static Function operator ^(Function a, Function b)
+        public override string ToString()
+        {
+            if (scalar == 1) return description;
+            return "(" + scalar + description + ")";
+        }
+        public Heuristic operate(string op, Heuristic rhs)
+        {
+            switch (op)
             {
-                return new Function(bd => Math.Pow(a.evaluate(bd), b.evaluate(bd)), a.description + "^" + b.description);
-            }
-
-            public Function delta()
-            {
-                var fun = this.fn;
-                return new Function(bd => fun(bd) - fun(bd.PrevBoard), "delta- " + description);
-            }
-
-            public override string ToString()
-            {
-                if (scalar == 1) return description;
-                return "(" + scalar + description + ")";
-            }
-            public Function operate(string op, Function rhs)
-            {
-                switch (op)
-                {
-                    case "+":
-                        return this + rhs;
-                    case "-":
-                        return this - rhs;
-                    case "*":
-                        return this * rhs;
-                    case "/":
-                        return this / rhs;
-                    case "^":
-                        return this ^ rhs;
-                    case "delta":
-                        return this.delta();
-                    default:
-                        throw new FormatException("Invalid operator");
-                }
+                case "+":
+                    return this + rhs;
+                case "-":
+                    return this - rhs;
+                case "*":
+                    return this * rhs;
+                case "/":
+                    return this / rhs;
+                case "^":
+                    return this ^ rhs;
+                case "delta":
+                    return this.delta();
+                default:
+                    throw new FormatException("Invalid operator");
             }
         }
 
-        public static Function turn = new Function(bd => bd.Turn, "Turn");
+        private static Heuristic turn { get { return new Heuristic(bd => bd.Turn, "Turn"); } }
 
-        private static Function score = new Function(b => b.notCurrentPlayer.points, "Score");
+        private static Heuristic score { get { return new Heuristic(b => b.notCurrentPlayer.points, "Score"); } }
 
-        public static Function LegalBuys = new Function(b => Move.BUY.getLegalMoves(b.PrevBoard).Count, "Buys");
+        private static Heuristic LegalBuys { get { return new Heuristic(b => Move.BUY.getLegalMoves(b.PrevBoard).Count, "Buys"); } }
 
-        public static Function colors(Gem c)
+        public static Heuristic colors(Gem c)
         {
             Func<Board, double> fn = b =>
              {
                  Gem deltaGems = (b.notCurrentPlayer.Gems - b.PrevBoard.currentPlayer.Gems);
                  return (c - (c - deltaGems).positive).magnitude;
              };
-            return new Function(fn, "colors: " + c);
+            return new Heuristic(fn, "colors: " + c);
         }
 
         /// <summary>
         /// Scores difference in points.
         /// </summary>
-        public static Function Lead = new Function(bd => bd.notCurrentPlayer.points - bd.currentPlayer.points, "Lead");
+        public static Heuristic Lead { get { return new Heuristic(bd => bd.notCurrentPlayer.points - bd.currentPlayer.points, "Lead"); } }
 
-        public static Function HasCard(Card id)
-        {
-            return new Function(bd => bd.notCurrentPlayer.Field.Contains(id) ? 1 : 0, "HasCard " + id);
-        }
+        //public static Heuristic HasCard(Card id)
+        //{
+        //    get { return new Heuristic(bd => bd.notCurrentPlayer.Field.Contains(id) ? 1 : 0, "HasCard " + id); }
+        //}
 
-        public static Function DenyCard(Card id)
-        {
-            return new Function(bd => bd.currentPlayer.Field.Contains(id) ? -1 : 0, "DenyCard " + id);
-        }
+        //public static Heuristic DenyCard(Card id)
+        //{
+        //    return new Heuristic(bd => bd.currentPlayer.Field.Contains(id) ? -1 : 0, "DenyCard " + id);
+        //}
 
         /// <summary>
         /// Scores 1 for a win, -1 for a loss, else zero. Tiebreaks on prestige.
         /// </summary>
-        public static Function WinLoss =
-            new Function(bd =>
+        public static Heuristic WinLoss
+        { get { return new Heuristic(bd =>
                 {
                     if (bd.gameOver)
                     {
@@ -244,22 +239,28 @@ namespace Splendor
 
                     }
                     return 0;
-                }, "WinLoss");
+                }, "WinLoss");}
+            }
 
-        public static Function Gems = new Function(bd => bd.PrevMove?.moveType == Move.Type.RESERVE ? 1 : bd.PrevMove?.moveType == Move.Type.BUY ? 0
-                                                         : bd.PrevMove == null ? 0 : bd.notCurrentPlayer.Gems.magnitude - bd.PrevBoard.currentPlayer.Gems.magnitude, "Gems");
-
+        public static Heuristic Gems
+        {
+            get
+            {
+                return new Heuristic(bd => bd.PrevMove?.moveType == Move.Type.RESERVE ? 1 : bd.PrevMove?.moveType == Move.Type.BUY ? 0
+                                                            : bd.PrevMove == null ? 0 : bd.notCurrentPlayer.Gems.magnitude - bd.PrevBoard.currentPlayer.Gems.magnitude, "Gems");
+            }
+        }
         /// <summary>
         /// Scores only points.
         /// </summary>
-        public static Function Points = new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? bd.notCurrentPlayer.points - bd.PrevBoard.currentPlayer.points : 0, "Points");
+        public static Heuristic Points { get { return new Heuristic(bd => bd.PrevMove?.moveType == Move.Type.BUY ? bd.notCurrentPlayer.points - bd.PrevBoard.currentPlayer.points : 0, "Points"); } }
 
         /// <summary>
         /// Scores only prestige.
         /// </summary>
-        public static Function Prestige = new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? 1 : 0, "Prestige");
+        public static Heuristic Prestige { get { return new Heuristic(bd => bd.PrevMove?.moveType == Move.Type.BUY ? 1 : 0, "Prestige"); } }
 
-        public static Function DistanceFromNobles = new Function(bd => bd.PrevMove?.moveType == Move.Type.BUY ? _DistanceFromNobles(bd.PrevBoard,true) - _DistanceFromNobles(bd, false) : 0, "Nobles");
+        public static Heuristic DistanceFromNobles { get { return new Heuristic(bd => bd.PrevMove?.moveType == Move.Type.BUY ? _DistanceFromNobles(bd.PrevBoard, true) - _DistanceFromNobles(bd, false) : 0, "Nobles"); } }
 
         private static double _DistanceFromNobles(Board b, bool current)
         {
@@ -297,30 +298,30 @@ namespace Splendor
             }
         }
 
-        public static Function parse(IEnumerable<string> exp)
+        public static Heuristic parse(IEnumerable<string> exp)
         {
             return eval_postfix(convertToPostfix(exp));
         }
-        public static Function parse(IEnumerable<string> exp, int skip)
+        public static Heuristic parse(IEnumerable<string> exp, int skip)
         {
             return eval_postfix(convertToPostfix(exp.Skip(skip)));
         }
 
-        private static Function eval_postfix(Queue<string> exp)
+        private static Heuristic eval_postfix(Queue<string> exp)
         {
-            Stack<Function> stack = new Stack<Function>();
+            Stack<Heuristic> stack = new Stack<Heuristic>();
             foreach (string s in exp)
             {
                 if (precedence(s) > 0)
                 {
-                    Function temp = stack.Pop();
-                    Function ret = stack.Pop().operate(s, temp);
+                    Heuristic temp = stack.Pop();
+                    Heuristic ret = stack.Pop().operate(s, temp);
                     stack.Push(ret);
                 }
                 else
                 {
                     double i;
-                    if (double.TryParse(s, out i)) stack.Push(new Function(i));
+                    if (double.TryParse(s, out i)) stack.Push(new Heuristic(i));
                     else
                     {
                         if (!dictionary.ContainsKey(s)) throw new FormatException(s + " is not in the dictionary.");

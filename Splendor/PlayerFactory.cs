@@ -45,13 +45,11 @@ namespace Splendor
             {
                 int i = int.Parse(x[0]);
 
-                return new Minimax(i, ScoringMethods.parse(x, 1));
+                return new Minimax(i, Heuristic.parse(x, 1));
             }, "Depth");
             Register("exact", Exact.ExactGene.Create);
             Register("selfish", BuyOrder.SelfishGene.Create);
             Register("greedybuyer", x => new GreedyBuyer());
-            Register("strategize", Strategize.Strategize.Create);
-            Register("strategize2", Strategize2.Strategize2.Create);
 
         }
     }

@@ -8,15 +8,14 @@ namespace Splendor.BuyOrder
     public class BuyFit : IFitnessFunction
     {
         public List<Card> cards;
-        private ScoringMethods.Function scoringFunction;
-        private ScoringMethods.Function greedy = ScoringMethods.Function.allEval2;
+        private Heuristic scoringFunction;
         public int timesEvaluated = 0;
         private int depth = 5;
         public bool willWin; //Whether the last evaluation determined a win was imminent.
         public bool willLose;
         public Move predictedMove; //Move the algorithm predicts Greedy will take.
 
-        public BuyFit(ScoringMethods.Function scoringFunction)
+        public BuyFit(Heuristic scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }
@@ -76,7 +75,7 @@ namespace Splendor.BuyOrder
 
         private Move simulateGreedyTurn(Board current)
         {
-            Move m = Greedy.getGreedyMove(current, greedy);
+            Move m = Greedy.getGreedyMove(current, scoringFunction);
             return m;
         }
 

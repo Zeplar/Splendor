@@ -52,7 +52,10 @@ namespace Splendor
 
         public void writeToFile(string file, string line)
         {
-            File.AppendAllText(directory + @"\" + file, line + Environment.NewLine);
+            lock (file)
+            {
+                File.AppendAllText(directory + @"\" + file, line + Environment.NewLine);
+            }
         }
 
         /// <summary>

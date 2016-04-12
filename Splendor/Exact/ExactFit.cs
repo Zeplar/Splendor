@@ -7,11 +7,11 @@ namespace Splendor.Exact
 {
     public class ExactFit : IFitnessFunction
     {
-        private ScoringMethods.Function scoringFunction;
-        private ScoringMethods.Function greedy = ScoringMethods.Points;
+        private Heuristic scoringFunction;
+        private Heuristic greedy = Heuristic.Points;
         public int timesEvaluated;
 
-        public ExactFit(ScoringMethods.Function scoringFunction)
+        public ExactFit(Heuristic scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }
