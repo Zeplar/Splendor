@@ -10,10 +10,12 @@ namespace Splendor.BuyOrder
         public List<Card> cards;
         private Heuristic scoringFunction;
         public int timesEvaluated = 0;
-        private int depth = 5;
+        private int depth = 10;
         public bool willWin; //Whether the last evaluation determined a win was imminent.
         public bool willLose;
         public Move predictedMove; //Move the algorithm predicts Greedy will take.
+
+        private bool deny = false; //Flag whether the current target is a deny target
 
         public BuyFit(Heuristic scoringFunction)
         {
@@ -79,9 +81,13 @@ namespace Splendor.BuyOrder
             return m;
         }
 
+        /// <summary>
+        /// If the ith card is still available, return True and set card = that card. Else return False.
+        /// </summary>
         private bool containsBuy(BuyOrderChromosome c, int i, Board current, out Card card)
         {
-            int id = c.Value[i];
+            int id = c.Value[i] % cards.Count;
+            deny = (c.Value[i] >= cards.Count); //Set the deny flag
             card = cards[id];
             return current.viewableCards.Contains(card);
         }
@@ -110,7 +116,12 @@ namespace Splendor.BuyOrder
             }
             else card[1] = card[0];
             //Move nextMove = BuySeeker.getMove(current, card);
-            Move nextMove = BuySeeker.getMove(current, card, new int[] { 2, 1 });
+            Move nextMove;
+            if (deny && new Move.RESERVE(card[0]).isLegal(current))
+            {
+                nextMove = new Move.RESERVE(card[0]);
+            }
+            else nextMove = BuySeeker.getMove(current, card, new int[] { 2, 1 });
             c.depth = nextBuy;
             return current.generate(nextMove);
         }
