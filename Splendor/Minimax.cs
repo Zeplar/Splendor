@@ -73,9 +73,11 @@ namespace Splendor
 
         public override void takeTurn()
         {
+            turnTimer.Restart();
             Board b = Board.current;
             double x;
             Move k = minimax(b, treeDepth, scoringFunction, out x);
+            turnTimer.Stop();
             RecordHistory.current.record(this + " made move " + k.ToString());
             takeAction(k);
         }

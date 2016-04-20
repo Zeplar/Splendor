@@ -96,7 +96,6 @@
     <Compile Include="GreedyBuyer.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="BuyOrder\BuySeeker.cs" />
-    <Compile Include="Human.cs" />
     <Compile Include="BuyOrder\BuyFit.cs" />
     <Compile Include="BuyOrder\SelfishGene.cs" />
     <Compile Include="PlayerFactory.cs" />

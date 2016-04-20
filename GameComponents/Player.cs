@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System;
 using AForge;
 
@@ -16,6 +17,13 @@ namespace Splendor
         internal int wins = 0;
         internal int turnOrder;
         public int[] movesTaken = new int[4];
+
+
+        /// <summary>
+        /// Maximum turn time in seconds
+        /// </summary>
+        public int maxTurnTime;
+        public Stopwatch turnTimer = new Stopwatch();
 
         public Gem Gems { get { return gems; } }
 
@@ -168,6 +176,7 @@ namespace Splendor
                 do { toDiscard = GameController.random.Next(5); } while (gems[toDiscard] == 0);
                 gems[toDiscard] -= 1;
                 Gem.board[toDiscard] += 1;
+                if (gems.magnitude > 10) throw new Exception("Reserve yielded more than 10 gems");
             }
 
         }

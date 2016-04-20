@@ -53,7 +53,6 @@ namespace Splendor
         {
             Move bestMove = null;
             double bestScore = int.MinValue;
-
             foreach (Move m in b.legalMoves)
             {
                //if (m.moveType == Move.Type.RESERVE) continue;
@@ -64,7 +63,10 @@ namespace Splendor
                     bestMove = m;
                 }
             }
-            if (bestMove == null) throw new Exception("GreedyMove returned a null move.");
+            if (bestMove == null)
+            {
+                throw new Exception("GreedyMove returned a null move.");
+            }
             return bestMove;
         }
 

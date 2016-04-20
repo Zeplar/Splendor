@@ -10,6 +10,8 @@ namespace Splendor
     {
         private int a, b, c, d, e, gold;
 
+        public static Dictionary<char, int> colors = new Dictionary<char, int>();
+
         public Gem(int a, int b, int c, int d, int e, int g)
         {
             this.a = a;
@@ -108,6 +110,11 @@ namespace Splendor
         public static void Reset()
         {
             selected = Gem.zero;
+            colors['w'] = 0;
+            colors['u'] = 1;
+            colors['b'] = 2;
+            colors['r'] = 3;
+            colors['g'] = 4;
         }
 
         public int this[int index]

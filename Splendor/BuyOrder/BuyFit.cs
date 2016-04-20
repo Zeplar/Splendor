@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AForge.Genetic;
-using System.Diagnostics;
+using System.Threading;
 
 namespace Splendor.BuyOrder
 {
@@ -9,8 +9,9 @@ namespace Splendor.BuyOrder
     {
         public List<Card> cards;
         private Heuristic scoringFunction;
+        private static object Lock = new object();
         public int timesEvaluated = 0;
-        private int depth = 10;
+        private int depth = 6;
         public bool willWin; //Whether the last evaluation determined a win was imminent.
         public bool willLose;
         public Move predictedMove; //Move the algorithm predicts Greedy will take.
@@ -57,9 +58,9 @@ namespace Splendor.BuyOrder
                 current = current.generate(simulateGreedyTurn(current));
                 score -= scoringFunction.evaluate(current);
             }
-            timesEvaluated++;
-
             score = Math.Max(1, score);
+
+            Interlocked.Increment(ref timesEvaluated);
 
             if (c.parentFitness > 0 && score > c.parentFitness)
             {

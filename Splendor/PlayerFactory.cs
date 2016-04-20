@@ -50,6 +50,7 @@ namespace Splendor
             Register("exact", Exact.ExactGene.Create);
             Register("selfish", BuyOrder.SelfishGene.Create);
             Register("greedybuyer", x => new GreedyBuyer());
+            Register("human", x => new Human());
 
         }
     }

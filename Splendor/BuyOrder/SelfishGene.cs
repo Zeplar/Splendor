@@ -16,25 +16,25 @@ namespace Splendor.BuyOrder
         private int evaluations = 0;
 
 
-        int totalximpnts = 0;
-        int totalmimpnts = 0;
-        int[] xoverimpnts = new int[5];
-        int[] mutimpnts = new int[5];
-        int diverseChromosomes = 0;
-        int totalChromosomes = 0;
+        //int totalximpnts = 0;
+        //int totalmimpnts = 0;
+        //int[] xoverimpnts = new int[5];
+        //int[] mutimpnts = new int[5];
+        //int diverseChromosomes = 0;
+        //int totalChromosomes = 0;
 
-        private void setData(int i)
-        {
-            if (xoverimpnts.Length <= i)
-            {
-                Array.Resize(ref xoverimpnts, i + 1);
-                Array.Resize(ref mutimpnts, i + 1);
-            }
-            xoverimpnts[i] += BuyOrderChromosome.crossOverImprovements - totalximpnts;
-            totalximpnts = BuyOrderChromosome.crossOverImprovements;
-            mutimpnts[i] += BuyOrderChromosome.mutationImprovements - totalmimpnts;
-            totalmimpnts = BuyOrderChromosome.mutationImprovements;
-        }
+        //private void setData(int i)
+        //{
+        //    if (xoverimpnts.Length <= i)
+        //    {
+        //        Array.Resize(ref xoverimpnts, i + 1);
+        //        Array.Resize(ref mutimpnts, i + 1);
+        //    }
+        //    xoverimpnts[i] += BuyOrderChromosome.crossOverImprovements - totalximpnts;
+        //    totalximpnts = BuyOrderChromosome.crossOverImprovements;
+        //    mutimpnts[i] += BuyOrderChromosome.mutationImprovements - totalmimpnts;
+        //    totalmimpnts = BuyOrderChromosome.mutationImprovements;
+        //}
 
 
         public SelfishGene(Heuristic scoringFunction) : this(scoringFunction, 200, 20) { }
@@ -75,28 +75,28 @@ namespace Splendor.BuyOrder
 
         public override void takeTurn()
         {
-            
+            Board.useDictionary = true;
             bool tempRecording = GameController.recording;
             GameController.recording = false;
-            lastBestChromosome = null;
-            double lastBestFitness = 0;
             fitness.cards = Board.current.viewableCards.FindAll(x => x.Deck != Card.Decks.nobles);
             var ga = new Population(popSize, new BuyOrderChromosome(2*fitness.cards.Count), fitness, new RankSelection(), random);
+            lastBestChromosome = ga.population[0] as BuyOrderChromosome;
+            ga.CrossoverRate = 0.5;
 
        //     if (!predicted.Equals(Board.current.PrevMove)) RecordHistory.current.record("!!! Prediction failed.");
        //     predicted = null;
             int i = 0;
-            while (fitness.timesEvaluated < evaluations)
+            turnTimer.Restart();
+            while (turnTimer.Elapsed < Board.current.notCurrentPlayer.turnTimer.Elapsed && i < 40)  //(fitness.timesEvaluated < evaluations)
             {
-                if (lastBestChromosome != null) ga.AddChromosome(lastBestChromosome);
                 ga.RunEpoch();
-                lastBestChromosome = ga.BestChromosome as BuyOrderChromosome;
-                lastBestFitness = ga.FitnessMax;
-
+                ga.AddChromosome(lastBestChromosome);
+                if (ga.BestChromosome.Fitness > lastBestChromosome.Fitness) lastBestChromosome = ga.BestChromosome as BuyOrderChromosome;
+                if (i % 6 == 0) Board.current.ResetDictionary();
                 CONSOLE.Overwrite(6, "Generations " + i + " Evaluation " + fitness.timesEvaluated);
                 RecordHistory.current.plot(i + "," + ga.FitnessMax + Environment.NewLine);
                 if ((GameController.turn % 3 == 0) && (i < 4)) takeSnapshot(ga);
-                setData(i);
+                //setData(i);
                 i++;
             }
             fitness.timesEvaluated = 0;
@@ -126,6 +126,7 @@ namespace Splendor.BuyOrder
             //    CONSOLE.Overwrite(18 + j, chromosomes[j].Value.String() + "   depth: " +chromosomes[j].depth + "    fitness: " + chromosomes[j].Fitness);
             //}
             takeAction(m);
+            Board.useDictionary = false;
         }
 
         public override string ToString()

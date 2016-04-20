@@ -462,7 +462,7 @@ namespace Splendor
 
                 List<RESERVE> l = new List<RESERVE>();
 
-                if (b.currentPlayer.reserve.Count >= 3)
+                if (b.currentPlayer.reserve.Count == 3)
                 {
                     return l;
                 }

@@ -56,12 +56,12 @@ namespace Splendor
                         double minutes = (watch.Elapsed.TotalMinutes / j) * (repeats - j);
                         CONSOLE.Overwrite(7, "Repeat " + j + "/" + repeats + ", ETA " + minutes.ToString().Substring(0, 4) + " minutes");
                     }
+
                     GameController.replayGame();
                     getStats();
                 }
                 watch.Stop();
                 CONSOLE.Overwrite(10, "P1 wins : " + p1Wins + "     Ties: " + ties + "      Stalemates: " + stalemates);
-                CONSOLE.Overwrite(11, "Average number of legal moves: " + (double)Board.MoveCounter / Board.BoardCounter);
             }
         }
 
