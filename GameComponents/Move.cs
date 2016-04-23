@@ -113,7 +113,7 @@ namespace Splendor
         /// <returns></returns>
         public static Move getRandomMove(Board bd)
         {
-            List<Move> m = getAllLegalMoves(bd);
+            List<Move> m = bd.legalMoves;
             return (m.Count > 0) ? m[GameController.Random.Next(m.Count)] : null;
         }
 

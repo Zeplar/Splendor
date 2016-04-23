@@ -87,7 +87,7 @@ namespace Splendor.BuyOrder
        //     predicted = null;
             int i = 0;
             turnTimer.Restart();
-            while (turnTimer.Elapsed < Board.current.notCurrentPlayer.turnTimer.Elapsed && i < 40)  //(fitness.timesEvaluated < evaluations)
+            while (fitness.timesEvaluated < evaluations)//(turnTimer.Elapsed < Board.current.notCurrentPlayer.turnTimer.Elapsed && i < 40)  
             {
                 ga.RunEpoch();
                 ga.AddChromosome(lastBestChromosome);

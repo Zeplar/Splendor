@@ -8,6 +8,10 @@ namespace Splendor
 {
     public class RandomSearch : Player
     {
+        public override string ToString()
+        {
+            return "RandomSearch " + depth + " " + evaluations;
+        }
         private int depth;
         private int evaluations;
         private Heuristic f;
@@ -51,6 +55,7 @@ namespace Splendor
             while (evals < evaluations)
             {
                 tempMove = Move.getRandomMove(Board.current);
+                if (tempMove == null) throw new Exception("No legal moves on starting point");
                 b = Board.current.generate(tempMove);
                 tempScore = f.evaluate(b);
                 evals++;
@@ -68,7 +73,9 @@ namespace Splendor
                     if (evals == evaluations) break;
 
                     //Simulate Random move
-                    b = b.generate(Move.getRandomMove(b));
+                    Move m = Move.getRandomMove(b);
+                    if (m == null) break;
+                    b = b.generate(m);
                     tempScore += f.evaluate(b);
                     evals++;
                 }

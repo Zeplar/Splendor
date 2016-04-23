@@ -37,6 +37,9 @@ namespace Splendor
             }
         }
 
+        /// <summary>
+        /// Cards and nobles currently on the board
+        /// </summary>
         public static List<Card> boardCards
         {
             get
