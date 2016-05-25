@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 namespace Splendor
 {
 
@@ -39,14 +40,15 @@ namespace Splendor
             Board b = Board.current;
             testBoard(b);
             Debug.Assert(b.currentPlayer == GameController.currentPlayer, "Board is misrepresenting players: ");
+            testEncoder();
         }
 
         public static void testBoard(Board b)
         {
             Gem g = b.Gems;
-            g += b.currentPlayer.Gems;
-            g += b.notCurrentPlayer.Gems;
-            Debug.Assert(g == new Gem(4, 4, 4, 4, 4, 8), "Gems didn't add up: " + g);
+            foreach (Player p in b.Players)
+                g += p.gems;
+            Debug.Assert(g == Gem.StartingGems, "Gems didn't add up: " + g);
 
             if (b.PrevBoard != null)
             {
@@ -59,20 +61,29 @@ namespace Splendor
                            "Cards didn't add up: " + b.BoardCards.String());
                 }
                 Debug.Assert(b != b.PrevBoard, "Bad board constructor: " + b.PrevMove);
-                Debug.Assert(b.notCurrentPlayer.Field.Count == b.PrevBoard.currentPlayer.Field.Count, "Player cards didn't add up");
-                Debug.Assert(b.currentPlayer.Field.Count == b.PrevBoard.notCurrentPlayer.Field.Count, "Player cards didn't add up");
+                int cardCount = 0;
+                foreach (Player p in b.Players)
+                {
+                    cardCount += p.field.Count + p.reserve.Count;
+                }
+                foreach (Player p in b.PrevBoard.Players)
+                {
+                    cardCount -= p.field.Count + p.reserve.Count;
+                }
+                Debug.Assert(cardCount == 0 || cardCount == 1, "Cards didn't add up");
             }
+            
 
         }
 
-        //[Conditional("DEBUG")]
-        //public static void testEncoder()
-        //{
-        //    Board current = Board.current;
-        //    byte[] encoded = current.Encode();
-        //    Board decoded = Board.Decode(encoded);
-        //    Debug.Assert(decoded.Equals(Board.current), "Board did not encode correctly.");
-        //}
+        [Conditional("DEBUG")]
+        public static void testEncoder()
+        {
+            Board current = Board.current;
+            byte[] encoded = current.Encode();
+            Board decoded = Board.Decode(encoded);
+            Debug.Assert(decoded.Equals(Board.current), "Board did not encode correctly.");
+        }
 
     }
 

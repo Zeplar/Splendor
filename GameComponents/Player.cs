@@ -15,9 +15,7 @@ namespace Splendor
         internal List<Card> field;
         public string name;
         internal int wins = 0;
-        internal int turnOrder;
         public int[] movesTaken = new int[4];
-
 
         /// <summary>
         /// Maximum turn time in seconds
@@ -167,8 +165,29 @@ namespace Splendor
                 gems[5] += 1;
                 Gem.board[5] -= 1;
             }
-            reserve.Add(c);
-            c.deck.removeCard(c);
+            //If the card is not a topdeck reserve
+            switch (c.id)
+            {
+                case (int)Card.TopDecks.tier1:
+                    reserve.Add(GameController.decks[0].getAllCards()[4]);
+                    GameController.decks[0].getAllCards().RemoveAt(4);
+                    reserve.FindLast(x => true).visible = false;
+                    break;
+                case (int)Card.TopDecks.tier2:
+                    reserve.Add(GameController.decks[1].getAllCards()[4]);
+                    GameController.decks[1].getAllCards().RemoveAt(4);
+                    reserve.FindLast(x => true).visible = false;
+                    break;
+                case (int)Card.TopDecks.tier3:
+                    reserve.Add(GameController.decks[2].getAllCards()[4]);
+                    GameController.decks[2].getAllCards().RemoveAt(4);
+                    reserve.FindLast(x => true).visible = false;
+                    break;
+                default:
+                reserve.Add(c);
+                c.deck.removeCard(c);
+                    break;
+            }
 
             if (gems.magnitude > 10)
             {
@@ -185,6 +204,8 @@ namespace Splendor
         {
             return this.ToString().GetHashCode();
         }
+
+        public virtual void GameOver() { }
 
     }
 }

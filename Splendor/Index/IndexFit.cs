@@ -3,32 +3,15 @@ using AForge.Genetic;
 using System.Diagnostics;
 using System;
 
-namespace Splendor.Exact
+namespace Splendor.Index
 {
-    public class ExactFit : IFitnessFunction
+    public class IndexFit : IFitnessFunction
     {
         private Heuristic scoringFunction;
         private Heuristic greedy = Heuristic.Points;
         public int timesEvaluated;
-        public int depth;
 
-        private int illegals = 0;
-        private object Lock = new object();
-        public int Illegals
-        {
-            get { return illegals; }
-            set { lock (Lock) { illegals++; } }
-        }
-
-        private int movesTaken = 0;
-        private object Lock2 = new object();
-        public int MovesTaken
-        {
-            get { return movesTaken; }
-            set { lock (Lock2) { movesTaken++; } }
-        }
-
-        public ExactFit(Heuristic scoringFunction)
+        public IndexFit(Heuristic scoringFunction)
         {
             this.scoringFunction = scoringFunction;
         }
@@ -36,7 +19,7 @@ namespace Splendor.Exact
         public double Evaluate(IChromosome chromosome)
         {
             timesEvaluated++;
-            return Math.Max(1, score((ExactChromosome)chromosome));
+            return Math.Max(1, score((AForge.Genetic.ShortArrayChromosome)chromosome));
 
         }
 
@@ -54,26 +37,12 @@ namespace Splendor.Exact
         /// <summary>
         /// Generates the next boardstate or returns false if unable
         /// </summary>
-        private Board generate(ExactChromosome max, Board b)
+        private Board generate(AForge.Genetic.ShortArrayChromosome max, Board b)
         {
-            MovesTaken++;
             Debug.Assert(b.Turn % 2 == 0);
             int i = b.Turn / 2;
-            if (max.moves.Count <= i)
-            {
-                max.moves.Add(null);
-            }
-            if (max.moves[i] == null || !max.moves[i].isLegal(b))
-            {
-                illegals++;
-                max.moves[i] = getExactMove(b);
-                if (max.moves[i] == null)
-                {
-                    return null;
-                }
-            }
-            max.boardState[i] = hash(b);
-            return b.generate(max.moves[i]);
+            Move m = b.legalMoves[max.Value[i] % b.legalMoves.Count];
+            return b.generate(m);
         }
 
         private bool predictWin(Board current, Move pred)
@@ -96,7 +65,7 @@ namespace Splendor.Exact
         /// <summary>
         /// Evaluates a chromosome against Greedy
         /// </summary>
-        private double score(ExactChromosome max)
+        private double score(AForge.Genetic.ShortArrayChromosome max)
         {
             Board current = Board.current;
             Board next;
@@ -104,7 +73,7 @@ namespace Splendor.Exact
             Move pred = null; //Predicted move next turn for Greedy
             double score = 0;
             int i = 0;
-            while (current.Turn < depth)
+            while (current.Turn < max.Value.Length)
             {
                 if (predictWin(current, pred)) break;
                 next = generate(max, current);
@@ -124,15 +93,6 @@ namespace Splendor.Exact
                 {
                     break;
                 }
-            }
-
-            if (max.parentFitness > 0 && score > max.parentFitness)
-            {
-                ExactChromosome.crossOverImprovements += 1;
-            }
-            else if (max.parentFitness < 0 && score > -max.parentFitness)
-            {
-                ExactChromosome.mutationImprovements += 1;
             }
 
             return score / i;

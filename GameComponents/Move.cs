@@ -504,6 +504,9 @@ namespace Splendor
                     return false;
                 }
                 bool isAvail = b.BoardCards.Contains(card) && card.deck != GameController.nobles;
+                isAvail |= ((card.id == 200 && GameController.decks[0].getAllCards().Count > 4)
+                    || (card.id == 201 && GameController.decks[1].getAllCards().Count > 4)
+                    || (card.id == 202 && GameController.decks[0].getAllCards().Count > 4));
                 return isAvail;
             }
 

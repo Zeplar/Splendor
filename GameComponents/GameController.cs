@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Diagnostics;
 using System;
 using AForge;
@@ -18,7 +18,7 @@ namespace Splendor
             get { return t; }
             private set { t = value; }
         }
-        public static Player[] players;
+        public static List<Player> players;
         public static Card selected;
         public static bool gameOver = true;
         public static bool takingTurn;
@@ -33,7 +33,7 @@ namespace Splendor
         {
             get
             {
-                return players[turn % 2];
+                return players[turn % players.Count];
             }
         }
 
@@ -73,20 +73,10 @@ namespace Splendor
         static void endGame()
         {
             gameOver = true;
-            Player winner, loser;
-            if (Board.current.winner == 0)
-            {
-                winner = currentPlayer; loser = players[(turn + 1) % 2];
-            }
-            else
-            {
-                winner = players[(turn + 1) % 2]; loser = currentPlayer;
-            }
-            winner.wins++;
-            RecordHistory.current.record(winner + " won.");
-            RecordHistory.current.recordWins(winner.ToString(), loser.ToString(), winner.points, loser.points);
-            RecordHistory.current.record("Moves taken by winner: " + winner.movesTaken.String());
-            RecordHistory.current.record("Moves taken by loser: " + loser.movesTaken.String());
+            bool tied, stalemate;
+            Player winner = getMaxPlayer(out tied, out stalemate);
+            if (!tied && !stalemate) winner.wins++;
+            foreach (Player p in players)      p.GameOver();
         }
 
         public static void replayGame()
@@ -101,17 +91,16 @@ namespace Splendor
                 p.field.Clear();
                 p.reserve.Clear();
                 p.gems = new Gem();
+                p.movesTaken = new int[4];
             }
-            players = new Player[2] { players[1], players[0] };
-            players[0].movesTaken = new int[4];
-            players[1].movesTaken = new int[4];
+            players.shuffle();
             turn = 0;
             Card.getCards();
-            Gem.board = new Gem(4, 4, 4, 4, 4, 8);
+            Gem.board = Gem.StartingGems;
             gameOver = false;
             takingTurn = false;
             Board.current = new Board();
-            UnitTests.testBoard();
+            //UnitTests.testBoard();
             while (!gameOver) nextTurn();
             endGame();
         }
@@ -121,45 +110,51 @@ namespace Splendor
         {
             tied = false;
             stalemated = Move.getRandomMove() == null;
-            if (players[0].points > players[1].points)
+
+            IEnumerable<Player> PlayersByMaxPoints = players.OrderByDescending(p => p.points).ThenBy(p => p.field.Count);
+            Player first = PlayersByMaxPoints.First();
+            PlayersByMaxPoints = PlayersByMaxPoints.TakeWhile(p => p.points == first.points && p.field.Count == first.field.Count);
+
+            if (PlayersByMaxPoints.Count() == 1)
             {
-                return players[0];
-            }
-            else if (players[1].points > players[0].points)
-            {
-                return players[1];
-            }
-            else if (players[0].field.Count > players[1].field.Count)
-            {
-                return players[1];
-            }
-            else if (players[1].field.Count > players[0].field.Count)
-            {
-                return players[0];
+                return PlayersByMaxPoints.First();
             }
             else
+            {
                 tied = true;
-                return players[0];
+                return PlayersByMaxPoints.First();
+            }
         }
 
         //Initialize the cards, players, and recording tool. Then start the game.
-        public static void Start(Player p1, Player p2, int randomSeed)
+        public static void Start(List<Player> Players, int randomSeed)
         {
-            Console.WriteLine("Initializing game with " + p1 + " and " + p2);
+            Console.WriteLine("Initializing game with " + Players.String());
             decks = new Deck[3] { new Deck(), new Deck(), new Deck() };
             nobles = new Deck();
-            players = new Player[2] { p1, p2 };
+            players = new List<Player>(Players);
             random = new ThreadSafeRandom(randomSeed);
-            p1.turnOrder = 0;
-            p2.turnOrder = 1;
-            Card.getCards();
             gameOver = false;
             timer = Stopwatch.StartNew();
+            switch (players.Count)
+            {
+                case 2:
+                    Gem.StartingGems = new Gem(4, 4, 4, 4, 4, 5);
+                    break;
+                case 3:
+                    Gem.StartingGems = new Gem(5, 5, 5, 5, 5, 5);
+                    break;
+                case 4:
+                    Gem.StartingGems = new Gem(7, 7, 7, 7, 7, 5);
+                    break;
+                default:
+                    throw new Exception("Bad number of players: " + players.Count);
+            }
         }
 
-        public static void Start(Player p1, Player p2)
+        public static void Start(List<Player> Players)
         {
-            Start(p1, p2, new Random().Next());
+            Start(Players, new Random().Next());
         }
 
     }

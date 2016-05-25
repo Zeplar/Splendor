@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Splendor", "Splendor\Splendor.csproj", "{C1FAE8CD-7E98-4F9E-8D28-5416A9E2BAE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "Splendor\Interface.csproj", "{C1FAE8CD-7E98-4F9E-8D28-5416A9E2BAE3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2EFAA327-1789-4438-B9F5-E83ACAE12DB2} = {2EFAA327-1789-4438-B9F5-E83ACAE12DB2}
 	EndProjectSection
@@ -13,9 +13,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameComponents", "GameComponents\GameComponents.csproj", "{28BB625C-6DF2-4CCD-9C93-4AFB60BADCE2}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86

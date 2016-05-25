@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Splendor
@@ -15,6 +17,7 @@ namespace Splendor
         private int depth;
         private int evaluations;
         private Heuristic f;
+        private object Lock = new object();
         public static RandomSearch Create(string[] args)
         {
             Heuristic f;
@@ -40,52 +43,56 @@ namespace Splendor
         public RandomSearch(Heuristic f, int depth, int evaluations)
         {
             this.f = f;
-            this.depth = depth - 1;
+            this.depth = depth;
             this.evaluations = evaluations;
         }
 
         public override void takeTurn()
         {
+            Board.useDictionary = true;
+            ConcurrentBag<double> allScores = new ConcurrentBag<double>();
             Move bestMove = null;
             double bestScore = double.MinValue;
-            double tempScore;
-            Move tempMove;
             int evals = 0;
-            Board b;
-            while (evals < evaluations)
-            {
-                tempMove = Move.getRandomMove(Board.current);
-                if (tempMove == null) throw new Exception("No legal moves on starting point");
-                b = Board.current.generate(tempMove);
-                tempScore = f.evaluate(b);
+            while (evals < evaluations) {
+                if (evals % 5000 > 4900) Board.current.ResetDictionary();
                 evals++;
-                for (int i=0; i < depth; i++)
-                {
-                    //Check that simulation isn't over
-                    if (b.gameOver || evals == evaluations) break;
+                Parallel.Invoke(() =>
+               {
+                   double tempScore = 0;
+                   Board b = Board.current;
+                   Move tempMove = Move.getRandomMove(b);
+                   Move m = tempMove;
+                   for (int i = 0; i < depth; i++)
+                   {
+                       //Simulate Random move
+                       if (m == null) break;
+                       b = b.generate(m);
+                       tempScore += f.evaluate(b);
 
-                    //Simulate opponent move
-                    b = b.generate(Greedy.getGreedyMove(b, f));
-                    tempScore -= f.evaluate(b);
-                    evals++;
+                       //Check that simulation isn't over
+                       if (b.gameOver) break;
 
-                    //Check that simulation isn't over
-                    if (evals == evaluations) break;
+                       //Simulate opponent move
+                       b = b.generate(Greedy.getGreedyMove(b, f));
+                       tempScore -= f.evaluate(b);
 
-                    //Simulate Random move
-                    Move m = Move.getRandomMove(b);
-                    if (m == null) break;
-                    b = b.generate(m);
-                    tempScore += f.evaluate(b);
-                    evals++;
-                }
+                       m = Move.getRandomMove(b);
+                   }
+                   allScores.Add(tempScore);
+                   lock (Lock)
+                   {
+                       if (tempScore > bestScore)
+                       {
+                           bestMove = tempMove;
+                           bestScore = tempScore;
+                       }
+                   }
 
-                if (tempScore > bestScore)
-                {
-                    bestMove = tempMove;
-                    bestScore = tempScore;
-                }
+               });
             }
+            if (GameController.turn % 3 == 0) RecordHistory.current.snapshot(allScores);
+            Board.useDictionary = false;
             takeAction(bestMove);
         }
     }

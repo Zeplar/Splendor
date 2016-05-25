@@ -10,6 +10,14 @@ namespace Splendor
     {
         private int a, b, c, d, e, gold;
 
+        /// <summary>
+        /// The number of gems the board starts with.
+        /// 2P: 4  
+        /// 3P: 5
+        /// 4P: 7
+        /// </summary>
+        public static Gem StartingGems;
+
         public static Dictionary<char, int> colors = new Dictionary<char, int>();
 
         public Gem(int a, int b, int c, int d, int e, int g)
@@ -22,15 +30,15 @@ namespace Splendor
             this.gold = g;
         }
 
-        public Gem(string gemArray)
+        public static Gem FromJson(Newtonsoft.Json.JsonTextReader reader)
         {
-            Debug.Assert(gemArray.Length == 5, gemArray);
-            a = gemArray[0];
-            b = gemArray[1];
-            c = gemArray[2];
-            d = gemArray[3];
-            e = gemArray[4];
-            gold = 0;  
+            int[] g = new int[6];
+            for (int i=0; i < 6; i++)
+            {
+                Console.WriteLine(reader.Value);
+                g[i] = (int)reader.ReadAsInt32();
+            }
+            return new Gem(g);
         }
 
         public Gem(int[] gemArray)
@@ -140,33 +148,33 @@ namespace Splendor
                         return 0;
                 }
             }
-            set
-            {
-                switch (index)
+                set
                 {
-                    case 0:
-                        a = value;
-                        break;
-                    case 1:
-                        b = value;
-                        break;
-                    case 2:
-                        c = value;
-                        break;
-                    case 3:
-                        d = value;
-                        break;
-                    case 4:
-                        e = value;
-                        break;
-                    case 5:
-                        gold = value;
-                        break;
-                    default:
-                        Trace.TraceError("Color index out of range");
-                        break;
+                    switch (index)
+                    {
+                        case 0:
+                            a = value;
+                            break;
+                        case 1:
+                            b = value;
+                            break;
+                        case 2:
+                            c = value;
+                            break;
+                        case 3:
+                            d = value;
+                            break;
+                        case 4:
+                            e = value;
+                            break;
+                        case 5:
+                            gold = value;
+                            break;
+                        default:
+                            Trace.TraceError("Color index out of range");
+                            break;
+                    }
                 }
-            }
         }
 
         public override string ToString()

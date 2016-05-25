@@ -26,26 +26,19 @@ namespace Splendor
         private struct Command
         {
             public int repeats;
-            public Player[] players;
+            public List<Player> players;
             bool record;
 
             public Command(List<Player> players, int repeats, bool record)
             {
-                this.players = players.ToArray();
-                this.repeats = repeats;
-                this.record = record;
-            }
-
-            public Command(Player player, int repeats, bool record)
-            {
-                players = new Player[2] { player, new Greedy(Heuristic.dictionary["allEval"]) };
+                this.players = new List<Player>(players);
                 this.repeats = repeats;
                 this.record = record;
             }
 
             public void run()
             {
-                GameController.Start(players[0], players[1]);
+                GameController.Start(players);
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
                 for (int j = 0; j < repeats; j++)
@@ -73,7 +66,7 @@ namespace Splendor
             {
                 case "repeat":
                     Console.WriteLine("Repeat.");
-                   if (PLAYERS.Count != 2)
+                   if (PLAYERS.Count < 2)
                     {
                         Console.WriteLine("Error: Not enough players.");
                         return;
@@ -143,9 +136,11 @@ namespace Splendor
             int i = 5;
             foreach (Command c in games)
             {
-                if ((c.players[0].Wins | c.players[1].Wins) == 0) break;
                 CONSOLE.Overwrite(i, new string(' ', Console.WindowWidth - 1));
-                CONSOLE.Overwrite(i, c.players[0] + ": " + c.players[0].Wins + " --- " + c.players[1] + ": " + c.players[1].Wins);
+                StringBuilder s = new StringBuilder();
+                for (int j = 0; j < c.players.Count; j++)
+                    s.AppendFormat("{0}: {1} --- ", c.players[j], c.players[j].Wins);
+                CONSOLE.Overwrite(i, s.ToString());
                 i++;
             }
         }
@@ -156,31 +151,31 @@ namespace Splendor
 
         }
 
-        static void findDiscrepancy(int tries)
-        {
-            Greedy g1 = new Greedy();
-            Greedy g2 = new Greedy();
-            Greedy g3 = new Greedy();
-            Minimax m = new Minimax(1, Heuristic.Lead + Heuristic.WinLoss);
-            int[] winArray = new int[tries];
+        //static void findDiscrepancy(int tries)
+        //{
+        //    Greedy g1 = new Greedy();
+        //    Greedy g2 = new Greedy();
+        //    Greedy g3 = new Greedy();
+        //    Minimax m = new Minimax(1, Heuristic.Lead + Heuristic.WinLoss);
+        //    int[] winArray = new int[tries];
 
-           GameController.Start(g1, g2, 100);
-            for (int i = 0; i < tries; i++)
-            {
-                GameController.replayGame();
-                Console.Write("" + i);
-                Console.CursorLeft = 0;
-                winArray[i] = g1.Wins;
-            }
-            GameController.Start(g3, m, 100);
-            for (int i = 0; i < tries; i++)
-            {
-                GameController.replayGame();
-                Console.Write("" + i);
-                Console.CursorLeft = 0;
-                if (winArray[i] != g3.Wins) throw new Exception("Games diverged at i= " + i);
-            }
-        }
+        //   GameController.Start(g1, g2, 100);
+        //    for (int i = 0; i < tries; i++)
+        //    {
+        //        GameController.replayGame();
+        //        Console.Write("" + i);
+        //        Console.CursorLeft = 0;
+        //        winArray[i] = g1.Wins;
+        //    }
+        //    GameController.Start(g3, m, 100);
+        //    for (int i = 0; i < tries; i++)
+        //    {
+        //        GameController.replayGame();
+        //        Console.Write("" + i);
+        //        Console.CursorLeft = 0;
+        //        if (winArray[i] != g3.Wins) throw new Exception("Games diverged at i= " + i);
+        //    }
+        //}
 
         static bool save(string[] s)
         {
@@ -203,35 +198,41 @@ namespace Splendor
 
         static bool makePlayer(string[] s)
         {
-            try {
-                if (PlayerFactory.Exists(s[0]))
+            if (PlayerFactory.Exists(s[0]))
+            {
+                Player temp = null;
+                try
                 {
-                    Player temp = null;
-                    try
-                    {
-                        temp = PlayerFactory.CreateNew(s);
-                    }
-                    catch (FormatException z)
-                    {
-                        Console.WriteLine(z.Message);
-                    }
-                    finally
-                    {
-                        if (PLAYERS.Count < 2) PLAYERS.Add(temp);
-                        else if (PLAYERS.Count == 2)
-                        {
-                            Console.WriteLine("repeat <i> <plot> <snapshot> <record>");
-                        }
-                    }
+                    temp = PlayerFactory.CreateNew(s);
+                    if (PLAYERS.Count < 4) PLAYERS.Add(temp);
                     return true;
                 }
-                return false;
-            } catch { Console.WriteLine("Error in makePlayer."); return false; }
+                catch (FormatException z)
+                {
+                    Console.WriteLine(z.Message);
+                    return false;
+                }
+            }
+            Console.WriteLine("That player type does not exist.");
+            return false;
         }
 
         static void help(string[] s)
         {
             if (Heuristic.dictionary.ContainsKey(s[0])) CONSOLE.WriteLine(Heuristic.dictionary[s[0]].ToString());
+        }
+
+        /// <summary>
+        /// Sets up the game through the online client
+        /// </summary>
+        static void SetupGame()
+        {
+            SynchronousSocketListener.StartListening();
+
+            List<Player> players = SynchronousSocketListener.parseStartGame();
+            Console.WriteLine("Players: " + players.String());
+            games.Add(new Command(players, 1, true));
+            SynchronousSocketListener.Reply(true);
         }
 
 
@@ -240,21 +241,35 @@ namespace Splendor
             Console.WriteLine("Configuration: Selfish depth 3, track.txt");
             PlayerFactory.Load();
             Heuristic.register();
-            Console.WriteLine("Available players: " + PlayerFactory.listAll);
-            Console.WriteLine("Scoring functions: " + Heuristic.listAll);
             while (true)
+            try {
+                SetupGame();
+                Console.WriteLine("Starting game.");
+                games[0].run();
+                SynchronousSocketListener.StopListening();
+            } catch
             {
-                string[] s = Console.ReadLine().Replace("(", "( ").Replace(")", " )").Replace("+", " + ").Replace("-"," - ").Replace("*"," * ").Replace("/"," / ").Split();
-                help(s);
-                if (makePlayer(s)) { }
-                else if (save(s)) { }
-                else
-                {
-                    foreach (string x in s)
-                        commands.Enqueue(x);
-                    while (commands.Count > 0) dequeue();
-                }
+                    SynchronousSocketListener.StopListening();
+                    continue;
             }
+            
+
+
+            //Console.WriteLine("Available players: " + PlayerFactory.listAll);
+            //Console.WriteLine("Scoring functions: " + Heuristic.listAll);
+            //while (true)
+            //{
+            //    string[] s = Console.ReadLine().Replace("(", "( ").Replace(")", " )").Replace("+", " + ").Replace("-"," - ").Replace("*"," * ").Replace("/"," / ").Split();
+            //    help(s);
+            //    if (makePlayer(s)) { }
+            //    else if (save(s)) { }
+            //    else
+            //    {
+            //        foreach (string x in s)
+            //            commands.Enqueue(x);
+            //        while (commands.Count > 0) dequeue();
+            //    }
+            //}
         }
     }
 }

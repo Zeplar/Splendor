@@ -37,10 +37,8 @@ namespace Splendor
 
         public static void Load()
         {
-            //Register("human", (x) => new Human());
             Register("greedy", Greedy.Create);
             Register("random", RandomSearch.Create);
-            Register("player", (x) => new Player());
             Register("minimax", x =>
             {
                 int i = int.Parse(x[0]);
@@ -49,8 +47,7 @@ namespace Splendor
             }, "Depth");
             Register("exact", Exact.ExactGene.Create);
             Register("selfish", BuyOrder.SelfishGene.Create);
-            Register("greedybuyer", x => new GreedyBuyer());
-            Register("human", x => new Human());
+            Register("index", Index.IndexGene.Create);
 
         }
     }
